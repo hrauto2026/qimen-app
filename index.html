@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奇門遁甲格局進階檢索</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            font-size: 20px;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .bubble-animate {
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .category-title {
+            background: linear-gradient(90deg, #4f46e5, #9333ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .grid-btn {
+            transition: all 0.2s ease-in-out;
+            border-width: 2px;
+        }
+        .grid-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .time-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #e5e7eb;
+        }
+        .time-table th, .time-table td {
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            text-align: left;
+            font-size: 18px;
+        }
+        .time-table th {
+            background-color: #f9fafb;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold category-title mb-4">奇門遁甲格局進階檢索</h1>
+            <p class="text-gray-500 text-lg">綠色代表吉格，紅色代表凶格。點擊查看詳細解釋。</p>
+        </header>
+
+        <main id="content-container" class="space-y-12">
+            <!-- 內容由 JavaScript 生成 -->
+        </main>
+    </div>
+
+    <!-- 氣泡解釋框 -->
+    <div id="bubble-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black bg-opacity-40 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-8 relative bubble-animate">
+            <button id="close-btn" class="absolute top-4 right-5 text-gray-400 hover:text-gray-700 text-3xl font-bold">&times;</button>
+            <h2 id="bubble-title" class="text-3xl font-bold text-gray-800 mb-4 border-b-2 border-gray-100 pb-2"></h2>
+            <div id="bubble-desc" class="text-gray-700 leading-relaxed text-[22px] overflow-y-auto max-h-[70vh]"></div>
+        </div>
+    </div>
+
+    <script>
+        const formationsData = [
+            // --- 奇儀組合 ---
+            { category: "奇儀組合", name: "乙丙丁三奇升殿及<br>奇遊祿位", desc: "乙奇到震（卯）、丙奇到巽（巳）或離（午）、丁奇到兌（酉）或離（午）。三奇到達其本殿或祿位之宮。主百事皆吉，聖眷優隆，升遷不次，求財利市。乙、丙、丁各得其所，大顯神威。", type: "吉" },
+            { category: "奇儀組合", name: "乙加辛 (青龍逃走)", desc: "日奇乙加辛金。主破財、受傷、人亡物失，奴僕拐帶，六畜皆傷。為大凶之格。", type: "凶" },
+            { category: "奇儀組合", name: "丙加戊 (飛鳥跌穴)", desc: "月奇丙加甲子戊。大吉之格，主不勞而獲，做事順利，有意外之喜。", type: "吉" },
+            { category: "奇儀組合", name: "丙加庚 (熒入太白)", desc: "月奇丙加庚金。主賊去、門戶破敗，利主不利客。為凶格。", type: "凶" },
+            { category: "奇儀組合", name: "丁加癸 (朱雀投江)", desc: "星奇丁加癸水。主文書牽連、口舌是非、音信沉溺。為大凶之格。", type: "凶" },
+            { category: "奇儀組合", name: "玉女守門", desc: "丁奇（玉女）與值使門同宮。利於婚姻、宴請、和解、隱私之事。", type: "吉" },
+            { category: "奇儀組合", name: "戊加丙 (青龍返首)", desc: "甲子戊加月奇丙。為大吉之格，百事皆宜，求財、就職、考試等大吉。", type: "吉" },
+            { category: "奇儀組合", name: "己加戊 (犬遇青龍)", desc: "天盤己（甲戌）加地盤戊（甲子）。戌狗遇上元帥青龍，主貴人提拔，凡事皆吉。極利面試、求職、升遷，微小之才得以依附權貴之勢而成就大業。", type: "吉" },
+            { category: "奇儀組合", name: "庚加丙 (太白入熒)", desc: "庚金加月奇丙。主賊來、破財、防盜劫，利客不利主。為凶格。", type: "凶" },
+            { category: "奇儀組合", name: "辛加乙 (白虎猖狂)", desc: "辛金加日奇乙。主客死他鄉、陰人內亂、血光之災、婚姻破裂。為大凶之格。", type: "凶" },
+            { category: "奇儀組合", name: "癸加丁 (螣蛇夭矯)", desc: "癸水加星奇丁。主虛驚不寧、文書官司、火焚水溺。為凶格。", type: "凶" },
+            { category: "奇儀組合", name: "壬加戊 (小蛇化龍)", desc: "天盤壬加地盤戊。壬為水為蛇，戊為土為龍。主左右提攜，前程顯達。原本卑微之人若遇此格，象徵將獲貴人扶持，前途大放異彩，變動中得大吉。", type: "吉" },
+
+            
+
+            // --- 九遁組合 ---
+            { category: "九遁組合", name: "天遁 (丙奇+生門+丁奇)", desc: "利於求官、上任、祈福。", type: "吉" },
+            { category: "九遁組合", name: "地遁 (乙奇+開門+己)", desc: "利於安營紮寨、建築、埋伏。", type: "吉" },
+            { category: "九遁組合", name: "人遁 (丁奇+休門+太陰)", desc: "利於和談、相親、隱藏。", type: "吉" },
+            { category: "九遁組合", name: "風遁 (乙奇+吉門+巽宮)", desc: "利於順風行事、傳遞信息。", type: "吉" },
+            { category: "九遁組合", name: "雲遁 (乙奇+吉門+辛)", desc: "利於求雨、隱蔽、逃亡。", type: "吉" },
+            { category: "九遁組合", name: "龍遁 (乙奇+吉門+坎宮/壬癸)", desc: "利於水上作業、修橋。", type: "吉" },
+            { category: "九遁組合", name: "虎遁 (乙奇+庚+辛/兌艮宮)", desc: "利於招兵買馬、防守、射擊。", type: "吉" },
+            { category: "九遁組合", name: "神遁 (丙奇+生門+九天)", desc: "利於祭祀、神佛之事、出師。", type: "吉" },
+            { category: "九遁組合", name: "鬼遁 (丁奇+杜門+九地)", desc: "利於超度、偷襲、暗中行事。", type: "吉" },
+
+            // --- 星門位置格局 ---
+            { category: "星門位置格局", name: "星伏吟", desc: "九星落在本宮。主停滯不前、閉塞、拖延，宜靜守不宜動。", type: "凶" },
+            { category: "星門位置格局", name: "門伏吟", desc: "八門落在本宮。主閉塞、痛苦、拖延，百事不宜。", type: "凶" },
+            { category: "星門位置格局", name: "星反吟", desc: "九星落在對沖之宮。主反覆無常、速度快但結果易變。", type: "凶" },
+            { category: "星門位置格局", name: "門反吟", desc: "八門落在對沖之宮。主事情反覆、破敗、難以成事。", type: "凶" },
+            { category: "星門位置格局", name: "六儀擊刑", desc: "天干落入與其地支相刑的宮位。主極度凶險、刑罰、傷災、破財。", type: "凶" },
+            { category: "星門位置格局", name: "三奇入墓", desc: "乙、丙、丁落入其五行墓庫之宮。主能力無法發揮、被困、暗昧不明。", type: "凶" },
+            { category: "星門位置格局", name: "三奇得使", desc: "乙、丙、丁三奇，遇值使門。主得天時地利，得貴人相助，辦事吉利。", type: "吉" },
+            { category: "星門位置格局", name: "神假 (三奇貴人)", desc: "乙、丙、丁三奇會合吉門，再會合吉神。主大吉。", type: "吉" },
+            { category: "星門位置格局", name: "歡怡格", desc: "三奇臨吉門，且無擊刑、入墓。主心情舒暢，事事順心。", type: "吉" },
+
+            // --- 時辰格局 ---
+            { 
+                category: "時辰格局", 
+                name: "特殊時辰格局對照表", 
+                type: "中性",
+                desc: `
+                <table class="time-table">
+                    <thead>
+                        <tr>
+                            <th class="text-red-600">五不遇時 (大凶)</th>
+                            <th class="text-green-600">天顯時格 (大吉)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>甲日 庚午時 (11:00-13:00)</td>
+                            <td>甲、己日 甲子時 (23:00-01:00)</td>
+                        </tr>
+                        <tr>
+                            <td>乙日 辛巳時 (09:00-11:00)</td>
+                            <td>甲、己日 甲戌時 (19:00-21:00)</td>
+                        </tr>
+                        <tr>
+                            <td>丙日 壬辰時 (07:00-09:00)</td>
+                            <td>乙、庚日 甲申時 (15:00-17:00)</td>
+                        </tr>
+                        <tr>
+                            <td>丁日癸卯時 (05:00-07:00)</td>
+                            <td>丙、辛日 甲午時 (11:00-13:00)</td>
+                        </tr>
+                        <tr>
+                            <td>戊日 甲寅時 (03:00-05:00)</td>
+                            <td>丁、壬日 甲辰時 (07:00-09:00)</td>
+                        </tr>
+                        <tr>
+                            <td>己日 乙丑時 (01:00-03:00)</td>
+                            <td>戊、癸日 甲寅時 (03:00-05:00)</td>
+                        </tr>
+                        <tr>
+                            <td>庚日 丙子時 (23:00-01:00)</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>辛日 丁酉時 (17:00-19:00)</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>壬日 戊申時 (15:00-17:00)</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>癸日 己未時 (13:00-15:00)</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="mt-4 text-sm text-gray-500">※ 五不遇時：時干剋日干，百事皆凶，縱得奇門亦不利。<br>※ 天顯時格：值符隨時干出現在特定宮位，宜出師、營建、求財、辦事。</p>
+                ` 
+            }
+        ];
+
+        const groupedData = formationsData.reduce((acc, curr) => {
+            if (!acc[curr.category]) acc[curr.category] = [];
+            acc[curr.category].push(curr);
+            return acc;
+        }, {});
+
+        const container = document.getElementById('content-container');
+        const modal = document.getElementById('bubble-modal');
+        const bubbleTitle = document.getElementById('bubble-title');
+        const bubbleDesc = document.getElementById('bubble-desc');
+        const closeBtn = document.getElementById('close-btn');
+
+        for (const [category, items] of Object.entries(groupedData)) {
+            const section = document.createElement('section');
+            section.className = 'bg-white rounded-2xl shadow-sm p-6 md:p-8 border border-gray-100';
+            
+            const title = document.createElement('h2');
+            title.className = 'text-2xl font-bold text-gray-800 mb-6 border-l-4 border-indigo-500 pl-4';
+            title.innerText = category;
+            section.appendChild(title);
+
+            const grid = document.createElement('div');
+            grid.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
+
+            items.forEach(item => {
+                const btn = document.createElement('button');
+                let colorClasses = 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100';
+                
+                if (item.type === '吉') {
+                    colorClasses = 'bg-green-50 text-green-700 border-green-500 hover:bg-green-600 hover:text-white';
+                } else if (item.type === '凶') {
+                    colorClasses = 'bg-red-50 text-red-700 border-red-500 hover:bg-red-600 hover:text-white';
+                } else if (item.category === '時辰格局') {
+                    colorClasses = 'bg-indigo-50 text-indigo-700 border-indigo-500 hover:bg-indigo-600 hover:text-white col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4';
+                }
+
+                btn.className = `grid-btn font-medium py-4 px-4 rounded-xl text-center transition-colors text-[20px] ${colorClasses}`;
+                btn.innerHTML = item.name;
+                btn.onclick = () => showBubble(item.name, item.desc, item.type);
+                grid.appendChild(btn);
+            });
+
+            section.appendChild(grid);
+            container.appendChild(section);
+        }
+
+        function showBubble(name, desc, type) {
+            bubbleTitle.innerHTML = name;
+            bubbleDesc.innerHTML = desc;
+            
+            let titleClass = "text-3xl font-bold mb-4 border-b-2 pb-2 ";
+            if (type === '吉') titleClass += "text-green-600 border-green-100";
+            else if (type === '凶') titleClass += "text-red-600 border-red-100";
+            else titleClass += "text-indigo-600 border-indigo-100";
+            
+            bubbleTitle.className = titleClass;
+
+            modal.classList.remove('hidden');
+            const bubbleContent = modal.querySelector('.bubble-animate');
+            bubbleContent.style.animation = 'none';
+            bubbleContent.offsetHeight; 
+            bubbleContent.style.animation = null; 
+        }
+
+        function closeBubble() {
+            modal.classList.add('hidden');
+        }
+
+        closeBtn.addEventListener('click', closeBubble);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeBubble();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeBubble();
+        });
+    </script>
+
+<script data-goatcounter="https://hrauto2026.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
