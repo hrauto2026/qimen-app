@@ -8,6 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- 專供 iOS Automation 抓取的隱藏 JSON 資料 -->
+    <script id="automation-json" type="application/json"></script>
+
     <style>
         body { font-family: 'Noto Sans TC', sans-serif; font-size: 18px; background-color: #f3f4f6; color: #1f2937; }
         .category-title { background: linear-gradient(90deg, #4f46e5, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -42,6 +46,32 @@
         <header class="text-center mb-10">
             <h1 class="text-4xl md:text-5xl font-bold category-title mb-4">(*測試中*)奇門遁甲參考資料</h1>
             <p class="text-gray-500 text-lg mb-6">點擊格子可查看完整引文與對照表。</p>
+            
+            <!-- 新增：今日資訊區塊 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-indigo-100 p-5 md:p-6 mb-8 mx-auto max-w-4xl text-left transition-all hover:shadow-md">
+                <h3 class="text-xl font-bold text-indigo-700 mb-4 border-b pb-2 flex items-center justify-between">
+                    <span>📅 今日奇門速覽</span>
+                    <span id="current-clock" class="text-sm font-normal text-gray-600 font-mono bg-gray-50 px-3 py-1 rounded-full border border-gray-200 shadow-inner"></span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-gray-700">
+                    <div class="flex items-center">
+                        <span class="font-bold w-24 shrink-0">目前日期：</span>
+                        <span id="current-date" class="font-medium"></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="font-bold w-24 shrink-0">今日三柱：</span>
+                        <span id="current-pillars" class="text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded tracking-widest"></span>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="font-bold w-24 text-green-600 shrink-0">天顯時格：</span>
+                        <span id="current-good-time" class="text-green-700 font-medium whitespace-pre-wrap leading-relaxed"></span>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="font-bold w-24 text-red-600 shrink-0">五不遇時：</span>
+                        <span id="current-bad-time" class="text-red-700 font-medium whitespace-pre-wrap leading-relaxed"></span>
+                    </div>
+                </div>
+            </div>
             
             <button onclick="showFutureTable()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all transform hover:scale-105 active:scale-95">
                 📅 查詢是日及未來30天的奇門吉凶時辰(五不遇時/天顯時格)(測試中)
@@ -215,7 +245,6 @@
         ];
 
         // --- 新增功能邏輯：未來 31 天格局計算 ---
-        
         const timeRulesMap = {
             "甲": { five: "庚午 (11:00-13:00)", heaven: "己巳 (09:00-11:00)" },
             "乙": { five: "辛巳 (09:00-11:00)", heaven: "甲申 (15:00-17:00)" },
@@ -229,7 +258,7 @@
             "癸": { five: "己未 (13:00-15:00)", heaven: "甲寅 (03:00-05:00)" }
         };
 
-        // 計算日干 (基準日: 2024-01-01 為 甲子日)
+        // 原本保持不變的函數，負責列表推算
         function getDayStem(date) {
             const allStems = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
             const anchorDate = new Date(2024, 0, 1); // 2024/01/01
@@ -275,8 +304,117 @@
             showBubble("是日及未來30日奇門吉凶時辰(測試中)", html);
         }
 
-        // --- 現有功能 (保持不變) ---
+        // ==========================================
+        // 新增：獨立三柱計算與每日儀表板刷新邏輯
+        // ==========================================
+        const baziStems = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
+        const branches = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
 
+        // 近似三柱計算模組
+        function getPillars(date) {
+            let year = date.getFullYear();
+            let month = date.getMonth();
+            let day = date.getDate();
+
+            // 近似交節氣日 (每月大約4-8日)
+            const terms = [6, 4, 6, 5, 6, 6, 7, 8, 8, 8, 7, 7];
+            let isPastTerm = day >= terms[month];
+
+            // 1. 年柱
+            let baziYear = year;
+            if (month === 0 || (month === 1 && !isPastTerm)) {
+                baziYear -= 1;
+            }
+            const yearStem = baziStems[(baziYear - 4 + 10) % 10];
+            const yearBranch = branches[(baziYear - 4 + 12) % 12];
+            
+            // 2. 月柱 (五虎遁)
+            let baziMonth = month;
+            if (!isPastTerm) {
+                baziMonth -= 1;
+                if (baziMonth < 0) baziMonth = 11;
+            }
+            const branchIdx = (baziMonth + 1) % 12;
+            const yearStemIdx = (baziYear - 4 + 10) % 10;
+            const tigerOffsets = [2, 4, 6, 8, 0]; // 甲己之年丙作首
+            const baseStemIdx = tigerOffsets[yearStemIdx % 5];
+            let solarMonthOffset = baziMonth - 1;
+            if (solarMonthOffset < 0) solarMonthOffset += 12;
+            const monthStem = baziStems[(baseStemIdx + solarMonthOffset) % 10];
+
+            // 3. 日柱 (精確推算)
+            const anchorDate = new Date(2024, 0, 1); // 2024-01-01 甲子日
+            const targetMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            const diffTime = targetMidnight.getTime() - anchorDate.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            let dayStemIdx = diffDays % 10;
+            if (dayStemIdx < 0) dayStemIdx += 10;
+            let dayBranchIdx = diffDays % 12;
+            if (dayBranchIdx < 0) dayBranchIdx += 12;
+
+            return {
+                yearPillar: yearStem + yearBranch,
+                monthPillar: monthStem + branches[branchIdx],
+                dayPillar: baziStems[dayStemIdx] + branches[dayBranchIdx],
+                dayStem: baziStems[dayStemIdx]
+            };
+        }
+
+        // 將格式轉換為符合自動化提取及排版的需求，例如 "13:00-15:00乙未時"
+        function formatTimeRule(ruleText) {
+            if (!ruleText) return "";
+            let cleanText = ruleText.replace(/<\/?br\s*\/?>/g, '\n');
+            const lines = cleanText.split('\n');
+            let formattedLines = lines.map(line => {
+                const match = line.match(/([一-龥]+)\s*\((.*?)\)(.*)/);
+                if (match) {
+                    return `${match[2]}${match[1]}時 ${match[3]}`.trim();
+                }
+                return line;
+            });
+            return formattedLines.join('\n');
+        }
+
+        function updateDailyDashboard() {
+            const now = new Date();
+            const pillars = getPillars(now);
+
+            // 更新日期與時鐘
+            const dateStr = `${now.getFullYear()}年${String(now.getMonth()+1).padStart(2,'0')}月${String(now.getDate()).padStart(2,'0')}日`;
+            const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+            
+            document.getElementById('current-date').innerText = dateStr;
+            document.getElementById('current-clock').innerText = timeStr;
+            document.getElementById('current-pillars').innerText = `${pillars.yearPillar}年 ${pillars.monthPillar}月 ${pillars.dayPillar}日`;
+
+            // 更新吉凶時辰
+            const rule = timeRulesMap[pillars.dayStem];
+            const badTime = formatTimeRule(rule.five);
+            const goodTime = formatTimeRule(rule.heaven);
+
+            document.getElementById('current-bad-time').innerText = badTime;
+            document.getElementById('current-good-time').innerText = goodTime;
+
+            // 更新供 iOS Automation 讀取的 JSON 標籤
+            const jsonPayload = {
+                date: dateStr,
+                time: timeStr,
+                yearPillar: pillars.yearPillar,
+                monthPillar: pillars.monthPillar,
+                dayPillar: pillars.dayPillar,
+                badTime: badTime,
+                goodTime: goodTime
+            };
+            document.getElementById('automation-json').textContent = JSON.stringify(jsonPayload, null, 2);
+        }
+
+        function initDashboard() {
+            updateDailyDashboard();
+            setInterval(updateDailyDashboard, 1000); // 時鐘每秒跳動
+        }
+
+        // --- 現有功能 (保持不變) ---
         function getStatusClass(text) {
             if (text.includes("(吉)")) return "status-ji";
             if (text.includes("(凶)")) return "status-xiong";
@@ -375,7 +513,9 @@
         document.getElementById('close-btn').onclick = () => document.getElementById('bubble-modal').classList.add('hidden');
         window.onclick = (e) => { if(e.target.id === 'bubble-modal') document.getElementById('bubble-modal').classList.add('hidden'); }
 
+        // 初始化
         init();
+        initDashboard();
     </script>
 <script data-goatcounter="https://hrauto2026.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
