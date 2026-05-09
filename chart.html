@@ -421,7 +421,7 @@
             // 修正天顯時格邏輯：精確判斷甲/己日之特定時辰 (含指定之己巳時) 以及其他天顯條件
             const dayStemForTX = dayGZ.substring(0, 1);
             let isTianXian = false;
-            if ((dayStemForTX === '甲' || dayStemForTX === '己') && (timeGZ === '甲子' || timeGZ === '甲戌' || timeGZ === '己巳')) isTianXian = true;
+            if ((dayStemForTX === '甲' || dayStemForTX === '己') && (timeGZ === '己巳')) isTianXian = true;
             else if ((dayStemForTX === '乙' || dayStemForTX === '庚') && timeGZ === '甲申') isTianXian = true;
             else if ((dayStemForTX === '丙' || dayStemForTX === '辛') && timeGZ === '甲午') isTianXian = true;
             else if ((dayStemForTX === '丁' || dayStemForTX === '壬') && timeGZ === '甲辰') isTianXian = true;
