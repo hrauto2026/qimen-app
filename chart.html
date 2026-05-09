@@ -16,16 +16,16 @@
             color: #1a202c;
         }
 
-        /* 響應式佈局調整 */
+        /* 響應式佈局調整 - 加大左右 padding 確保地支標籤不被裁切 */
         .grid-wrapper { 
-            padding: 30px 15px; 
+            padding: 30px 28px; 
             overflow-x: auto; 
             -webkit-overflow-scrolling: touch;
         }
         
         @media (max-width: 640px) {
-            .grid-wrapper { padding: 20px 8px; }
-            .grid-qimen { gap: 6px !important; }
+            .grid-wrapper { padding: 20px 25px; } /* 關鍵修改：確保手機端左右有空間 */
+            .grid-qimen { gap: 6px !important; margin: 0 auto; width: calc(100% - 10px); }
             .palace { min-height: 130px !important; padding: 6px !important; }
             .branch-label { font-size: 0.8rem !important; }
         }
@@ -34,7 +34,7 @@
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
             gap: 12px; 
-            max-width: 550px; /* 從 420px 調回，讓 Pro Max 顯示更飽滿 */
+            max-width: 550px; 
             min-width: 300px; 
             margin: auto; 
         }
@@ -87,7 +87,8 @@
             color: #4b5563;
             font-size: 0.9rem;
             pointer-events: none;
-            opacity: 0.8;
+            opacity: 0.9;
+            z-index: 10;
         }
 
         .title-link:hover {
@@ -126,16 +127,16 @@
         </div>
     </div>
 
-    <!-- 盤面頁首資訊 (優化 iPhone 16 Pro Max 易讀性) -->
-    <div id="pan-header" class="hidden mb-4 p-3 border-l-4 border-indigo-500 bg-indigo-50/80 rounded-r-lg text-gray-800 shadow-sm">
-        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-3 gap-2">
-            <h2 class="text-xs md:text-sm text-indigo-900 font-bold" id="info-bazi"></h2>
+    <!-- 盤面頁首資訊 (字體加大 50% 並自適應) -->
+    <div id="pan-header" class="hidden mb-4 p-4 border-l-4 border-indigo-500 bg-indigo-50/80 rounded-r-lg text-gray-800 shadow-sm">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-3">
+            <h2 class="text-sm sm:text-base md:text-lg text-indigo-900 font-bold" id="info-bazi"></h2>
             <div class="flex space-x-2">
-                <button onclick="shiftHour(-1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1 px-3 rounded shadow-sm text-[10px] font-bold">◀ 前時</button>
-                <button onclick="shiftHour(1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1 px-3 rounded shadow-sm text-[10px] font-bold">後時 ▶</button>
+                <button onclick="shiftHour(-1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">◀ 前時</button>
+                <button onclick="shiftHour(1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">後時 ▶</button>
             </div>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[10px] md:text-xs">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs sm:text-sm md:text-base leading-relaxed">
             <div><span class="text-gray-500">節氣：</span><span id="info-jieqi" class="text-indigo-800 font-bold"></span></div>
             <div><span class="text-gray-500">局數：</span><span id="info-ju" class="text-red-600 font-bold"></span></div>
             <div><span class="text-gray-500">旬首：</span><span id="info-xunshou"></span></div>
@@ -143,7 +144,7 @@
             <div><span class="text-gray-500">值使：</span><span id="info-zhishi"></span></div>
             <div><span class="text-gray-500">空亡：</span><span id="info-kongwang"></span></div>
         </div>
-        <div id="info-special" class="text-[11px] min-h-[1rem] mt-2 border-t border-indigo-100 pt-1 font-bold"></div>
+        <div id="info-special" class="text-xs sm:text-sm md:text-base min-h-[1.5rem] mt-3 border-t border-indigo-200 pt-2 font-bold"></div>
     </div>
 
     <!-- 九宮格盤面 -->
@@ -195,15 +196,16 @@
         5: { name: "中五", type: "white-palace", branch: [] }
     };
 
-    const BRANCH_POSITIONS = {
-        1: `<div class="branch-label -bottom-6 left-1/2 -translate-x-1/2">子</div>`,
-        8: `<div class="branch-label -bottom-5 left-1/4">丑</div><div class="branch-label top-3/4 -left-5">寅</div>`,
-        3: `<div class="branch-label top-1/2 -left-5 -translate-y-1/2">卯</div>`,
-        4: `<div class="branch-label bottom-3/4 -left-5">辰</div><div class="branch-label -top-5 left-1/4">巳</div>`,
-        9: `<div class="branch-label -top-6 left-1/2 -translate-x-1/2">午</div>`,
-        2: `<div class="branch-label -top-5 right-1/4">未</div><div class="branch-label bottom-3/4 -right-5">申</div>`,
-        7: `<div class="branch-label top-1/2 -right-5 -translate-y-1/2">酉</div>`,
-        6: `<div class="branch-label top-3/4 -right-5">戌</div><div class="branch-label -bottom-5 right-1/4">亥</div>`,
+    // 變更為 Template，方便後續動態注入 highlight
+    const BRANCH_POSITIONS_TEMPLATE = {
+        1: `<div class="branch-label -bottom-6 left-1/2 -translate-x-1/2">>子<</div>`,
+        8: `<div class="branch-label -bottom-5 left-1/4">>丑<</div><div class="branch-label top-3/4 -left-5">>寅<</div>`,
+        3: `<div class="branch-label top-1/2 -left-5 -translate-y-1/2">>卯<</div>`,
+        4: `<div class="branch-label bottom-3/4 -left-5">>辰<</div><div class="branch-label -top-5 left-1/4">>巳<</div>`,
+        9: `<div class="branch-label -top-6 left-1/2 -translate-x-1/2">>午<</div>`,
+        2: `<div class="branch-label -top-5 right-1/4">>未<</div><div class="branch-label bottom-3/4 -right-5">>申<</div>`,
+        7: `<div class="branch-label top-1/2 -right-5 -translate-y-1/2">>酉<</div>`,
+        6: `<div class="branch-label top-3/4 -right-5">>戌<</div><div class="branch-label -bottom-5 right-1/4">>亥<</div>`,
         5: ``
     };
 
@@ -217,6 +219,15 @@
     const GODS_YANG = ["值符", "螣蛇", "太陰", "六合", "白虎", "玄武", "九地", "九天"];
     const DOORS_ORDER = ["休門", "生門", "傷門", "杜門", "景門", "死門", "驚門", "開門"];
     const TRAD_JIEQI = { "冬至": "冬至", "小寒": "小寒", "大寒": "大寒", "立春": "立春", "雨水": "雨水", "惊蛰": "驚蟄", "驚蟄": "驚蟄", "春分": "春分", "清明": "清明", "谷雨": "穀雨", "穀雨": "穀雨", "立夏": "立夏", "小满": "小滿", "小滿": "小滿", "芒种": "芒種", "芒種": "芒種", "夏至": "夏至", "小暑": "小暑", "大暑": "大暑", "立秋": "立秋", "处暑": "處暑", "處暑": "處暑", "白露": "白露", "秋分": "秋分", "寒露": "寒露", "霜降": "霜降", "立冬": "立冬", "小雪": "小雪", "大雪": "大雪", "DONG_ZHI": "冬至" };
+
+    // 新增：五行專屬色碼對照表
+    const WUXING_COLORS = {
+        '甲': '#15803d', '乙': '#15803d', '寅': '#15803d', '卯': '#15803d', // 木：綠色
+        '丙': '#b91c1c', '丁': '#b91c1c', '巳': '#b91c1c', '午': '#b91c1c', // 火：紅色
+        '戊': '#78350f', '己': '#78350f', '辰': '#78350f', '戌': '#78350f', '丑': '#78350f', '未': '#78350f', // 土：棕色
+        '庚': '#d97706', '辛': '#d97706', '申': '#d97706', '酉': '#d97706', // 金：金色 (Amber-600)
+        '壬': '#0369a1', '癸': '#0369a1', '亥': '#0369a1', '子': '#0369a1'  // 水：藍色
+    };
 
     let currentDate = new Date();
     let panData = {}; 
@@ -297,6 +308,14 @@
         return { name: jieQiName, time: timeStr };
     }
 
+    // 輔助函數：為八字字串加上五行顏色
+    function colorizeGanZhi(str) {
+        return str.split('').map(char => {
+            if (WUXING_COLORS[char]) return `<span style="color: ${WUXING_COLORS[char]}; text-shadow: 0 0 1px rgba(0,0,0,0.1);">${char}</span>`;
+            return char;
+        }).join('');
+    }
+
     function generatePan() {
         try {
             const y = parseInt(document.getElementById('sel-year').value);
@@ -309,8 +328,12 @@
             const solar = Solar.fromYmdHms(y, m, d, h, 30, 0);
             const lunar = solar.getLunar();
             const pureHour = hSel.options[hSel.selectedIndex].text.split(' ')[0]; 
-            const baziRawStr = `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInGanZhi()}月 ${lunar.getDayInGanZhi()}日 ${lunar.getTimeInGanZhi()}時`;
-            const baziStr = `${y}年${m}月${d}日${pureHour}時 ｜ ${baziRawStr}`;
+            
+            // 用於儲存與複製的純文字八字
+            const baziRawStr = `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInGanZhi()}月 ${lunar.getDayInGanZhiExact()}日 ${lunar.getTimeInGanZhi()}時`;
+            // 帶有五行顏色的八字 HTML
+            const coloredBaziStr = `${colorizeGanZhi(lunar.getYearInGanZhi())}年 ${colorizeGanZhi(lunar.getMonthInGanZhi())}月 ${colorizeGanZhi(lunar.getDayInGanZhiExact())}日 ${colorizeGanZhi(lunar.getTimeInGanZhi())}時`;
+            const baziStrForDisplay = `${y}年${m}月${d}日${pureHour}時 ｜ ${coloredBaziStr}`;
             
             const jqData = getAccurateJieQi(lunar);
             const jieQi = jqData.name;
@@ -394,12 +417,22 @@
 
             let specialStr = "";
             const isWuBuYu = (timeStemIdx === (STEMS.indexOf(dayStem) + 6) % 10);
-            const isTianXian = (timeStem === '甲');
+            
+            // 修正天顯時格邏輯：精確判斷甲/己日之特定時辰 (含指定之己巳時) 以及其他天顯條件
+            const dayStemForTX = dayGZ.substring(0, 1);
+            let isTianXian = false;
+            if ((dayStemForTX === '甲' || dayStemForTX === '己') && (timeGZ === '甲子' || timeGZ === '甲戌' || timeGZ === '己巳')) isTianXian = true;
+            else if ((dayStemForTX === '乙' || dayStemForTX === '庚') && timeGZ === '甲申') isTianXian = true;
+            else if ((dayStemForTX === '丙' || dayStemForTX === '辛') && timeGZ === '甲午') isTianXian = true;
+            else if ((dayStemForTX === '丁' || dayStemForTX === '壬') && timeGZ === '甲辰') isTianXian = true;
+            else if ((dayStemForTX === '戊' || dayStemForTX === '癸') && timeGZ === '甲寅') isTianXian = true;
+
             if (isWuBuYu) specialStr += "<span class='text-red-600'>【五不遇時】</span> ";
             if (isTianXian) specialStr += "<span class='text-green-600'>【天顯時格】</span> ";
 
-            document.getElementById('info-bazi').innerText = baziStr;
-            document.getElementById('info-jieqi').innerHTML = `${jieQi} <span class="text-[8px] text-gray-500 font-normal">(交節：${jqData.time})</span>`;
+            // 更新介面資訊 (使用 innerHTML 來支援五行彩色文字)
+            document.getElementById('info-bazi').innerHTML = baziStrForDisplay;
+            document.getElementById('info-jieqi').innerHTML = `${jieQi} <span class="text-[10px] text-gray-500 font-normal">(交節：${jqData.time})</span>`;
             document.getElementById('info-ju').innerText = juStr;
             document.getElementById('info-xunshou').innerText = xunShouGZ + xunShouStem;
             document.getElementById('info-zhifu').innerText = zhiFuStar;
@@ -424,6 +457,45 @@
             const isRuMu = (stem, pNum) => (stem==='戊'&&pNum===6) || (stem==='丙'&&pNum===6) || (stem==='己'&&pNum===8) || (stem==='丁'&&pNum===8) || (stem==='庚'&&pNum===8) || (stem==='辛'&&pNum===4) || (stem==='壬'&&pNum===4) || (stem==='癸'&&pNum===2) || (stem==='乙'&&pNum===2);
 
             panData = { bazi: baziRawStr, ju: juStr, xun: xunShouGZ+xunShouStem, zf: zhiFuStar, zs: zhiShiDoor, kw: kw1+"、"+kw2, palaces: {} };
+
+            // 處理月支 Highlight
+            const currentMonthBranch = lunar.getMonthInGanZhi().substring(1, 2);
+            const branchPositions = {};
+            for (let key in BRANCH_POSITIONS_TEMPLATE) {
+                let htmlStr = BRANCH_POSITIONS_TEMPLATE[key];
+                if (htmlStr.includes(`>${currentMonthBranch}<`)) {
+                    // 套用高光樣式：黃底紅字、加粗、加框
+                    htmlStr = htmlStr.replace(`>${currentMonthBranch}<`, `><span class="bg-yellow-200 text-red-600 px-1.5 py-0.5 rounded shadow border border-yellow-400 font-extrabold z-20">${currentMonthBranch}</span><`);
+                }
+                // 去除其他沒有 highlight 的輔助標記
+                htmlStr = htmlStr.replace(/>(.)</g, ">$1<");
+                branchPositions[key] = htmlStr.replace(/>/g, '').replace(/</g, '').replace(/div class="branch-label/g, 'div class="branch-label"').replace(/"(.*?)""/g, '"$1"'); // 復原HTML結構
+                
+                // 更乾淨的替換邏輯
+                let cleanHTML = BRANCH_POSITIONS_TEMPLATE[key];
+                if (cleanHTML.includes(`>${currentMonthBranch}<`)) {
+                    cleanHTML = cleanHTML.replace(`>${currentMonthBranch}<`, `><span class="bg-yellow-200 text-red-600 px-1 rounded shadow-sm border border-yellow-400 font-extrabold z-20">${currentMonthBranch}</span><`);
+                }
+                cleanHTML = cleanHTML.replace(/>(.)</g, ">$1<"); // 清理未匹配的括號
+                // 安全清理多餘符號
+                cleanHTML = cleanHTML.replace(/>([子丑寅卯辰巳午未申酉戌亥])</g, ">$1<");
+                branchPositions[key] = cleanHTML.replace(/>([子丑寅卯辰巳午未申酉戌亥])</g, ">$1<");
+            }
+            
+            // 重新精確生成地支 HTML 防止替換出錯
+            const getBranchHTML = (i) => {
+                let template = BRANCH_POSITIONS_TEMPLATE[i];
+                BRANCHES.forEach(b => {
+                    if (template.includes(`>${b}<`)) {
+                        if (b === currentMonthBranch) {
+                            template = template.replace(`>${b}<`, `><span class="bg-yellow-200 text-red-600 px-1 rounded shadow border border-yellow-400 font-extrabold">${b}</span><`);
+                        } else {
+                            template = template.replace(`>${b}<`, `>${b}<`);
+                        }
+                    }
+                });
+                return template;
+            };
 
             for (let i = 1; i <= 9; i++) {
                 const el = document.getElementById(`palace-${i}`);
@@ -454,7 +526,7 @@
                 let godColor = GOD_COLORS[godPan[i]] || "black", star1Color = STAR_COLORS[pStar[0]] || "black", doorColor = DOOR_COLORS[pDoor] || "black";
 
                 el.innerHTML = `
-                    ${BRANCH_POSITIONS[i]}
+                    ${getBranchHTML(i)}
                     <div class="flex flex-col h-full justify-between">
                         <div class="flex justify-between items-start leading-none mb-1">
                             <span class="text-main text-${godColor}">${godPan[i]}</span>
