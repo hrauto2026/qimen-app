@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>奇門遁甲 - 拆補法</title>
+    <title>奇門遁甲 - 拆補法起盤</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
     <style>
-        /* 全局統一使用標楷體 (Req 1) */
+        /* 全局統一使用標楷體 */
         body { 
             font-family: 'BiauKai', 'DFKai-SB', 'Kaiti', 'STKaiti', 'Noto Serif TC', serif; 
             background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
@@ -19,15 +19,15 @@
         /* 響應式佈局調整 */
         .grid-wrapper { 
             padding: 40px 20px; 
-            overflow-x: auto; /* 手機端防止溢出 */
+            overflow-x: auto; 
             -webkit-overflow-scrolling: touch;
         }
         
         @media (max-width: 640px) {
             .grid-wrapper { padding: 30px 10px; }
             .grid-qimen { gap: 8px !important; }
-            .palace { min-height: 180px !important; padding: 8px !important; }
-            .branch-label { font-size: 1rem !important; }
+            .palace { min-height: 160px !important; padding: 8px !important; }
+            .branch-label { font-size: 0.85rem !important; }
         }
 
         .grid-qimen { 
@@ -35,7 +35,7 @@
             grid-template-columns: repeat(3, 1fr); 
             gap: 16px; 
             max-width: 700px; 
-            min-width: 320px; /* 保證最小寬度不變形 */
+            min-width: 320px; 
             margin: auto; 
         }
 
@@ -43,7 +43,7 @@
             position: relative; 
             border-radius: 12px; 
             padding: 12px; 
-            min-height: 240px;
+            min-height: 200px;
             display: flex; 
             flex-direction: column; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
@@ -52,7 +52,7 @@
             transition: transform 0.2s;
         }
 
-        /* 五行背景色 */
+        /* 五行顏色類別 */
         .bg-water { background-color: #f0f9ff; border-color: #bae6fd; } 
         .text-water { color: #0369a1; }
         .bg-brown { background-color: #fcf6f0; border-color: #d7c4b4; } 
@@ -65,13 +65,13 @@
         .text-metal { color: #b45309; }
         .bg-white-palace { background-color: #ffffff; border-color: #e2e8f0; } 
 
-        /* 響應式字體大小控制 (Req 4, 7) */
+        /* 宮內主文字大小，縮小約30% */
         .text-main {
-            font-size: clamp(1.4rem, 4vw, 2.2rem);
-            line-height: 1.1;
+            font-size: clamp(1rem, 2.8vw, 1.54rem);
+            line-height: 1.15;
         }
 
-        /* 橙色時干方塊 (Req 2) */
+        /* 橙色方塊 (時干高亮) */
         .hour-stem { 
             display: inline-block; 
             background-color: #f97316; 
@@ -82,20 +82,24 @@
             box-shadow: 0 2px 4px rgba(249, 115, 22, 0.3);
         }
 
-        /* 外部地支標籤 (Req 4) */
+        /* 外部地支標籤，相應調小 */
         .branch-label {
             position: absolute;
             color: #4b5563;
-            font-size: 1.3rem;
+            font-size: 1rem;
             pointer-events: none;
             opacity: 0.8;
+        }
+
+        .title-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body class="p-2 md:p-8">
 
 <div class="max-w-4xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-4 md:p-8 border border-white">
-        <h1 class="text-3xl md:text-4xl text-center mb-8 text-indigo-900 tracking-widest">
+    <h1 class="text-3xl md:text-4xl text-center mb-8 text-indigo-900 tracking-widest">
         奇門遁甲 - 陽盤拆補法 (<a href="https://hrauto2026.github.io/qimen-app/index.html" class="title-link hover:text-indigo-600 transition-colors duration-300">返回主頁</a>)
     </h1>
     
@@ -140,7 +144,7 @@
             <div><span class="text-gray-500">值使：</span><span id="info-zhishi"></span></div>
             <div><span class="text-gray-500">空亡：</span><span id="info-kongwang"></span></div>
         </div>
-        <div id="info-special" class="text-red-600 text-lg min-h-[1.5rem] mt-2 border-t border-indigo-100 pt-2"></div>
+        <div id="info-special" class="text-lg min-h-[1.5rem] mt-2 border-t border-indigo-100 pt-2"></div>
     </div>
 
     <!-- 九宮格盤面 -->
@@ -204,8 +208,11 @@
         5: ``
     };
 
+    /* 本命五行對應色彩 */
     const STAR_COLORS = { "天蓬": "water", "天任": "brown", "天衝": "wood", "天輔": "wood", "天英": "fire", "天芮": "brown", "天柱": "metal", "天心": "metal", "天禽": "brown" };
     const GOD_COLORS = { "值符": "brown", "螣蛇": "fire", "太陰": "metal", "六合": "wood", "白虎": "metal", "玄武": "water", "九地": "brown", "九天": "metal" };
+    const DOOR_COLORS = { "休門": "water", "生門": "brown", "傷門": "wood", "杜門": "wood", "景門": "fire", "死門": "brown", "驚門": "metal", "開門": "metal" };
+
     const BASE_STARS = { 1: "天蓬", 8: "天任", 3: "天衝", 4: "天輔", 9: "天英", 2: "天芮", 7: "天柱", 6: "天心", 5: "天禽" };
     const BASE_DOORS = { 1: "休門", 8: "生門", 3: "傷門", 4: "杜門", 9: "景門", 2: "死門", 7: "驚門", 6: "開門", 5: "死門" };
     const RING_ORDER = [1, 8, 3, 4, 9, 2, 7, 6];
@@ -345,6 +352,7 @@
             const xunShouIdx = (timeBranchIdx - timeStemIdx + 12) % 12, xunShouGZ = "甲" + BRANCHES[xunShouIdx];
             const XUN_MAP = { "甲子": "戊", "甲戌": "己", "甲申": "庚", "甲午": "辛", "甲辰": "壬", "甲寅": "癸" };
             const xunShouStem = XUN_MAP[xunShouGZ];
+            
             const targetHighlightStem = (timeStem === '甲') ? xunShouStem : timeStem;
 
             let xunShouPalace = parseInt(Object.keys(earthPan).find(k => earthPan[k] === xunShouStem));
@@ -388,8 +396,10 @@
             const ma = maMap[timeBranch];
 
             let specialStr = "";
-            if (timeStemIdx === (STEMS.indexOf(dayStem) + 6) % 10) specialStr += "【五不遇時】 "; // Req 3: 戊日甲寅時 (戊4->4+6=10->癸, 甲0->是)
-            if (timeStem === '甲') specialStr += "【天顯時格】 ";
+            const isWuBuYu = (timeStemIdx === (STEMS.indexOf(dayStem) + 6) % 10);
+            const isTianXian = (timeStem === '甲');
+            if (isWuBuYu) specialStr += "<span class='text-red-600'>【五不遇時】</span> ";
+            if (isTianXian) specialStr += "<span class='text-green-600'>【天顯時格】</span> ";
 
             document.getElementById('info-bazi').innerText = baziStr;
             document.getElementById('info-jieqi').innerHTML = `${jieQi} <span class="text-xs text-gray-500">(交節：${jqData.time})</span>`;
@@ -398,7 +408,8 @@
             document.getElementById('info-zhifu').innerText = zhiFuStar;
             document.getElementById('info-zhishi').innerText = zhiShiDoor;
             document.getElementById('info-kongwang').innerText = kw1 + "、" + kw2;
-            document.getElementById('info-special').innerText = specialStr;
+            document.getElementById('info-special').innerHTML = specialStr;
+            
             document.getElementById('pan-header').classList.remove('hidden');
             document.getElementById('qimen-grid').classList.remove('hidden');
             document.getElementById('action-footer').classList.remove('hidden');
@@ -423,10 +434,10 @@
                     let s = earthPan[5];
                     el.innerHTML = `
                         <div class="absolute top-0 right-0 text-sm text-gray-400 m-2">中五</div>
-                        <div class="flex justify-center items-center h-full text-5xl text-black">
+                        <div class="flex justify-center items-center h-full text-4xl text-black">
                             ${s === targetHighlightStem ? `<span class="hour-stem">${s}</span>` : s}
                         </div>
-                        <div class="absolute bottom-0 left-0 text-gray-400 text-xl m-2">${anGanPan[5]}<span class="text-xs ml-0.5">(暗)</span></div>
+                        <div class="absolute bottom-0 left-0 text-gray-400 text-lg m-2">${anGanPan[5]}<span class="text-xs ml-0.5">(暗)</span></div>
                     `;
                     panData.palaces["中五"] = s; continue;
                 }
@@ -437,13 +448,19 @@
                 if(isMa) currentYiMaPalace = PALACES[i].name;
 
                 const renderStem = (s, pNum, isEarth) => {
-                    let tags = []; if(isJiXing(s, pNum)) tags.push("刑"); if(isRuMu(s, pNum)) tags.push("墓");
-                    let tagStr = tags.length > 0 ? `<span class="text-xs ${isEarth?'text-gray-500':'text-red-600'}">(${tags.join("+")})</span>` : "";
+                    let tags = []; 
+                    if(isJiXing(s, pNum)) tags.push("刑"); 
+                    if(isRuMu(s, pNum)) tags.push("墓");
+                    // (刑)(墓)標記統一顯示為紅色 (Req 2)
+                    let tagStr = tags.length > 0 ? `<span class="text-xs text-red-600 ml-0.5">(${tags.join("+")})</span>` : "";
                     let content = s === targetHighlightStem ? `<span class="hour-stem">${s}</span>` : `<span class="text-black">${s}</span>`;
                     return `<span>${content}${tagStr}</span>`;
                 };
 
-                let godColor = GOD_COLORS[godPan[i]] || "black", star1Color = STAR_COLORS[pStar[0]] || "black";
+                let godColor = GOD_COLORS[godPan[i]] || "black";
+                let star1Color = STAR_COLORS[pStar[0]] || "black";
+                let star2Color = pStar[1] ? (STAR_COLORS[pStar[1]] || "black") : "black";
+                let doorColor = DOOR_COLORS[pDoor] || "black";
 
                 el.innerHTML = `
                     ${BRANCH_POSITIONS[i]}
@@ -454,19 +471,19 @@
                         </div>
                         <div class="text-main leading-none mb-1 tracking-wider">
                             <span class="text-${star1Color}">${pStar[0]}</span>
-                            ${pStar[1] ? `<span class="text-gray-300 mx-1">/</span><span class="text-${STAR_COLORS[pStar[1]] || 'black'}">${pStar[1]}</span>` : ''}
+                            ${pStar[1] ? `<span class="text-gray-400 mx-1">/</span><span class="text-${star2Color}">${pStar[1]}</span>` : ''}
                         </div>
                         <div class="flex items-start leading-none mb-2">
-                            ${isMenPo(pDoor, i) ? `<span class="text-lg text-red-600 mt-1">(迫)</span>` : ""}
-                            <span class="text-main text-${PALACES[i].type} tracking-wider">${pDoor}</span>
-                            <span class="text-2xl ml-2 flex gap-1">${isKong ? '⭕' : ''}${isMa ? '🐎' : ''}</span>
+                            ${isMenPo(pDoor, i) ? `<span class="text-sm text-red-600 mt-1 mr-1">(迫)</span>` : ""}
+                            <span class="text-main text-${doorColor} tracking-wider">${pDoor}</span>
+                            <span class="text-xl ml-2 flex gap-1">${isKong ? '⭕' : ''}${isMa ? '🐎' : ''}</span>
                         </div>
                         <div class="flex justify-between items-end mt-auto">
-                            <span class="text-gray-400 text-2xl">${anGanPan[i]}<span class="text-xs ml-0.5">(暗)</span></span>
+                            <span class="text-gray-400 text-lg">${anGanPan[i]}<span class="text-xs ml-0.5">(暗)</span></span>
                             <div class="flex flex-col items-end leading-tight text-main">
-                                <div class="mb-1">${hStem.map(s => renderStem(s, i, false)).join('/')}</div>
+                                <div class="mb-1">${hStem.map(s => renderStem(s, i, false)).join('<span class="text-gray-400 mx-1">/</span>')}</div>
                                 <div class="border-t-2 border-gray-300 min-w-[3rem] text-right pt-1">
-                                    ${eStem.map((s, idx) => (idx > 0 ? "<span class='text-xs text-gray-400 mr-1'>禽寄</span>" : "") + renderStem(s, i, true)).join('<br>')}
+                                    ${eStem.map((s, idx) => renderStem(s, i, true)).join('<span class="text-gray-400 mx-1">/</span>')}
                                 </div>
                             </div>
                         </div>
