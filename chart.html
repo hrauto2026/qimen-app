@@ -38,13 +38,11 @@
         .bg-white-palace { background-color: #ffffff; border-color: #e2e8f0; } 
         
         .text-main { font-size: clamp(0.95rem, 2.5vw, 1.45rem); line-height: 1.1; }
-        .text-palace-name { font-weight: 900; } /* 移除了固定字體大小，繼承 text-main */
+        .text-palace-name { font-weight: 900; }
         
-        /* Highlight 改用淡色背景與實線邊框，以利顯示內部五行文字顏色 */
         .day-stem { display: inline-block; background-color: #f3e8ff; border: 1.5px solid #a855f7; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         .hour-stem { display: inline-block; background-color: #ffedd5; border: 1.5px solid #f97316; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         
-        /* Emoji 改為垂直排列容器 */
         .emoji-container { position: absolute; top: 6px; right: 6px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 1.3rem; line-height: 1; z-index: 10; }
         .branch-label { position: absolute; color: #4b5563; font-size: 0.9rem; pointer-events: none; opacity: 0.9; z-index: 10; }
     </style>
@@ -237,7 +235,20 @@
 
     function generatePan() {
         try {
-            const y = parseInt(document.getElementById('sel-year').value), m = parseInt(document.getElementById('sel-month').value), d = parseInt(document.getElementById('sel-day').value), hSel = document.getElementById('sel-hour'), h = parseInt(hSel.value);
+            const y = parseInt(document.getElementById('sel-year').value);
+            const m = parseInt(document.getElementById('sel-month').value);
+            const d = parseInt(document.getElementById('sel-day').value);
+            
+            // --- 日期合法性檢查 ---
+            const checkDate = new Date(y, m - 1, d);
+            if (checkDate.getFullYear() !== y || checkDate.getMonth() !== (m - 1) || checkDate.getDate() !== d) {
+                alert(`錯誤：您輸入的日期 ${y}年${m}月${d}日 並不存在，請重新選擇。`);
+                return;
+            }
+            // ---------------------
+
+            const hSel = document.getElementById('sel-hour');
+            const h = parseInt(hSel.value);
             currentDate = new Date(y, m - 1, d, h, 30); 
             const solar = Solar.fromYmdHms(y, m, d, h, 30, 0), lunar = solar.getLunar(), pureHour = hSel.options[hSel.selectedIndex].text.split(' ')[0]; 
             const baziRawStr = `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInGanZhi()}月 ${lunar.getDayInGanZhiExact()}日 ${lunar.getTimeInGanZhi()}時`;
@@ -326,23 +337,15 @@
 
             for (let i = 1; i <= 9; i++) {
                 const el = document.getElementById(`palace-${i}`);
-                
-                // 動態渲染天/地/暗干文字，並處理五行顏色與 Highlight
                 const renderStem = (s, pNum, isAnGan = false) => {
                     let tags = []; if(isJiXing(s, pNum)) tags.push("刑"); if(isRuMu(s, pNum)) tags.push("墓");
                     let tagClass = isAnGan ? "text-gray-400" : "text-red-600";
                     let tagStr = tags.length ? `<span class="text-[10px] ${tagClass} ml-0.5 font-bold">(${tags.join("+")})</span>` : "";
                     
-                    // 暗干限制字體大小
-                    if (isAnGan) {
-                        return `<span class="text-gray-400 text-sm sm:text-base">${s}${tagStr}</span>`;
-                    }
+                    if (isAnGan) return `<span class="text-gray-400 text-sm sm:text-base">${s}${tagStr}</span>`;
 
-                    // 天地盤五行色碼
                     let stemColor = WUXING_COLORS[s] || "#1a202c";
                     let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
-                    
-                    // 覆蓋 CSS，確保文字顯示五行顏色
                     let content = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important;">${s}</span>` : `<span class="font-bold" style="color: ${stemColor};">${s}</span>`;
                     return `<span>${content}${tagStr}</span>`;
                 };
