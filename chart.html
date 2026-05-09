@@ -16,7 +16,7 @@
             color: #1a202c;
         }
 
-        /* 響應式佈局調整 - 加大左右 padding 確保地支標籤不被裁切 */
+        /* 響應式佈局調整 */
         .grid-wrapper { 
             padding: 30px 28px; 
             overflow-x: auto; 
@@ -24,7 +24,7 @@
         }
         
         @media (max-width: 640px) {
-            .grid-wrapper { padding: 20px 25px; } /* 關鍵修改：確保手機端左右有空間 */
+            .grid-wrapper { padding: 20px 25px; }
             .grid-qimen { gap: 6px !important; margin: 0 auto; width: calc(100% - 10px); }
             .palace { min-height: 130px !important; padding: 6px !important; }
             .branch-label { font-size: 0.8rem !important; }
@@ -52,7 +52,6 @@
             transition: transform 0.2s;
         }
 
-        /* 五行顏色類別 */
         .bg-water { background-color: #f0f9ff; border-color: #bae6fd; } 
         .text-water { color: #0369a1; }
         .bg-brown { background-color: #fcf6f0; border-color: #d7c4b4; } 
@@ -65,13 +64,11 @@
         .text-metal { color: #b45309; }
         .bg-white-palace { background-color: #ffffff; border-color: #e2e8f0; } 
 
-        /* 宮內主文字大小優化 */
         .text-main {
             font-size: clamp(0.9rem, 2.5vw, 1.4rem);
             line-height: 1.1;
         }
 
-        /* 橙色時干方塊 */
         .hour-stem { 
             display: inline-block; 
             background-color: #f97316; 
@@ -81,7 +78,6 @@
             line-height: 1.1;
         }
 
-        /* 外部地支標籤 */
         .branch-label {
             position: absolute;
             color: #4b5563;
@@ -103,10 +99,9 @@
         (測試中)奇門遁甲 - 拆補法排盤 (<a href="https://hrauto2026.github.io/qimen-app/index.html" class="title-link hover:text-indigo-600 transition-colors duration-300">返回主頁</a>)
     </h1>
     
-    <!-- 選擇時間區塊 -->
     <div class="flex flex-wrap justify-center items-center gap-2 mb-4 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100 shadow-inner">
         <div class="flex items-center gap-1">
-            <select id="sel-year" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
+            <select id="sel-year" class="p-1 border border-gray-300 rounded bg-white text-base outline-none" onchange="updateJieQiYearBtn()"></select>
             <span class="text-gray-600 text-sm">年</span>
         </div>
         <div class="flex items-center gap-1">
@@ -122,21 +117,21 @@
             <span class="text-gray-600 text-sm">時</span>
         </div>
         <div class="w-full sm:w-auto flex justify-center gap-2 mt-2 sm:mt-0">
+            <button onclick="resetToNow()" class="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-3 rounded-lg shadow text-sm">現在時間</button>
             <button onclick="generatePan()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-1.5 px-5 rounded-lg shadow text-sm">起盤</button>
-            <button onclick="showJieQiModal()" class="bg-teal-600 hover:bg-teal-700 text-white py-1.5 px-3 rounded-lg shadow text-xs">🗓️ 該年廿四節氣</button>
+            <button onclick="showJieQiModal()" class="bg-teal-600 hover:bg-teal-700 text-white py-1.5 px-3 rounded-lg shadow text-xs">🗓️ <span id="btn-jieqi-year"></span>年廿四節氣</button>
         </div>
     </div>
 
-    <!-- 盤面頁首資訊 (字體加大 50% 並自適應) -->
     <div id="pan-header" class="hidden mb-4 p-4 border-l-4 border-indigo-500 bg-indigo-50/80 rounded-r-lg text-gray-800 shadow-sm">
-        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-3">
-            <h2 class="text-sm sm:text-base md:text-lg text-indigo-900 font-bold" id="info-bazi"></h2>
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-2 gap-2">
+            <h2 class="text-base sm:text-lg md:text-xl text-indigo-900 font-bold" id="info-bazi"></h2>
             <div class="flex space-x-2">
                 <button onclick="shiftHour(-1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">◀ 前一時辰</button>
                 <button onclick="shiftHour(1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">後一時辰 ▶</button>
             </div>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs sm:text-sm md:text-base leading-relaxed">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2 text-sm sm:text-base md:text-lg leading-tight">
             <div><span class="text-gray-500">節氣：</span><span id="info-jieqi" class="text-indigo-800 font-bold"></span></div>
             <div><span class="text-gray-500">局數：</span><span id="info-ju" class="text-red-600 font-bold"></span></div>
             <div><span class="text-gray-500">旬首：</span><span id="info-xunshou"></span></div>
@@ -144,10 +139,9 @@
             <div><span class="text-gray-500">值使：</span><span id="info-zhishi"></span></div>
             <div><span class="text-gray-500">空亡：</span><span id="info-kongwang"></span></div>
         </div>
-        <div id="info-special" class="text-xs sm:text-sm md:text-base min-h-[1.5rem] mt-3 border-t border-indigo-200 pt-2 font-bold"></div>
+        <div id="info-special" class="text-sm sm:text-base md:text-lg mt-1 border-t border-indigo-200 pt-1 font-bold"></div>
     </div>
 
-    <!-- 九宮格盤面 -->
     <div class="grid-wrapper">
         <div id="qimen-grid" class="grid-qimen hidden">
             <div id="palace-4" class="palace bg-wood"></div>
@@ -170,7 +164,6 @@
     </div>
 </div>
 
-<!-- 廿四節氣 Modal -->
 <div id="jieqi-modal" class="fixed inset-0 bg-gray-900/60 hidden flex justify-center items-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-5 max-w-md w-full max-h-[80vh] overflow-y-auto relative border-t-8 border-teal-600">
         <button onclick="closeJieQiModal()" class="absolute top-3 right-4 text-gray-400 hover:text-black text-2xl">✖</button>
@@ -196,7 +189,6 @@
         5: { name: "中五", type: "white-palace", branch: [] }
     };
 
-    // 變更為 Template，方便後續動態注入 highlight
     const BRANCH_POSITIONS_TEMPLATE = {
         1: `<div class="branch-label -bottom-6 left-1/2 -translate-x-1/2">子</div>`,
         8: `<div class="branch-label -bottom-5 left-1/4">丑</div><div class="branch-label top-3/4 -left-5">寅</div>`,
@@ -220,13 +212,12 @@
     const DOORS_ORDER = ["休門", "生門", "傷門", "杜門", "景門", "死門", "驚門", "開門"];
     const TRAD_JIEQI = { "冬至": "冬至", "小寒": "小寒", "大寒": "大寒", "立春": "立春", "雨水": "雨水", "惊蛰": "驚蟄", "驚蟄": "驚蟄", "春分": "春分", "清明": "清明", "谷雨": "穀雨", "穀雨": "穀雨", "立夏": "立夏", "小满": "小滿", "小滿": "小滿", "芒种": "芒種", "芒種": "芒種", "夏至": "夏至", "小暑": "小暑", "大暑": "大暑", "立秋": "立秋", "处暑": "處暑", "處暑": "處暑", "白露": "白露", "秋分": "秋分", "寒露": "寒露", "霜降": "霜降", "立冬": "立冬", "小雪": "小雪", "大雪": "大雪", "DONG_ZHI": "冬至" };
 
-    // 新增：五行專屬色碼對照表
     const WUXING_COLORS = {
-        '甲': '#15803d', '乙': '#15803d', '寅': '#15803d', '卯': '#15803d', // 木：綠色
-        '丙': '#b91c1c', '丁': '#b91c1c', '巳': '#b91c1c', '午': '#b91c1c', // 火：紅色
-        '戊': '#78350f', '己': '#78350f', '辰': '#78350f', '戌': '#78350f', '丑': '#78350f', '未': '#78350f', // 土：棕色
-        '庚': '#d97706', '辛': '#d97706', '申': '#d97706', '酉': '#d97706', // 金：金色 (Amber-600)
-        '壬': '#0369a1', '癸': '#0369a1', '亥': '#0369a1', '子': '#0369a1'  // 水：藍色
+        '甲': '#15803d', '乙': '#15803d', '寅': '#15803d', '卯': '#15803d',
+        '丙': '#b91c1c', '丁': '#b91c1c', '巳': '#b91c1c', '午': '#b91c1c',
+        '戊': '#78350f', '己': '#78350f', '辰': '#78350f', '戌': '#78350f', '丑': '#78350f', '未': '#78350f',
+        '庚': '#d97706', '辛': '#d97706', '申': '#d97706', '酉': '#d97706',
+        '壬': '#0369a1', '癸': '#0369a1', '亥': '#0369a1', '子': '#0369a1'
     };
 
     let currentDate = new Date();
@@ -242,9 +233,24 @@
         for (let i = 1930; i <= 2050; i++) ySel.add(new Option(i, i));
         for (let i = 1; i <= 12; i++) mSel.add(new Option(i, i));
         for (let i = 1; i <= 31; i++) dSel.add(new Option(i, i));
-        const hourNames = ["子 (00-01)", "丑 (01-03)", "寅 (03-05)", "卯 (05-07)", "辰 (07-09)", "巳 (09-11)", "午 (11-13)", "未 (13-15)", "申 (15-17)", "酉 (17-19)", "戌 (19-21)", "亥 (21-23)", "子 (23-24)"];
-        const hourValues = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 23];
-        for (let i = 0; i < hourNames.length; i++) hSel.add(new Option(hourNames[i], hourValues[i]));
+        
+        // 修改 (2): 下拉選單顯示長格式
+        const hourOptions = [
+            { label: "子 (23:00-00:59)", val: 23 },
+            { label: "丑 (01:00-02:59)", val: 1 },
+            { label: "寅 (03:00-04:59)", val: 3 },
+            { label: "卯 (05:00-06:59)", val: 5 },
+            { label: "辰 (07:00-08:59)", val: 7 },
+            { label: "巳 (09:00-10:59)", val: 9 },
+            { label: "午 (11:00-12:59)", val: 11 },
+            { label: "未 (13:00-14:59)", val: 13 },
+            { label: "申 (15:00-16:59)", val: 15 },
+            { label: "酉 (17:00-18:59)", val: 17 },
+            { label: "戌 (19:00-20:59)", val: 19 },
+            { label: "亥 (21:00-22:59)", val: 21 }
+        ];
+        hourOptions.forEach(opt => hSel.add(new Option(opt.label, opt.val)));
+        
         updateSelectorsFromDate(currentDate);
     }
 
@@ -252,10 +258,26 @@
         document.getElementById('sel-year').value = d.getFullYear();
         document.getElementById('sel-month').value = d.getMonth() + 1;
         document.getElementById('sel-day').value = d.getDate();
+        
+        // 修改 (2): 修正時辰自動判定邏輯，19:48 應為 19 (戌時)
         let h = d.getHours();
-        let hVal = (h % 2 !== 0) ? h - 1 : h; 
-        if(h === 23) hVal = 23;
+        let hVal;
+        if (h >= 23 || h < 1) hVal = 23;
+        else if (h % 2 === 0) hVal = h - 1; // 例如 20 點 -> 19 (戌)
+        else hVal = h; // 例如 19 點 -> 19 (戌)
+        
         document.getElementById('sel-hour').value = hVal;
+        updateJieQiYearBtn();
+    }
+
+    function updateJieQiYearBtn() {
+        document.getElementById('btn-jieqi-year').innerText = document.getElementById('sel-year').value;
+    }
+
+    function resetToNow() {
+        currentDate = new Date();
+        updateSelectorsFromDate(currentDate);
+        generatePan();
     }
 
     function shiftHour(dir) {
@@ -308,7 +330,6 @@
         return { name: jieQiName, time: timeStr };
     }
 
-    // 輔助函數：為八字字串加上五行顏色
     function colorizeGanZhi(str) {
         return str.split('').map(char => {
             if (WUXING_COLORS[char]) return `<span style="color: ${WUXING_COLORS[char]}; text-shadow: 0 0 1px rgba(0,0,0,0.1);">${char}</span>`;
@@ -329,9 +350,7 @@
             const lunar = solar.getLunar();
             const pureHour = hSel.options[hSel.selectedIndex].text.split(' ')[0]; 
             
-            // 用於儲存與複製的純文字八字
             const baziRawStr = `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInGanZhi()}月 ${lunar.getDayInGanZhiExact()}日 ${lunar.getTimeInGanZhi()}時`;
-            // 帶有五行顏色的八字 HTML
             const coloredBaziStr = `${colorizeGanZhi(lunar.getYearInGanZhi())}年 ${colorizeGanZhi(lunar.getMonthInGanZhi())}月 ${colorizeGanZhi(lunar.getDayInGanZhiExact())}日 ${colorizeGanZhi(lunar.getTimeInGanZhi())}時`;
             const baziStrForDisplay = `${y}年${m}月${d}日${pureHour}時 ｜ ${coloredBaziStr}`;
             
@@ -418,7 +437,6 @@
             let specialStr = "";
             const isWuBuYu = (timeStemIdx === (STEMS.indexOf(dayStem) + 6) % 10);
             
-            // 修正天顯時格邏輯：精確判斷甲/己日之特定時辰 (含指定之己巳時) 以及其他天顯條件
             const dayStemForTX = dayGZ.substring(0, 1);
             let isTianXian = false;
             if ((dayStemForTX === '甲' || dayStemForTX === '己') && (timeGZ === '己巳')) isTianXian = true;
@@ -430,7 +448,6 @@
             if (isTianXian) specialStr += "<span class='text-green-600'>【✅天顯時格】</span> ";            
             if (isWuBuYu) specialStr += "<span class='text-red-600'>【❌五不遇時】</span> ";
 
-            // 更新介面資訊 (使用 innerHTML 來支援五行彩色文字)
             document.getElementById('info-bazi').innerHTML = baziStrForDisplay;
             document.getElementById('info-jieqi').innerHTML = `${jieQi} <span class="text-[10px] text-gray-500 font-normal">(交節：${jqData.time})</span>`;
             document.getElementById('info-ju').innerText = juStr;
@@ -458,39 +475,17 @@
 
             panData = { bazi: baziRawStr, ju: juStr, xun: xunShouGZ+xunShouStem, zf: zhiFuStar, zs: zhiShiDoor, kw: kw1+"、"+kw2, palaces: {} };
 
-            // 處理月支 Highlight
             const currentMonthBranch = lunar.getMonthInGanZhi().substring(1, 2);
-            const branchPositions = {};
-            for (let key in BRANCH_POSITIONS_TEMPLATE) {
-                let htmlStr = BRANCH_POSITIONS_TEMPLATE[key];
-                if (htmlStr.includes(`>${currentMonthBranch}<`)) {
-                    // 套用高光樣式：黃底紅字、加粗、加框
-                    htmlStr = htmlStr.replace(`>${currentMonthBranch}<`, `><span class="bg-yellow-200 text-red-600 px-1.5 py-0.5 rounded shadow border border-yellow-400 font-extrabold z-20">${currentMonthBranch}</span><`);
-                }
-                // 去除其他沒有 highlight 的輔助標記
-                htmlStr = htmlStr.replace(/>(.)</g, ">$1<");
-                branchPositions[key] = htmlStr.replace(/>/g, '').replace(/</g, '').replace(/div class="branch-label/g, 'div class="branch-label"').replace(/"(.*?)""/g, '"$1"'); // 復原HTML結構
-                
-                // 更乾淨的替換邏輯
-                let cleanHTML = BRANCH_POSITIONS_TEMPLATE[key];
-                if (cleanHTML.includes(`>${currentMonthBranch}<`)) {
-                    cleanHTML = cleanHTML.replace(`>${currentMonthBranch}<`, `><span class="bg-yellow-200 text-red-600 px-1 rounded shadow-sm border border-yellow-400 font-extrabold z-20">${currentMonthBranch}</span><`);
-                }
-                cleanHTML = cleanHTML.replace(/>(.)</g, ">$1<"); // 清理未匹配的括號
-                // 安全清理多餘符號
-                cleanHTML = cleanHTML.replace(/>([子丑寅卯辰巳午未申酉戌亥])</g, ">$1<");
-                branchPositions[key] = cleanHTML.replace(/>([子丑寅卯辰巳午未申酉戌亥])</g, ">$1<");
-            }
             
-            // 重新精確生成地支 HTML 防止替換出錯
             const getBranchHTML = (i) => {
                 let template = BRANCH_POSITIONS_TEMPLATE[i];
                 BRANCHES.forEach(b => {
                     if (template.includes(`>${b}<`)) {
+                        let wuxingColor = WUXING_COLORS[b] || '#4b5563';
                         if (b === currentMonthBranch) {
-                            template = template.replace(`>${b}<`, `><span class="bg-yellow-200 text-red-600 px-1 rounded shadow border border-yellow-400 font-extrabold">${b}</span><`);
+                            template = template.replace(`>${b}<`, `><span class="bg-yellow-200 px-1 rounded shadow border border-yellow-400 font-extrabold" style="color: ${wuxingColor};">${b}</span><`);
                         } else {
-                            template = template.replace(`>${b}<`, `>${b}<`);
+                            template = template.replace(`>${b}<`, `><span style="color: ${wuxingColor}; font-weight: bold;">${b}</span><`);
                         }
                     }
                 });
@@ -501,12 +496,18 @@
                 const el = document.getElementById(`palace-${i}`);
                 if(i === 5) {
                     let s = earthPan[5];
+                    let anGan = anGanPan[5];
+                    let anGanTags = [];
+                    if(isJiXing(anGan, 5)) anGanTags.push("刑");
+                    if(isRuMu(anGan, 5)) anGanTags.push("墓");
+                    let anGanTagStr = anGanTags.length > 0 ? `<span class="text-[10px] text-gray-400 ml-0.5">(${anGanTags.join("+")})</span>` : "";
+
                     el.innerHTML = `
                         <div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div>
                         <div class="flex justify-center items-center h-full text-3xl text-black">
                             ${s === targetHighlightStem ? `<span class="hour-stem">${s}</span>` : s}
                         </div>
-                        <div class="absolute bottom-0 left-0 text-gray-400 text-lg m-1">${anGanPan[5]}<span class="text-[10px] ml-0.5">(暗)</span></div>
+                        <div class="absolute bottom-0 left-0 text-gray-400 text-lg m-1">${anGan}${anGanTagStr}</div>
                     `;
                     panData.palaces["中五"] = s; continue;
                 }
@@ -518,12 +519,18 @@
 
                 const renderStem = (s, pNum, isEarth) => {
                     let tags = []; if(isJiXing(s, pNum)) tags.push("刑"); if(isRuMu(s, pNum)) tags.push("墓");
-                    let tagStr = tags.length > 0 ? `<span class="text-[10px] text-red-600 ml-0.5 font-bold">(${tags.join("+")})</span>` : "";
+                    let tagStr = tags.length > 0 ? `<span class="text-[10px] text-gray-400 ml-0.5 font-bold">(${tags.join("+")})</span>` : "";
                     let content = s === targetHighlightStem ? `<span class="hour-stem font-bold">${s}</span>` : `<span class="text-black">${s}</span>`;
                     return `<span>${content}${tagStr}</span>`;
                 };
 
                 let godColor = GOD_COLORS[godPan[i]] || "black", star1Color = STAR_COLORS[pStar[0]] || "black", doorColor = DOOR_COLORS[pDoor] || "black";
+                
+                let anGan = anGanPan[i];
+                let anGanTags = [];
+                if(isJiXing(anGan, i)) anGanTags.push("刑");
+                if(isRuMu(anGan, i)) anGanTags.push("墓");
+                let anGanTagStr = anGanTags.length > 0 ? `<span class="text-[10px] text-gray-400 ml-0.5 font-normal">(${anGanTags.join("+")})</span>` : "";
 
                 el.innerHTML = `
                     ${getBranchHTML(i)}
@@ -540,11 +547,11 @@
                             ${pStar[1] ? `<span class="text-gray-400 mx-0.5">/</span><span class="text-${STAR_COLORS[pStar[1]] || 'black'}">${pStar[1]}</span>` : ''}
                         </div>
                         <div class="flex items-start leading-none mb-1">
-                            ${isMenPo(pDoor, i) ? `<span class="text-[10px] text-red-600 mt-1 mr-0.5 font-bold">(迫)</span>` : ""}
                             <span class="text-main text-${doorColor} tracking-wider">${pDoor}</span>
+                            ${isMenPo(pDoor, i) ? `<span class="text-[10px] text-red-600 mt-1 ml-0.5 font-bold">(迫)</span>` : ""}
                         </div>
                         <div class="flex justify-between items-end mt-auto">
-                            <span class="text-gray-400 text-lg">${anGanPan[i]}<span class="text-[10px] ml-0.5 font-normal">(暗)</span></span>
+                            <span class="text-gray-400 text-lg">${anGan}${anGanTagStr}</span>
                             <div class="flex flex-col items-end leading-tight text-main font-bold">
                                 <div class="mb-1">${hStem.map(s => renderStem(s, i, false)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
                                 <div class="border-t-[1.5px] border-gray-300 min-w-[2.5rem] text-right pt-0.5">
@@ -560,17 +567,9 @@
     }
 
 function copyPan() {
-    // 1. 獲取特殊的格局文字（移除 HTML 標籤後的純文字）
     const specialText = document.getElementById('info-special').innerText.trim();
-    
-    // 2. 組合時間與格局標註
-    // 如果有格局（如：【天顯時格】），則加上空格並串接；若無則保持原樣
     const baziLine = panData.bazi + (specialText ? " " + specialText : "");
-
-    // 3. 更新你的 text 字串
     let text = `【奇門遁甲 - 拆補法排盤】\n時間：${baziLine}\n局數：${panData.ju}\n旬首：${panData.xun}\n值符：${panData.zf} | 值使：${panData.zs}\n空亡：${panData.kw} | 驛馬：${currentYiMaPalace}\n----------------------\n`;
-    
-    // ... 以下維持原本的循環與複製邏輯 ...
     for (let i = 1; i <= 9; i++) if(i!==5) text += `${PALACES[i].name}：${panData.palaces[PALACES[i].name]}\n`;
     navigator.clipboard.writeText(text).then(() => alert("資料已複製！")).catch(() => {
         let t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); document.execCommand("Copy"); t.remove(); alert("資料已複製！");
