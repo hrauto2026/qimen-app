@@ -427,8 +427,8 @@
             else if ((dayStemForTX === '丁' || dayStemForTX === '壬') && timeGZ === '甲辰') isTianXian = true;
             else if ((dayStemForTX === '戊' || dayStemForTX === '癸') && timeGZ === '甲寅') isTianXian = true;
 
-            if (isWuBuYu) specialStr += "<span class='text-red-600'>【五不遇時】</span> ";
-            if (isTianXian) specialStr += "<span class='text-green-600'>【天顯時格】</span> ";
+            if (isTianXian) specialStr += "<span class='text-green-600'>【✅天顯時格】</span> ";            
+            if (isWuBuYu) specialStr += "<span class='text-red-600'>【❌五不遇時】</span> ";
 
             // 更新介面資訊 (使用 innerHTML 來支援五行彩色文字)
             document.getElementById('info-bazi').innerHTML = baziStrForDisplay;
