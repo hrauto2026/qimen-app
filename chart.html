@@ -38,12 +38,14 @@
         .bg-white-palace { background-color: #ffffff; border-color: #e2e8f0; } 
         
         .text-main { font-size: clamp(0.95rem, 2.5vw, 1.45rem); line-height: 1.1; }
-        .text-palace-name { font-size: 1.1rem; font-weight: 900; }
+        .text-palace-name { font-weight: 900; } /* 移除了固定字體大小，繼承 text-main */
         
-        .day-stem { display: inline-block; background-color: #a855f7; color: white !important; padding: 0 3px; border-radius: 3px; line-height: 1.1; }
-        .hour-stem { display: inline-block; background-color: #f97316; color: white !important; padding: 0 3px; border-radius: 3px; line-height: 1.1; }
+        /* Highlight 改用淡色背景與實線邊框，以利顯示內部五行文字顏色 */
+        .day-stem { display: inline-block; background-color: #f3e8ff; border: 1.5px solid #a855f7; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
+        .hour-stem { display: inline-block; background-color: #ffedd5; border: 1.5px solid #f97316; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         
-        .big-emoji { font-size: 1.4rem; line-height: 1; position: absolute; top: 40px; right: 8px; }
+        /* Emoji 改為垂直排列容器 */
+        .emoji-container { position: absolute; top: 6px; right: 6px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 1.3rem; line-height: 1; z-index: 10; }
         .branch-label { position: absolute; color: #4b5563; font-size: 0.9rem; pointer-events: none; opacity: 0.9; z-index: 10; }
     </style>
 </head>
@@ -263,7 +265,6 @@
             }
             let godPan = {}; for (let i = 0; i < 8; i++) godPan[RING_ORDER[(rIdxTarget + (isYang ? i : 8 - i)) % 8]] = GODS_YANG[i];
             
-            // 修正時辰偏移計算 bug (currentD 改為 currentD_val)
             let currentD_val = xunShouPalace;
             for(let i=0; i<timeStemIdx; i++) { currentD_val = isYang ? currentD_val + 1 : currentD_val - 1; if(currentD_val > 9) currentD_val = 1; else if(currentD_val < 1) currentD_val = 9; }
             if(currentD_val === 5) currentD_val = 2;
@@ -325,20 +326,33 @@
 
             for (let i = 1; i <= 9; i++) {
                 const el = document.getElementById(`palace-${i}`);
+                
+                // 動態渲染天/地/暗干文字，並處理五行顏色與 Highlight
                 const renderStem = (s, pNum, isAnGan = false) => {
                     let tags = []; if(isJiXing(s, pNum)) tags.push("刑"); if(isRuMu(s, pNum)) tags.push("墓");
                     let tagClass = isAnGan ? "text-gray-400" : "text-red-600";
                     let tagStr = tags.length ? `<span class="text-[10px] ${tagClass} ml-0.5 font-bold">(${tags.join("+")})</span>` : "";
+                    
+                    // 暗干限制字體大小
+                    if (isAnGan) {
+                        return `<span class="text-gray-400 text-sm sm:text-base">${s}${tagStr}</span>`;
+                    }
+
+                    // 天地盤五行色碼
+                    let stemColor = WUXING_COLORS[s] || "#1a202c";
                     let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
-                    let content = highlightClass ? `<span class="${highlightClass} font-bold">${s}</span>` : `<span class="text-black">${s}</span>`;
+                    
+                    // 覆蓋 CSS，確保文字顯示五行顏色
+                    let content = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important;">${s}</span>` : `<span class="font-bold" style="color: ${stemColor};">${s}</span>`;
                     return `<span>${content}${tagStr}</span>`;
                 };
 
                 if(i === 5) {
                     let s = earthPan[5], anGan = anGanPan[5];
-                    el.innerHTML = `${getBranchHTML(5)}<div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div><div class="flex justify-center items-center h-full text-3xl text-black">${renderStem(s, 5)}</div><div class="absolute bottom-0 left-0 text-gray-400 text-lg m-1">${renderStem(anGan, 5, true)}</div>`;
+                    el.innerHTML = `${getBranchHTML(5)}<div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div><div class="flex justify-center items-center h-full text-3xl text-black">${renderStem(s, 5)}</div><div class="absolute bottom-0 left-0 m-1">${renderStem(anGan, 5, true)}</div>`;
                     panData.palaces["中五"] = s; continue;
                 }
+                
                 let pDoor = doorPan[i], isKong = PALACES[i].branch.includes(kw1) || PALACES[i].branch.includes(kw2), isMa = PALACES[i].branch.includes(ma);
                 let hStems = Array.isArray(heavenPan[i]) ? heavenPan[i] : [heavenPan[i]], eStems = Array.isArray(earthPan[i]) ? earthPan[i] : (i===2 ? [earthPan[2], earthPan[5]] : [earthPan[i]]);
                 let pStars = Array.isArray(starPan[i]) ? starPan[i] : [starPan[i]];
@@ -349,19 +363,22 @@
                 let palaceLabel = `${PALACES[i].name}(${PALACES[i].num})`;
 
                 el.innerHTML = `${getBranchHTML(i)}
-                    <div class="flex flex-col h-full justify-between">
-                        <div class="flex flex-col items-center leading-none mb-1">
+                    <div class="emoji-container">
+                        ${isKong ? '<span>🈳</span>' : ''}
+                        ${isMa ? '<span>🐎</span>' : ''}
+                    </div>
+                    <div class="flex flex-col h-full justify-between relative">
+                        <div class="flex flex-col items-center leading-none mb-1 text-main">
                             <span class="text-palace-name text-${PALACES[i].type}">${palaceLabel}</span>
                             <span class="text-xl leading-none mt-0.5">${PALACES[i].gua}</span>
                         </div>
                         <div class="flex flex-col items-start leading-none mb-1">
                             <span class="text-main text-${godColor}">${godPan[i]}</span>
                         </div>
-                        <div class="big-emoji flex gap-1">${isKong ? '🈳' : ''}${isMa ? '🐎' : ''}</div>
                         <div class="text-main leading-none mb-1 tracking-wider"><span class="text-${STAR_COLORS[pStars[0]] || 'black'}">${starText}</span></div>
                         <div class="flex items-start leading-none mb-1"><span class="text-main text-${doorColor} tracking-wider">${pDoor}</span>${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 mt-1 ml-0.5 font-bold">(迫)</span>`:""}</div>
                         <div class="flex justify-between items-end mt-auto">
-                            <span class="text-gray-400 text-lg">${renderStem(anGan, i, true)}</span>
+                            <div class="mb-1">${renderStem(anGan, i, true)}</div>
                             <div class="flex flex-col items-end leading-tight text-main font-bold">
                                 <div class="mb-1">${hStems.map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
                                 <div class="border-t-[1.5px] border-gray-300 min-w-[2.5rem] text-right pt-0.5">${eStems.map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
