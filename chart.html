@@ -559,14 +559,23 @@
         } catch (e) { alert("起盤錯誤: " + e.message); }
     }
 
-    function copyPan() {
-        let text = `【奇門遁甲 - 拆補法排盤】\n時間：${panData.bazi}\n局數：${panData.ju}\n旬首：${panData.xun}\n值符：${panData.zf} | 值使：${panData.zs}\n空亡：${panData.kw} | 驛馬：${currentYiMaPalace}\n----------------------\n`;
-        for (let i = 1; i <= 9; i++) if(i!==5) text += `${PALACES[i].name}：${panData.palaces[PALACES[i].name]}\n`;
-        navigator.clipboard.writeText(text).then(() => alert("資料已複製！")).catch(() => {
-            let t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); document.execCommand("Copy"); t.remove(); alert("資料已複製！");
-        });
-    }
+function copyPan() {
+    // 1. 獲取特殊的格局文字（移除 HTML 標籤後的純文字）
+    const specialText = document.getElementById('info-special').innerText.trim();
+    
+    // 2. 組合時間與格局標註
+    // 如果有格局（如：【天顯時格】），則加上空格並串接；若無則保持原樣
+    const baziLine = panData.bazi + (specialText ? " " + specialText : "");
 
+    // 3. 更新你的 text 字串
+    let text = `【奇門遁甲 - 拆補法排盤】\n時間：${baziLine}\n局數：${panData.ju}\n旬首：${panData.xun}\n值符：${panData.zf} | 值使：${panData.zs}\n空亡：${panData.kw} | 驛馬：${currentYiMaPalace}\n----------------------\n`;
+    
+    // ... 以下維持原本的循環與複製邏輯 ...
+    for (let i = 1; i <= 9; i++) if(i!==5) text += `${PALACES[i].name}：${panData.palaces[PALACES[i].name]}\n`;
+    navigator.clipboard.writeText(text).then(() => alert("資料已複製！")).catch(() => {
+        let t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); document.execCommand("Copy"); t.remove(); alert("資料已複製！");
+    });
+}
     window.onload = initSelectors;
 </script>
 </body>
