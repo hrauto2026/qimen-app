@@ -18,36 +18,36 @@
 
         /* 響應式佈局調整 */
         .grid-wrapper { 
-            padding: 40px 20px; 
+            padding: 24px 12px; 
             overflow-x: auto; 
             -webkit-overflow-scrolling: touch;
         }
         
         @media (max-width: 640px) {
-            .grid-wrapper { padding: 30px 10px; }
-            .grid-qimen { gap: 8px !important; }
-            .palace { min-height: 160px !important; padding: 8px !important; }
-            .branch-label { font-size: 0.85rem !important; }
+            .grid-wrapper { padding: 18px 6px; }
+            .grid-qimen { gap: 5px !important; }
+            .palace { min-height: 96px !important; padding: 5px !important; }
+            .branch-label { font-size: 0.51rem !important; }
         }
 
         .grid-qimen { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
-            gap: 16px; 
-            max-width: 700px; 
-            min-width: 320px; 
+            gap: 10px; 
+            max-width: 420px; /* 原 700px 減少 40% */
+            min-width: 192px; /* 原 320px 減少 40% */
             margin: auto; 
         }
 
         .palace {
             position: relative; 
-            border-radius: 12px; 
-            padding: 12px; 
-            min-height: 200px;
+            border-radius: 7px; 
+            padding: 7px; 
+            min-height: 120px; /* 原 200px 減少 40% */
             display: flex; 
             flex-direction: column; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
-            border: 2px solid;
+            box-shadow: 0 2px 9px rgba(0,0,0,0.08); 
+            border: 1px solid;
             background-color: rgba(255, 255, 255, 0.8);
             transition: transform 0.2s;
         }
@@ -65,9 +65,9 @@
         .text-metal { color: #b45309; }
         .bg-white-palace { background-color: #ffffff; border-color: #e2e8f0; } 
 
-        /* 宮內主文字大小，縮小約30% */
+        /* 宮內主文字大小，按比例縮小 */
         .text-main {
-            font-size: clamp(1rem, 2.8vw, 1.54rem);
+            font-size: clamp(0.6rem, 1.68vw, 0.92rem);
             line-height: 1.15;
         }
 
@@ -76,17 +76,17 @@
             display: inline-block; 
             background-color: #f97316; 
             color: white !important; 
-            padding: 0 4px; 
-            border-radius: 4px; 
+            padding: 0 2px; 
+            border-radius: 2px; 
             line-height: 1.1;
-            box-shadow: 0 2px 4px rgba(249, 115, 22, 0.3);
+            box-shadow: 0 1px 2px rgba(249, 115, 22, 0.3);
         }
 
         /* 外部地支標籤，相應調小 */
         .branch-label {
             position: absolute;
             color: #4b5563;
-            font-size: 1rem;
+            font-size: 0.6rem;
             pointer-events: none;
             opacity: 0.8;
         }
@@ -100,7 +100,7 @@
 
 <div class="max-w-4xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-4 md:p-8 border border-white">
     <h1 class="text-3xl md:text-4xl text-center mb-8 text-indigo-900 tracking-widest">
-        奇門遁甲 - 陽盤拆補法 (<a href="https://hrauto2026.github.io/qimen-app/index.html" class="title-link hover:text-indigo-600 transition-colors duration-300">返回主頁</a>)
+        **測試中**奇門遁甲 - 拆補法 (<a href="https://hrauto2026.github.io/qimen-app/index.html" class="title-link hover:text-indigo-600 transition-colors duration-300">返回主頁</a>)
     </h1>
     
     <!-- 選擇時間區塊 -->
@@ -127,16 +127,16 @@
         </div>
     </div>
 
-    <!-- 盤面頁首資訊 -->
-    <div id="pan-header" class="hidden mb-6 p-4 border-l-4 border-indigo-500 bg-indigo-50/80 rounded-r-xl text-gray-800 shadow-sm">
-        <div class="flex flex-col lg:flex-row justify-between lg:items-center mb-4 gap-4">
-            <h2 class="text-lg md:text-xl text-indigo-900" id="info-bazi"></h2>
-            <div class="flex space-x-2">
-                <button onclick="shiftHour(-1)" class="flex-1 md:flex-none bg-white border border-indigo-200 hover:bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded shadow-sm text-sm transition">◀ 前時</button>
-                <button onclick="shiftHour(1)" class="flex-1 md:flex-none bg-white border border-indigo-200 hover:bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded shadow-sm text-sm transition">後時 ▶</button>
+    <!-- 盤面頁首資訊 (整體縮小 50%) -->
+    <div id="pan-header" class="hidden mb-3 p-2 border-l-2 border-indigo-500 bg-indigo-50/80 rounded-r-md text-gray-800 shadow-sm">
+        <div class="flex flex-col lg:flex-row justify-between lg:items-center mb-2 gap-2">
+            <h2 class="text-[9px] md:text-[10px] text-indigo-900" id="info-bazi"></h2>
+            <div class="flex space-x-1">
+                <button onclick="shiftHour(-1)" class="flex-1 md:flex-none bg-white border border-indigo-200 hover:bg-indigo-100 text-indigo-700 py-[3px] px-[6px] rounded-sm shadow-sm text-[7px] transition">◀ 前時</button>
+                <button onclick="shiftHour(1)" class="flex-1 md:flex-none bg-white border border-indigo-200 hover:bg-indigo-100 text-indigo-700 py-[3px] px-[6px] rounded-sm shadow-sm text-[7px] transition">後時 ▶</button>
             </div>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-base md:text-lg">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-[6px] text-[8px] md:text-[9px]">
             <div><span class="text-gray-500">節氣：</span><span id="info-jieqi" class="text-indigo-800"></span></div>
             <div><span class="text-gray-500">局數：</span><span id="info-ju" class="text-red-600"></span></div>
             <div><span class="text-gray-500">旬首：</span><span id="info-xunshou"></span></div>
@@ -144,7 +144,7 @@
             <div><span class="text-gray-500">值使：</span><span id="info-zhishi"></span></div>
             <div><span class="text-gray-500">空亡：</span><span id="info-kongwang"></span></div>
         </div>
-        <div id="info-special" class="text-lg min-h-[1.5rem] mt-2 border-t border-indigo-100 pt-2"></div>
+        <div id="info-special" class="text-[9px] min-h-[0.75rem] mt-1 border-t border-indigo-100 pt-1"></div>
     </div>
 
     <!-- 九宮格盤面 -->
@@ -197,14 +197,14 @@
     };
 
     const BRANCH_POSITIONS = {
-        1: `<div class="branch-label -bottom-8 left-1/2 -translate-x-1/2">子</div>`,
-        8: `<div class="branch-label -bottom-7 left-1/4">丑</div><div class="branch-label top-3/4 -left-7">寅</div>`,
-        3: `<div class="branch-label top-1/2 -left-7 -translate-y-1/2">卯</div>`,
-        4: `<div class="branch-label bottom-3/4 -left-7">辰</div><div class="branch-label -top-7 left-1/4">巳</div>`,
-        9: `<div class="branch-label -top-8 left-1/2 -translate-x-1/2">午</div>`,
-        2: `<div class="branch-label -top-7 right-1/4">未</div><div class="branch-label bottom-3/4 -right-7">申</div>`,
-        7: `<div class="branch-label top-1/2 -right-7 -translate-y-1/2">酉</div>`,
-        6: `<div class="branch-label top-3/4 -right-7">戌</div><div class="branch-label -bottom-7 right-1/4">亥</div>`,
+        1: `<div class="branch-label -bottom-5 left-1/2 -translate-x-1/2">子</div>`,
+        8: `<div class="branch-label -bottom-4 left-1/4">丑</div><div class="branch-label top-3/4 -left-4">寅</div>`,
+        3: `<div class="branch-label top-1/2 -left-4 -translate-y-1/2">卯</div>`,
+        4: `<div class="branch-label bottom-3/4 -left-4">辰</div><div class="branch-label -top-4 left-1/4">巳</div>`,
+        9: `<div class="branch-label -top-5 left-1/2 -translate-x-1/2">午</div>`,
+        2: `<div class="branch-label -top-4 right-1/4">未</div><div class="branch-label bottom-3/4 -right-4">申</div>`,
+        7: `<div class="branch-label top-1/2 -right-4 -translate-y-1/2">酉</div>`,
+        6: `<div class="branch-label top-3/4 -right-4">戌</div><div class="branch-label -bottom-4 right-1/4">亥</div>`,
         5: ``
     };
 
@@ -402,7 +402,8 @@
             if (isTianXian) specialStr += "<span class='text-green-600'>【天顯時格】</span> ";
 
             document.getElementById('info-bazi').innerText = baziStr;
-            document.getElementById('info-jieqi').innerHTML = `${jieQi} <span class="text-xs text-gray-500">(交節：${jqData.time})</span>`;
+            // 交節字體縮小到 text-[6px] 相當於 50% 的 12px
+            document.getElementById('info-jieqi').innerHTML = `${jieQi} <span class="text-[6px] text-gray-500">(交節：${jqData.time})</span>`;
             document.getElementById('info-ju').innerText = juStr;
             document.getElementById('info-xunshou').innerText = xunShouGZ + xunShouStem;
             document.getElementById('info-zhifu').innerText = zhiFuStar;
@@ -433,11 +434,11 @@
                 if(i === 5) {
                     let s = earthPan[5];
                     el.innerHTML = `
-                        <div class="absolute top-0 right-0 text-sm text-gray-400 m-2">中五</div>
-                        <div class="flex justify-center items-center h-full text-4xl text-black">
+                        <div class="absolute top-0 right-0 text-[0.6rem] text-gray-400 m-1">中五</div>
+                        <div class="flex justify-center items-center h-full text-[1.6rem] text-black">
                             ${s === targetHighlightStem ? `<span class="hour-stem">${s}</span>` : s}
                         </div>
-                        <div class="absolute bottom-0 left-0 text-gray-400 text-lg m-2">${anGanPan[5]}<span class="text-xs ml-0.5">(暗)</span></div>
+                        <div class="absolute bottom-0 left-0 text-gray-400 text-[0.8rem] m-1">${anGanPan[5]}<span class="text-[0.5rem] ml-0.5">(暗)</span></div>
                     `;
                     panData.palaces["中五"] = s; continue;
                 }
@@ -451,8 +452,7 @@
                     let tags = []; 
                     if(isJiXing(s, pNum)) tags.push("刑"); 
                     if(isRuMu(s, pNum)) tags.push("墓");
-                    // (刑)(墓)標記統一顯示為紅色 (Req 2)
-                    let tagStr = tags.length > 0 ? `<span class="text-xs text-red-600 ml-0.5">(${tags.join("+")})</span>` : "";
+                    let tagStr = tags.length > 0 ? `<span class="text-[0.6rem] text-red-600 ml-0.5">(${tags.join("+")})</span>` : "";
                     let content = s === targetHighlightStem ? `<span class="hour-stem">${s}</span>` : `<span class="text-black">${s}</span>`;
                     return `<span>${content}${tagStr}</span>`;
                 };
@@ -467,35 +467,37 @@
                     <div class="flex flex-col h-full justify-between palace-font">
                         <div class="flex justify-between items-start leading-none mb-1">
                             <span class="text-main text-${godColor}">${godPan[i]}</span>
-                            <span class="text-sm text-${PALACES[i].type}">${PALACES[i].name}</span>
+                            <div class="flex flex-col items-end">
+                                <span class="text-[0.6rem] text-${PALACES[i].type}">${PALACES[i].name}</span>
+                                <span class="text-[0.8rem] flex gap-1 mt-0.5">${isKong ? '🈳' : ''}${isMa ? '🐎' : ''}</span>
+                            </div>
                         </div>
                         <div class="text-main leading-none mb-1 tracking-wider">
                             <span class="text-${star1Color}">${pStar[0]}</span>
-                            ${pStar[1] ? `<span class="text-gray-400 mx-1">/</span><span class="text-${star2Color}">${pStar[1]}</span>` : ''}
+                            ${pStar[1] ? `<span class="text-gray-400 mx-0.5">/</span><span class="text-${star2Color}">${pStar[1]}</span>` : ''}
                         </div>
-                        <div class="flex items-start leading-none mb-2">
-                            ${isMenPo(pDoor, i) ? `<span class="text-sm text-red-600 mt-1 mr-1">(迫)</span>` : ""}
+                        <div class="flex items-start leading-none mb-1">
+                            ${isMenPo(pDoor, i) ? `<span class="text-[0.6rem] text-red-600 mt-0.5 mr-0.5">(迫)</span>` : ""}
                             <span class="text-main text-${doorColor} tracking-wider">${pDoor}</span>
-                            <span class="text-xl ml-2 flex gap-1">${isKong ? '🈳' : ''}${isMa ? '🐎' : ''}</span>
                         </div>
                         <div class="flex justify-between items-end mt-auto">
-                            <span class="text-gray-400 text-lg">${anGanPan[i]}<span class="text-xs ml-0.5">(暗)</span></span>
+                            <span class="text-gray-400 text-[0.8rem]">${anGanPan[i]}<span class="text-[0.5rem] ml-0.5">(暗)</span></span>
                             <div class="flex flex-col items-end leading-tight text-main">
-                                <div class="mb-1">${hStem.map(s => renderStem(s, i, false)).join('<span class="text-gray-400 mx-1">/</span>')}</div>
-                                <div class="border-t-2 border-gray-300 min-w-[3rem] text-right pt-1">
-                                    ${eStem.map((s, idx) => renderStem(s, i, true)).join('<span class="text-gray-400 mx-1">/</span>')}
+                                <div class="mb-0.5">${hStem.map(s => renderStem(s, i, false)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
+                                <div class="border-t-[1.5px] border-gray-300 min-w-[2rem] text-right pt-0.5">
+                                    ${eStem.map((s, idx) => renderStem(s, i, true)).join('<span class="text-gray-400 mx-0.5">/</span>')}
                                 </div>
                             </div>
                         </div>
                     </div>
                 `;
-                panData.palaces[PALACES[i].name] = `${godPan[i]}/${pStar.join('/')}/${pDoor}/${hStem.join('+')}(天盤)+${eStem.join('+')}(地盤)${isMa?'/*驛馬*':''}${isKong?'/*空亡*':''}`;
+                panData.palaces[PALACES[i].name] = `${godPan[i]}/${pStar.join('/')}/${pDoor}/${hStem.join('+')}(天盤)${eStem.join('+')}(地盤)${isMa?'/*驛馬*':''}${isKong?'/*空亡*':''}`;
             }
         } catch (e) { alert("起盤錯誤: " + e.message); }
     }
 
     function copyPan() {
-        let text = `【奇門遁甲 - 拆補法專業版】\n時間：${panData.bazi}\n局數：${panData.ju}\n旬首：${panData.xun}\n值符：${panData.zf} | 值使：${panData.zs}\n空亡：${panData.kw} | 驛馬：${currentYiMaPalace}\n----------------------\n`;
+        let text = `【奇門遁甲起盤】\n時間：${panData.bazi}\n局數：${panData.ju}\n旬首：${panData.xun}\n值符：${panData.zf} | 值使：${panData.zs}\n空亡：${panData.kw} | 驛馬：${currentYiMaPalace}\n----------------------\n`;
         for (let i = 1; i <= 9; i++) if(i!==5) text += `${PALACES[i].name}：${panData.palaces[PALACES[i].name]}\n`;
         navigator.clipboard.writeText(text).then(() => alert("資料已複製！")).catch(() => {
             let t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); document.execCommand("Copy"); t.remove(); alert("資料已複製！");
