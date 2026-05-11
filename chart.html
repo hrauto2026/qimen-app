@@ -132,14 +132,14 @@
     const BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
     const YI_LIU = ['戊', '己', '庚', '辛', '壬', '癸', '丁', '丙', '乙']; 
     const PALACES = {
-        1: { name: "坎為水", num: "一", gua: "☵", type: "water", branch: ["子"], baseDoor: "休門" },
-        8: { name: "艮為山", num: "八", gua: "☶", type: "brown", branch: ["丑", "寅"], baseDoor: "生門" },
-        3: { name: "震為雷", num: "三", gua: "☳", type: "wood", branch: ["卯"], baseDoor: "傷門" },
-        4: { name: "巽為風", num: "四", gua: "☴", type: "wood", branch: ["辰", "巳"], baseDoor: "杜門" },
-        9: { name: "離為火", num: "九", gua: "☲", type: "fire", branch: ["午"], baseDoor: "景門" },
-        2: { name: "坤為地", num: "二", gua: "☷", type: "brown", branch: ["未", "申"], baseDoor: "死門" },
-        7: { name: "兌為澤", num: "七", gua: "☱", type: "metal", branch: ["酉"], baseDoor: "驚門" },
-        6: { name: "乾為天", num: "六", gua: "☰", type: "metal", branch: ["戌", "亥"], baseDoor: "開門" },
+        1: { name: "坎一", num: "一", gua: "☵", type: "water", branch: ["子"], baseDoor: "休門" },
+        8: { name: "艮八", num: "八", gua: "☶", type: "brown", branch: ["丑", "寅"], baseDoor: "生門" },
+        3: { name: "震三", num: "三", gua: "☳", type: "wood", branch: ["卯"], baseDoor: "傷門" },
+        4: { name: "巽四", num: "四", gua: "☴", type: "wood", branch: ["辰", "巳"], baseDoor: "杜門" },
+        9: { name: "離九", num: "九", gua: "☲", type: "fire", branch: ["午"], baseDoor: "景門" },
+        2: { name: "坤二", num: "二", gua: "☷", type: "brown", branch: ["未", "申"], baseDoor: "死門" },
+        7: { name: "兌七", num: "七", gua: "☱", type: "metal", branch: ["酉"], baseDoor: "驚門" },
+        6: { name: "乾六", num: "六", gua: "☰", type: "metal", branch: ["戌", "亥"], baseDoor: "開門" },
         5: { name: "中五", num: "五", gua: "", type: "white-palace", branch: [], baseDoor: "死門" }
     };
     const BRANCH_POSITIONS_TEMPLATE = { 1: `子`, 8: `丑寅`, 3: `卯`, 4: `辰巳`, 9: `午`, 2: `未申`, 7: `酉`, 6: `戌亥`, 5: `` };
@@ -364,7 +364,7 @@
                 
                 let godColor = GOD_COLORS[godPan[i]] || "black", doorColor = DOOR_COLORS[pDoor] || "black", anGan = anGanPan[i];
                 let starText = (pStars[0] === "天芮" && pStars[1] === "天禽") ? "天芮/禽" : pStars[0];
-                let palaceLabel = `${PALACES[i].name}(${PALACES[i].num})`;
+                let palaceLabel = `${PALACES[i].name}`;
 
                 el.innerHTML = `${getBranchHTML(i)}
                     <div class="emoji-container">
@@ -389,7 +389,7 @@
                             </div>
                         </div>
                     </div>`;
-                panData.palaces[PALACES[i].name] = `${godPan[i]}/${starText}/${pDoor}/${hStems.join('+')}(天)/${eStems.join('+')}(地)${isMa?'/馬':''}${isKong?'/空':''}`;
+                panData.palaces[PALACES[i].name] = `${godPan[i]}/${starText}/${pDoor}/${hStems.join('+')}(天)/${eStems.join('+')}(地)${isMa?'/**驛馬**':''}${isKong?'/**空亡**':''}`;
             }
         } catch (e) { alert("起盤錯誤: " + e.message); console.error(e); }
     }
