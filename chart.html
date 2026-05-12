@@ -427,6 +427,8 @@
             for (let i = 0; i < 9; i++) { earthPan[currentPalaceNum] = YI_LIU[i]; currentPalaceNum = isYang ? currentPalaceNum + 1 : currentPalaceNum - 1; if (currentPalaceNum > 9) currentPalaceNum = 1; else if (currentPalaceNum < 1) currentPalaceNum = 9; }
             
             const xunShouIdx = (timeBranchIdx - timeStemIdx + 12) % 12, xunShouGZ = "甲" + BRANCHES[xunShouIdx], XUN_MAP = { "甲子": "戊", "甲戌": "己", "甲申": "庚", "甲午": "辛", "甲辰": "壬", "甲寅": "癸" }, xunShouStem = XUN_MAP[xunShouGZ], targetHighlightStem = (timeStem === '甲') ? xunShouStem : timeStem;
+            
+            // 【修正：若日干為甲，則找出其對應的旬首代碼 (戊~癸)，用來判斷落宮與沖合】
             const dayHighlightStem = (dayStem === '甲') ? XUN_MAP[dayGZ.substring(0,2)] || dayStem : dayStem;
 
             let xunShouPalace = parseInt(Object.keys(earthPan).find(k => earthPan[k] === xunShouStem)), zhiFuStar = BASE_STARS[xunShouPalace], effectiveXunShouPalace = xunShouPalace === 5 ? 2 : xunShouPalace;
@@ -479,7 +481,7 @@
             for(let i=1; i<=9; i++) {
                 if(i===5) continue;
                 let hStems = Array.isArray(heavenPan[i]) ? heavenPan[i] : [heavenPan[i]];
-                if(hStems.includes(dayStem)) dPalaces.push(i);
+                if(hStems.includes(dayHighlightStem)) dPalaces.push(i); // 【修正：使用包含甲木轉換的 dayHighlightStem】
             }
             let monthBranch = monthGZ.substring(1, 2);
             let clashBranch = CLASH_MAP[monthBranch];
@@ -628,14 +630,14 @@
             for (let i = 1; i <= 9; i++) {
                 if (i === 5) continue;
                 let hStemsArray = Array.isArray(heavenPan[i]) ? heavenPan[i] : [heavenPan[i]];
-                if (hStemsArray.includes(dayStem)) {
+                if (hStemsArray.includes(dayHighlightStem)) { // 【修正：使用包含甲木轉換的 dayHighlightStem】
                     hDayPalace = i;
                     break;
                 }
             }
             if (hDayPalace !== -1) {
                 document.getElementById(`palace-${hDayPalace}`).classList.add('palace-active');
-            } else if (heavenPan[5] === dayStem || (Array.isArray(heavenPan[5]) && heavenPan[5].includes(dayStem))) {
+            } else if (heavenPan[5] === dayHighlightStem || (Array.isArray(heavenPan[5]) && heavenPan[5].includes(dayHighlightStem))) { // 【修正：使用包含甲木轉換的 dayHighlightStem】
                 document.getElementById('palace-5').classList.add('palace-active');
             }
 
