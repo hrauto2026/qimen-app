@@ -68,8 +68,12 @@
             <span class="text-gray-600 text-sm">日</span>
         </div>
         <div class="flex items-center gap-1">
-            <select id="sel-hour" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
+            <select id="sel-hour24" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
             <span class="text-gray-600 text-sm">時</span>
+        </div>
+        <div class="flex items-center gap-1">
+            <select id="sel-minute" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
+            <span class="text-gray-600 text-sm">分</span>
         </div>
         <div class="w-full sm:w-auto flex justify-center gap-2 mt-2 sm:mt-0">
             <button onclick="resetToNow()" class="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-3 rounded-lg shadow text-sm">現在時間</button>
@@ -120,7 +124,14 @@
             <span class="text-sm font-bold text-gray-700" id="bagua-label">後天八卦數</span>
             <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" id="toggle-bagua" class="sr-only peer" onchange="toggleBaGua()">
-                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 shadow-inner"></div>
+                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed shadow-inner"></div>
+            </label>
+        </div>
+        <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow border border-orange-100">
+            <span class="text-sm font-bold text-gray-700" id="energy-label">能量狀態</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="toggle-energy" class="sr-only peer" onchange="toggleEnergy()">
+                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed shadow-inner"></div>
             </label>
         </div>
     </div>
@@ -177,14 +188,74 @@
     const WUXING_COLORS = { '甲': '#15803d', '乙': '#15803d', '寅': '#15803d', '卯': '#15803d', '丙': '#b91c1c', '丁': '#b91c1c', '巳': '#b91c1c', '午': '#b91c1c', '戊': '#78350f', '己': '#78350f', '辰': '#78350f', '戌': '#78350f', '丑': '#78350f', '未': '#78350f', '庚': '#d97706', '辛': '#d97706', '申': '#d97706', '酉': '#d97706', '壬': '#0369a1', '癸': '#0369a1', '亥': '#0369a1', '子': '#0369a1' };
     const CLASH_MAP = { "子":"午", "午":"子", "丑":"未", "未":"丑", "寅":"申", "申":"寅", "卯":"酉", "酉":"卯", "辰":"戌", "戌":"辰", "巳":"亥", "亥":"巳" };
 
+    // --- 能量狀態字典 ---
+    const STAR_ENERGY = {
+        '天蓬': {1:'相', 8:'囚', 3:'旺', 4:'旺', 9:'休', 2:'囚', 7:'廢', 6:'廢'},
+        '天芮': {1:'休', 8:'相', 3:'囚', 4:'囚', 9:'廢', 2:'相', 7:'旺', 6:'旺'},
+        '天禽': {1:'休', 8:'相', 3:'囚', 4:'囚', 9:'廢', 2:'相', 7:'旺', 6:'旺'},
+        '天任': {1:'休', 8:'相', 3:'囚', 4:'囚', 9:'廢', 2:'相', 7:'旺', 6:'旺'},
+        '天衝': {1:'廢', 8:'休', 3:'相', 4:'相', 9:'旺', 2:'休', 7:'囚', 6:'囚'},
+        '天輔': {1:'廢', 8:'休', 3:'相', 4:'相', 9:'旺', 2:'休', 7:'囚', 6:'囚'},
+        '天心': {1:'旺', 8:'廢', 3:'休', 4:'休', 9:'囚', 2:'廢', 7:'相', 6:'相'},
+        '天柱': {1:'旺', 8:'廢', 3:'休', 4:'休', 9:'囚', 2:'廢', 7:'相', 6:'相'},
+        '天英': {1:'囚', 8:'旺', 3:'廢', 4:'廢', 9:'相', 2:'旺', 7:'休', 6:'休'}
+    };
+
+    const DOOR_ENERGY = {
+        '休門': {1:'旺', 8:'死', 3:'休', 4:'休', 9:'囚', 2:'死', 7:'相', 6:'相'},
+        '生門': {1:'囚', 8:'旺', 3:'死', 4:'死', 9:'相', 2:'旺', 7:'休', 6:'休'},
+        '死門': {1:'囚', 8:'旺', 3:'死', 4:'死', 9:'相', 2:'旺', 7:'休', 6:'休'},
+        '傷門': {1:'相', 8:'囚', 3:'旺', 4:'旺', 9:'休', 2:'囚', 7:'死', 6:'死'},
+        '杜門': {1:'相', 8:'囚', 3:'旺', 4:'旺', 9:'休', 2:'囚', 7:'死', 6:'死'},
+        '景門': {1:'死', 8:'休', 3:'相', 4:'相', 9:'旺', 2:'休', 7:'囚', 6:'囚'},
+        '驚門': {1:'休', 8:'相', 3:'囚', 4:'囚', 9:'死', 2:'相', 7:'旺', 6:'旺'},
+        '開門': {1:'休', 8:'相', 3:'囚', 4:'囚', 9:'死', 2:'相', 7:'旺', 6:'旺'}
+    };
+
+    const STEM_ENERGY = {
+        '甲': {1:'沐浴', 8:'冠帶/臨官', 3:'帝旺', 4:'衰/病', 9:'死', 2:'墓/絕', 7:'胎', 6:'養/長生'},
+        '乙': {1:'病', 8:'衰/帝旺', 3:'臨官', 4:'冠帶/沐浴', 9:'長生', 2:'養/胎', 7:'絕', 6:'墓/死'},
+        '丙': {1:'胎', 8:'養/長生', 3:'沐浴', 4:'冠帶/臨官', 9:'帝旺', 2:'衰/病', 7:'死', 6:'墓/絕'},
+        '丁': {1:'絕', 8:'墓/死', 3:'病', 4:'衰/帝旺', 9:'臨官', 2:'冠帶/沐浴', 7:'長生', 6:'養/胎'},
+        '戊': {1:'胎', 8:'養/長生', 3:'沐浴', 4:'冠帶/臨官', 9:'帝旺', 2:'衰/病', 7:'死', 6:'墓/絕'},
+        '己': {1:'絕', 8:'墓/死', 3:'病', 4:'衰/帝旺', 9:'臨官', 2:'冠帶/沐浴', 7:'長生', 6:'養/胎'},
+        '庚': {1:'死', 8:'墓/絕', 3:'胎', 4:'養/長生', 9:'沐浴', 2:'冠帶/臨官', 7:'帝旺', 6:'衰/病'},
+        '辛': {1:'長生', 8:'養/胎', 3:'絕', 4:'墓/死', 9:'病', 2:'衰/帝旺', 7:'臨官', 6:'冠帶/沐浴'},
+        '壬': {1:'帝旺', 8:'衰/病', 3:'死', 4:'墓/絕', 9:'胎', 2:'養/長生', 7:'沐浴', 6:'冠帶/臨官'},
+        '癸': {1:'臨官', 8:'冠帶/沐浴', 3:'長生', 4:'養/胎', 9:'絕', 2:'墓/死', 7:'病', 6:'衰/帝旺'}
+    };
+
     let currentDate = new Date();
     let panData = {}; 
     let currentYiMaPalace = "";
     let useXianTian = false;
+    let useEnergy = false;
 
     function toggleBaGua() {
         useXianTian = document.getElementById('toggle-bagua').checked;
         document.getElementById('bagua-label').innerText = useXianTian ? "先天八卦數" : "後天八卦數";
+        
+        if (useXianTian) {
+            document.getElementById('toggle-energy').checked = false;
+            document.getElementById('toggle-energy').disabled = true;
+            useEnergy = false;
+        } else {
+            document.getElementById('toggle-energy').disabled = false;
+        }
+        generatePan();
+    }
+
+    function toggleEnergy() {
+        useEnergy = document.getElementById('toggle-energy').checked;
+        
+        if (useEnergy) {
+            document.getElementById('toggle-bagua').checked = false;
+            document.getElementById('toggle-bagua').disabled = true;
+            useXianTian = false;
+            document.getElementById('bagua-label').innerText = "後天八卦數";
+        } else {
+            document.getElementById('toggle-bagua').disabled = false;
+        }
         generatePan();
     }
 
@@ -192,17 +263,15 @@
         const ySel = document.getElementById('sel-year');
         const mSel = document.getElementById('sel-month');
         const dSel = document.getElementById('sel-day');
-        const hSel = document.getElementById('sel-hour');
+        const hSel = document.getElementById('sel-hour24');
+        const minSel = document.getElementById('sel-minute');
+        
         for (let i = 1930; i <= 2050; i++) ySel.add(new Option(i, i));
         for (let i = 1; i <= 12; i++) mSel.add(new Option(i, i));
         for (let i = 1; i <= 31; i++) dSel.add(new Option(i, i));
-        const hourOptions = [
-            { label: "子 (23:00-00:59)", val: 23 }, { label: "丑 (01:00-02:59)", val: 1 }, { label: "寅 (03:00-04:59)", val: 3 },
-            { label: "卯 (05:00-06:59)", val: 5 }, { label: "辰 (07:00-08:59)", val: 7 }, { label: "巳 (09:00-10:59)", val: 9 },
-            { label: "午 (11:00-12:59)", val: 11 }, { label: "未 (13:00-14:59)", val: 13 }, { label: "申 (15:00-16:59)", val: 15 },
-            { label: "酉 (17:00-18:59)", val: 17 }, { label: "戌 (19:00-20:59)", val: 19 }, { label: "亥 (21:00-22:59)", val: 21 }
-        ];
-        hourOptions.forEach(opt => hSel.add(new Option(opt.label, opt.val)));
+        for (let i = 0; i <= 23; i++) hSel.add(new Option(i.toString().padStart(2, '0'), i));
+        for (let i = 0; i <= 59; i++) minSel.add(new Option(i.toString().padStart(2, '0'), i));
+        
         updateSelectorsFromDate(currentDate);
     }
 
@@ -210,9 +279,8 @@
         document.getElementById('sel-year').value = d.getFullYear();
         document.getElementById('sel-month').value = d.getMonth() + 1;
         document.getElementById('sel-day').value = d.getDate();
-        let h = d.getHours();
-        let hVal = (h >= 23 || h < 1) ? 23 : (h % 2 === 0 ? h - 1 : h);
-        document.getElementById('sel-hour').value = hVal;
+        document.getElementById('sel-hour24').value = d.getHours();
+        document.getElementById('sel-minute').value = d.getMinutes();
         updateJieQiYearBtn();
     }
 
@@ -221,8 +289,11 @@
     function shiftHour(dir) { currentDate.setHours(currentDate.getHours() + (dir * 2)); updateSelectorsFromDate(currentDate); generatePan(); }
 
     function highlightPalace(el) {
+        let wasActive = el.classList.contains('palace-active');
         document.querySelectorAll('.palace').forEach(p => p.classList.remove('palace-active'));
-        el.classList.add('palace-active');
+        if (!wasActive) {
+            el.classList.add('palace-active');
+        }
     }
 
     function showJieQiModal() {
@@ -245,17 +316,43 @@
     }
     function closeJieQiModal() { document.getElementById('jieqi-modal').classList.add('hidden'); }
 
-    function getAccurateJieQi(lunarObj) {
+    // 全新嚴謹版 getAccurateJieQi：將節氣精確到時分秒與當前時間比對，避免同日偷跑
+    function getAccurateJieQi(currentDate) {
         let jieQiName = "未知", timeStr = "";
         try {
-            const prevJ = lunarObj.getPrevJie(true), prevQ = lunarObj.getPrevQi(true);
-            if (prevJ && prevQ) {
-                const jS = prevJ.getSolar(), qS = prevQ.getSolar();
-                const dJ = new Date(jS.getYear(), jS.getMonth() - 1, jS.getDay(), jS.getHour(), jS.getMinute(), jS.getSecond());
-                const dQ = new Date(qS.getYear(), qS.getMonth() - 1, qS.getDay(), qS.getHour(), qS.getMinute(), qS.getSecond());
-                if (dJ > dQ) { jieQiName = TRAD_JIEQI[prevJ.getName()] || prevJ.getName(); timeStr = jS.toYmdHms(); }
-                else { jieQiName = TRAD_JIEQI[prevQ.getName()] || prevQ.getName(); timeStr = qS.toYmdHms(); }
+            const solar = Solar.fromDate(currentDate);
+            const lunar = solar.getLunar();
+            
+            // 先取得包含當日(true)的節與氣
+            let prevJ = lunar.getPrevJie(true);
+            let prevQ = lunar.getPrevQi(true);
+
+            // 轉換為標準 Date 物件進行精準時間比對
+            let dJ = new Date(prevJ.getSolar().getYear(), prevJ.getSolar().getMonth() - 1, prevJ.getSolar().getDay(), prevJ.getSolar().getHour(), prevJ.getSolar().getMinute(), prevJ.getSolar().getSecond());
+            let dQ = new Date(prevQ.getSolar().getYear(), prevQ.getSolar().getMonth() - 1, prevQ.getSolar().getDay(), prevQ.getSolar().getHour(), prevQ.getSolar().getMinute(), prevQ.getSolar().getSecond());
+
+            // 如果取得的「節」時間晚於現在時間，代表還沒交節，必須退回上一個節
+            if (dJ > currentDate) {
+                prevJ = lunar.getPrevJie(false); // false 代表不含今日，確實退回上一個
+                dJ = new Date(prevJ.getSolar().getYear(), prevJ.getSolar().getMonth() - 1, prevJ.getSolar().getDay(), prevJ.getSolar().getHour(), prevJ.getSolar().getMinute(), prevJ.getSolar().getSecond());
             }
+            
+            // 同理處理「氣」
+            if (dQ > currentDate) {
+                prevQ = lunar.getPrevQi(false);
+                dQ = new Date(prevQ.getSolar().getYear(), prevQ.getSolar().getMonth() - 1, prevQ.getSolar().getDay(), prevQ.getSolar().getHour(), prevQ.getSolar().getMinute(), prevQ.getSolar().getSecond());
+            }
+
+            // 比較當下所處的是節還是氣（取時間較晚、距離現在最近的那個）
+            let targetJQ;
+            if (dJ > dQ) {
+                targetJQ = prevJ;
+            } else {
+                targetJQ = prevQ;
+            }
+
+            jieQiName = TRAD_JIEQI[targetJQ.getName()] || targetJQ.getName();
+            timeStr = targetJQ.getSolar().toYmdHms();
         } catch (e) { console.error(e); }
         return { name: jieQiName, time: timeStr };
     }
@@ -279,13 +376,48 @@
             }
             // ---------------------
 
-            const hSel = document.getElementById('sel-hour');
-            const h = parseInt(hSel.value);
-            currentDate = new Date(y, m - 1, d, h, 30); 
-            const solar = Solar.fromYmdHms(y, m, d, h, 30, 0), lunar = solar.getLunar(), pureHour = hSel.options[hSel.selectedIndex].text.split(' ')[0]; 
-            const baziRawStr = `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInGanZhi()}月 ${lunar.getDayInGanZhiExact()}日 ${lunar.getTimeInGanZhi()}時`;
-            const coloredBaziStr = `${colorizeGanZhi(lunar.getYearInGanZhi())}年 ${colorizeGanZhi(lunar.getMonthInGanZhi())}月 ${colorizeGanZhi(lunar.getDayInGanZhiExact())}日 ${colorizeGanZhi(lunar.getTimeInGanZhi())}時`;
-            const jqData = getAccurateJieQi(lunar), jieQi = jqData.name, dayGZ = lunar.getDayInGanZhiExact(), dayStem = dayGZ.substring(0, 1);
+            const h = parseInt(document.getElementById('sel-hour24').value);
+            const min = parseInt(document.getElementById('sel-minute').value);
+            currentDate = new Date(y, m - 1, d, h, min); 
+            
+            // 區分早晚子的子正換日邏輯
+            const exactLunar = Solar.fromYmdHms(y, m, d, h, min, 0).getLunar();
+            // 日柱一律鎖定在該日曆天的正午，確保 23:xx 時依然是當天日柱 (晚子)
+            const noonLunar = Solar.fromYmdHms(y, m, d, 12, 0, 0).getLunar();
+            
+            // 使用 Exact 方法精確到時分秒，避免同日交節氣偷步的問題
+            const yearGZ = exactLunar.getYearInGanZhiExact();
+            const monthGZ = exactLunar.getMonthInGanZhiExact();
+            const dayGZ = noonLunar.getDayInGanZhiExact(); 
+            const dayStem = dayGZ.substring(0, 1);
+
+            // 推算時柱 (五鼠遁)
+            const hIdx = Math.floor((h + 1) % 24 / 2); // 0=子, 1=丑... 11=亥
+            const timeBranch = BRANCHES[hIdx];
+            
+            // 23:00 之後已進入隔天的時辰序列，因此無論早晚子，推算時干必須借用「隔天」的日干
+            let wushuDate = new Date(currentDate);
+            if (h >= 23) {
+                wushuDate.setDate(wushuDate.getDate() + 1);
+            }
+            const wushuLunar = Solar.fromYmdHms(wushuDate.getFullYear(), wushuDate.getMonth() + 1, wushuDate.getDate(), 12, 0, 0).getLunar();
+            const wushuDayStem = wushuLunar.getDayInGanZhi().substring(0, 1);
+            const wushuDayStemIdx = STEMS.indexOf(wushuDayStem);
+            
+            const timeStemIdx = ((wushuDayStemIdx % 5) * 2 + hIdx) % 10;
+            const timeGZ = STEMS[timeStemIdx] + timeBranch;
+            const timeStem = timeGZ.substring(0, 1);
+            const timeBranchIdx = BRANCHES.indexOf(timeBranch);
+
+            let ziMark = "";
+            if (h >= 23) ziMark = "晚子";
+            else if (h === 0) ziMark = "早子";
+
+            const baziRawStr = `${yearGZ}年 ${monthGZ}月 ${dayGZ}日 ${timeGZ}時`;
+            const coloredBaziStr = `${colorizeGanZhi(yearGZ)}年 ${colorizeGanZhi(monthGZ)}月 ${colorizeGanZhi(dayGZ)}日 ${colorizeGanZhi(timeGZ)}時`;
+            
+            // 傳入完整的 Date 物件進行精確比對
+            const jqData = getAccurateJieQi(currentDate), jieQi = jqData.name;
             const JIA_ZI = []; for(let i=0; i<60; i++) JIA_ZI.push(STEMS[i%10] + BRANCHES[i%12]);
             const dIdx = JIA_ZI.indexOf(dayGZ), fuTouIdx = dIdx - (dIdx % 5), fuTouBranch = BRANCHES[fuTouIdx % 12];
             let yuan = ["子", "午", "卯", "酉"].includes(fuTouBranch) ? "上元" : (["寅", "申", "巳", "亥"].includes(fuTouBranch) ? "中元" : "下元");
@@ -293,8 +425,9 @@
             const juConfig = JU_TABLE[jieQi] || {陽: true, 上元: 1, 中元: 1, 下元: 1}, isYang = juConfig["陽"], juNum = juConfig[yuan], juStr = (isYang ? "陽遁" : "陰遁") + juNum + "局 (" + yuan + ")";
             let earthPan = {}; let currentPalaceNum = juNum;
             for (let i = 0; i < 9; i++) { earthPan[currentPalaceNum] = YI_LIU[i]; currentPalaceNum = isYang ? currentPalaceNum + 1 : currentPalaceNum - 1; if (currentPalaceNum > 9) currentPalaceNum = 1; else if (currentPalaceNum < 1) currentPalaceNum = 9; }
-            const timeGZ = lunar.getTimeInGanZhi(), timeStem = timeGZ.substring(0, 1), timeBranch = timeGZ.substring(1, 2), timeStemIdx = STEMS.indexOf(timeStem), timeBranchIdx = BRANCHES.indexOf(timeBranch), xunShouIdx = (timeBranchIdx - timeStemIdx + 12) % 12, xunShouGZ = "甲" + BRANCHES[xunShouIdx], XUN_MAP = { "甲子": "戊", "甲戌": "己", "甲申": "庚", "甲午": "辛", "甲辰": "壬", "甲寅": "癸" }, xunShouStem = XUN_MAP[xunShouGZ], targetHighlightStem = (timeStem === '甲') ? xunShouStem : timeStem;
-            const dayHighlightStem = (dayStem === '甲') ? XUN_MAP[lunar.getDayInGanZhiExact().substring(0,2)] || dayStem : dayStem;
+            
+            const xunShouIdx = (timeBranchIdx - timeStemIdx + 12) % 12, xunShouGZ = "甲" + BRANCHES[xunShouIdx], XUN_MAP = { "甲子": "戊", "甲戌": "己", "甲申": "庚", "甲午": "辛", "甲辰": "壬", "甲寅": "癸" }, xunShouStem = XUN_MAP[xunShouGZ], targetHighlightStem = (timeStem === '甲') ? xunShouStem : timeStem;
+            const dayHighlightStem = (dayStem === '甲') ? XUN_MAP[dayGZ.substring(0,2)] || dayStem : dayStem;
 
             let xunShouPalace = parseInt(Object.keys(earthPan).find(k => earthPan[k] === xunShouStem)), zhiFuStar = BASE_STARS[xunShouPalace], effectiveXunShouPalace = xunShouPalace === 5 ? 2 : xunShouPalace;
             if (xunShouPalace === 5) zhiFuStar = "天禽";
@@ -332,7 +465,8 @@
             if (isTianXian) { specialStr += "<span class='text-green-600 font-bold ml-2'>【✅天顯時格】</span>"; rawSpecialInfo += "【✅天顯時格】"; }
             if (isWuBuYu) { specialStr += "<span class='text-red-600 font-bold ml-2'>【❌五不遇時】</span>"; rawSpecialInfo += "【❌五不遇時】"; }
             
-            document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日${pureHour}時 ｜ ${coloredBaziStr}${specialStr}`;
+            let displayZiMark = ziMark ? `<span class="text-orange-600 font-bold ml-1">【${ziMark}】</span>` : "";
+            document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} ｜ ${coloredBaziStr}${displayZiMark}${specialStr}`;
             document.getElementById('info-jieqi').innerHTML = `${jieQi} <span class="text-[10px] text-gray-500 font-normal">(交節：${jqData.time})</span>`;
             document.getElementById('info-ju').innerText = juStr;
             document.getElementById('info-xunshou').innerText = xunShouGZ + xunShouStem;
@@ -347,7 +481,7 @@
                 let hStems = Array.isArray(heavenPan[i]) ? heavenPan[i] : [heavenPan[i]];
                 if(hStems.includes(dayStem)) dPalaces.push(i);
             }
-            let monthBranch = lunar.getMonthInGanZhi().substring(1, 2);
+            let monthBranch = monthGZ.substring(1, 2);
             let clashBranch = CLASH_MAP[monthBranch];
             let isZuo = false;
             let isChong = false;
@@ -388,8 +522,10 @@
                 return tags.length ? `(${tags.join("+")})` : "";
             };
 
-            panData = { bazi: baziRawStr, ju: juStr, xun: xunShouGZ+xunShouStem, zf: zhiFuStar, zs: doorPan[currentD_val], kw: kw1+"、"+kw2, special: rawSpecialInfo, stemStatus: rawStemStatus, palaces: {} };
-            const currentMonthBranch = lunar.getMonthInGanZhi().substring(1, 2);
+            // 用於複製功能的 bazi 加上公曆以及早晚子標記
+            let copyBaziLine = `${baziRawStr} (${y}年${m}月${d}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}${ziMark ? ' ' + ziMark : ''})`;
+            panData = { bazi: copyBaziLine, ju: juStr, xun: xunShouGZ+xunShouStem, zf: zhiFuStar, zs: doorPan[currentD_val], kw: kw1+"、"+kw2, special: rawSpecialInfo, stemStatus: rawStemStatus, palaces: {} };
+            const currentMonthBranch = monthGZ.substring(1, 2);
             const getBranchHTML = (i) => {
                 let text = BRANCH_POSITIONS_TEMPLATE[i], html = "";
                 for(let b of text) {
@@ -419,18 +555,28 @@
                     let tagClass = isAnGan ? "text-gray-400" : "text-red-600";
                     let tagStr = tags.length ? `<span class="text-[10px] ${tagClass} ml-0.5 font-bold">(${tags.join("+")})</span>` : "";
                     
-                    if (isAnGan) return `<span class="text-gray-400 text-sm sm:text-base">${s}${tagStr}</span>`;
+                    let displayChar = s;
+                    if (useEnergy) {
+                        let energyPNum = (pNum === 5) ? 2 : pNum; // 中五宮寄坤二
+                        displayChar = STEM_ENERGY[s] ? STEM_ENERGY[s][energyPNum] : s;
+                    }
+
+                    if (isAnGan) {
+                        let textClassSize = useEnergy ? "text-[10px] sm:text-xs" : "text-sm sm:text-base";
+                        return `<span class="text-gray-400 ${textClassSize}">${displayChar}${tagStr}</span>`;
+                    }
 
                     let stemColor = WUXING_COLORS[s] || "#1a202c";
                     let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
-                    let content = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important;">${s}</span>` : `<span class="font-bold" style="color: ${stemColor};">${s}</span>`;
+                    let extraStyle = useEnergy && displayChar.length > 1 ? "font-size: 0.75em; line-height: 1;" : "";
+                    let content = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important; ${extraStyle}">${displayChar}</span>` : `<span class="font-bold" style="color: ${stemColor}; ${extraStyle}">${displayChar}</span>`;
                     return `<span>${content}${tagStr}</span>`;
                 };
 
                 if(i === 5) {
                     let s = earthPan[5], anGan = anGanPan[5];
                     el.innerHTML = `${getBranchHTML(5)}<div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div><div class="flex justify-center items-center h-full text-3xl text-black">${renderStem(s, 5)}</div><div class="absolute bottom-0 left-0 m-1">${renderStem(anGan, 5, true)}</div>`;
-                    panData.palaces["中五"] = s; continue;
+                    panData.palaces["中五"] = useEnergy ? (STEM_ENERGY[s] ? STEM_ENERGY[s][2] : s) : s; continue;
                 }
                 
                 let pDoor = doorPan[i], isKong = ACTIVE_PALACES[i].branch.includes(kw1) || ACTIVE_PALACES[i].branch.includes(kw2), isMa = ACTIVE_PALACES[i].branch.includes(ma);
@@ -441,6 +587,9 @@
                 let godColor = GOD_COLORS[godPan[i]] || "black", doorColor = DOOR_COLORS[pDoor] || "black", anGan = anGanPan[i];
                 let starText = (pStars[0] === "天芮" && pStars[1] === "天禽") ? "天芮/禽" : pStars[0];
                 let palaceLabel = `${ACTIVE_PALACES[i].name}`;
+
+                let pDoorDisplay = useEnergy ? DOOR_ENERGY[pDoor][i] : pDoor;
+                let starTextDisplay = useEnergy ? (STAR_ENERGY[pStars[0]] ? STAR_ENERGY[pStars[0]][i] : starText) : starText;
 
                 el.innerHTML = `${getBranchHTML(i)}
                     <div class="emoji-container">
@@ -455,8 +604,8 @@
                         <div class="flex flex-col items-start leading-none mb-1">
                             <span class="text-main text-${godColor}">${godPan[i]}</span>
                         </div>
-                        <div class="text-main leading-none mb-1 tracking-wider"><span class="text-${STAR_COLORS[pStars[0]] || 'black'}">${starText}</span></div>
-                        <div class="flex items-start leading-none mb-1"><span class="text-main text-${doorColor} tracking-wider">${pDoor}</span>${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 mt-1 ml-0.5 font-bold">(迫)</span>`:""}</div>
+                        <div class="text-main leading-none mb-1 tracking-wider"><span class="text-${STAR_COLORS[pStars[0]] || 'black'}">${starTextDisplay}</span></div>
+                        <div class="flex items-start leading-none mb-1"><span class="text-main text-${doorColor} tracking-wider">${pDoorDisplay}</span>${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 mt-1 ml-0.5 font-bold">(迫)</span>`:""}</div>
                         <div class="flex justify-between items-end mt-auto">
                             <div class="mb-1">${renderStem(anGan, i, true)}</div>
                             <div class="flex flex-col items-end leading-tight text-main font-bold">
@@ -466,12 +615,30 @@
                         </div>
                     </div>`;
                 
-                let doorTextForCopy = pDoor + (isMenPo(pDoor, i) ? "(迫)" : "");
-                let hStemsForCopy = hStems.map(s => s + getStemTagsText(s, i)).join('+');
-                let eStemsForCopy = eStems.map(s => s + getStemTagsText(s, i)).join('+');
+                let doorTextForCopy = pDoorDisplay + (isMenPo(pDoor, i) ? "(迫)" : "");
+                let hStemsForCopy = hStems.map(s => (useEnergy ? (STEM_ENERGY[s] ? STEM_ENERGY[s][i] : s) : s) + getStemTagsText(s, i)).join('+');
+                let eStemsForCopy = eStems.map(s => (useEnergy ? (STEM_ENERGY[s] ? STEM_ENERGY[s][(i===5)?2:i] : s) : s) + getStemTagsText(s, i)).join('+');
 
-                panData.palaces[ACTIVE_PALACES[i].name] = `${godPan[i]}/${starText}/${doorTextForCopy}/${hStemsForCopy}(天)/${eStemsForCopy}(地)${isMa?'/**驛馬**':''}${isKong?'/**空亡**':''}`;
+                panData.palaces[ACTIVE_PALACES[i].name] = `${godPan[i]}/${starTextDisplay}/${doorTextForCopy}/${hStemsForCopy}(天)/${eStemsForCopy}(地)${isMa?'/**驛馬**':''}${isKong?'/**空亡**':''}`;
             }
+
+            // 清除並自動 highlight 日干所在宮位
+            document.querySelectorAll('.palace').forEach(p => p.classList.remove('palace-active'));
+            let hDayPalace = -1;
+            for (let i = 1; i <= 9; i++) {
+                if (i === 5) continue;
+                let hStemsArray = Array.isArray(heavenPan[i]) ? heavenPan[i] : [heavenPan[i]];
+                if (hStemsArray.includes(dayStem)) {
+                    hDayPalace = i;
+                    break;
+                }
+            }
+            if (hDayPalace !== -1) {
+                document.getElementById(`palace-${hDayPalace}`).classList.add('palace-active');
+            } else if (heavenPan[5] === dayStem || (Array.isArray(heavenPan[5]) && heavenPan[5].includes(dayStem))) {
+                document.getElementById('palace-5').classList.add('palace-active');
+            }
+
         } catch (e) { alert("起盤錯誤: " + e.message); console.error(e); }
     }
     function copyPan() {
