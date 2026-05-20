@@ -116,9 +116,13 @@
     </div>
 
     <div class="flex justify-center items-center mt-6 hidden gap-4 flex-wrap" id="action-footer">
-        <button onclick="copyPan()" class="bg-slate-800 hover:bg-black text-white py-2.5 px-8 rounded-full shadow-lg transition active:scale-95 flex items-center justify-center text-base">
+        <button onclick="copyPan()" class="bg-slate-800 hover:bg-black text-white py-2.5 px-6 rounded-full shadow-lg transition active:scale-95 flex items-center justify-center text-base">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
             複製盤面資料
+        </button>
+        <button onclick="sharePan()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 px-6 rounded-full shadow-lg transition active:scale-95 flex items-center justify-center text-base">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+            分享起盤連結
         </button>
         <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow border border-indigo-100">
             <span class="text-sm font-bold text-gray-700" id="bagua-label">後天八卦數</span>
@@ -132,6 +136,20 @@
             <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" id="toggle-energy" class="sr-only peer" onchange="toggleEnergy()">
                 <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed shadow-inner"></div>
+            </label>
+        </div>
+        <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow border border-green-100">
+            <span class="text-sm font-bold text-gray-700">內外盤</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="toggle-neiwai" class="sr-only peer" onchange="toggleNeiWai()">
+                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed shadow-inner"></div>
+            </label>
+        </div>
+        <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow border border-blue-100">
+            <span class="text-sm font-bold text-gray-700">按宮看格局</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="toggle-palacemodal" class="sr-only peer" onchange="togglePalaceModal()">
+                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed shadow-inner"></div>
             </label>
         </div>
     </div>
@@ -374,6 +392,8 @@
 
     // --- 用於儲存每個宮位的詳細資料 ---
     let globalPalaceData = {};
+    let useNeiWai = false;
+    let enablePalaceModal = false;
 
     // 關閉宮位 Modal
     function closePalaceModal() {
@@ -499,7 +519,7 @@
 
         // 地遁
         if (isJiMen && hasH('乙') && (god === '六合' || god === '九地' || god === '太陰')) {
-            results.push({ name: '地遁', type: '吉', desc: '《奇門遁甲秘笈大全》：『開休生合乙奇，下臨地盤六合、九地、太陰宮者，皆名「地遁」，得日精所蔽，可以設伏、謀為，百事皆吉。若乘朱雀，惟宜設詞、行詐、間諜。乘螣蛇者，宜蠱惑。乘太常，有酒食、宴會。乘青龍，有財喜。如乘白虎主鬪勝。乘玄武，主竊盜、探私。乘勾陳，主淹滯。得地遁之吉者，宜修築、起造、埋葬、藏匿之事，俱皆大吉。』' });
+            results.push({ name: '地遁', type: '吉', desc: '《奇門遁甲秘笈大全》：『開休生合乙奇，下臨地盤六合、九地、太陰宮者，皆名「地遁」，得日精所蔽，可以設伏、謀為，百事皆吉。若乘朱雀，惟宜設詞、行詐、間諜。乘太常，有酒食、宴會。乘青龍，有財喜。如乘白虎主鬪勝。乘玄武，主竊盜、探私。乘勾陳，主淹滯。得地遁之吉者，宜修築、起造、埋葬、藏匿之事，俱皆大吉。』' });
         }
 
         // 人遁
@@ -598,6 +618,15 @@
         generatePan();
     }
 
+    function toggleNeiWai() {
+        useNeiWai = document.getElementById('toggle-neiwai').checked;
+        generatePan();
+    }
+
+    function togglePalaceModal() {
+        enablePalaceModal = document.getElementById('toggle-palacemodal').checked;
+    }
+
     function initSelectors() {
         const ySel = document.getElementById('sel-year');
         const mSel = document.getElementById('sel-month');
@@ -611,7 +640,19 @@
         for (let i = 0; i <= 23; i++) hSel.add(new Option(i.toString().padStart(2, '0'), i));
         for (let i = 0; i <= 59; i++) minSel.add(new Option(i.toString().padStart(2, '0'), i));
         
-        updateSelectorsFromDate(currentDate);
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('y') && urlParams.has('m') && urlParams.has('d') && urlParams.has('h') && urlParams.has('min')) {
+            document.getElementById('sel-year').value = urlParams.get('y');
+            document.getElementById('sel-month').value = urlParams.get('m');
+            document.getElementById('sel-day').value = urlParams.get('d');
+            document.getElementById('sel-hour24').value = urlParams.get('h');
+            document.getElementById('sel-minute').value = urlParams.get('min');
+            currentDate = new Date(urlParams.get('y'), urlParams.get('m') - 1, urlParams.get('d'), urlParams.get('h'), urlParams.get('min'));
+            updateJieQiYearBtn();
+            generatePan();
+        } else {
+            updateSelectorsFromDate(currentDate);
+        }
     }
 
     function updateSelectorsFromDate(d) {
@@ -634,10 +675,12 @@
             el.classList.add('palace-active');
         }
 
-        // --- 提取宮位 ID 並觸發 Modal ---
-        let idMatch = el.id.match(/palace-(\d)/);
-        if(idMatch && idMatch[1]) {
-            showPalaceDetails(parseInt(idMatch[1]));
+        // --- 根據新開關決定是否觸發 Modal ---
+        if (enablePalaceModal) {
+            let idMatch = el.id.match(/palace-(\d)/);
+            if(idMatch && idMatch[1]) {
+                showPalaceDetails(parseInt(idMatch[1]));
+            }
         }
     }
 
@@ -897,6 +940,18 @@
                 el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                 if (wasActive) el.classList.add('palace-active');
 
+                // --- 內外盤計算 ---
+                let guaDisplay = ACTIVE_PALACES[i].gua;
+                if (useNeiWai) {
+                    let isInner = false;
+                    if (isYang) {
+                        if ([1, 8, 3, 4].includes(i)) isInner = true;
+                    } else {
+                        if ([9, 2, 7, 6].includes(i)) isInner = true;
+                    }
+                    guaDisplay = isInner ? "內" : "外";
+                }
+
                 const renderStem = (s, pNum, isAnGan = false) => {
                     let tags = []; if(isJiXing(s, pNum)) tags.push("刑"); if(isRuMu(s, pNum)) tags.push("墓");
                     let tagClass = isAnGan ? "text-gray-400" : "text-red-600";
@@ -970,7 +1025,7 @@
                     <div class="flex flex-col h-full justify-between relative">
                         <div class="flex flex-col items-center leading-none mb-1 text-main">
                             <span class="text-palace-name text-${ACTIVE_PALACES[i].type}">${palaceLabel}</span>
-                            <span class="text-xl leading-none mt-0.5">${ACTIVE_PALACES[i].gua}</span>
+                            <span class="text-xl leading-none mt-0.5">${guaDisplay}</span>
                         </div>
                         <div class="flex flex-col items-start leading-none mb-1">
                             <span class="text-main text-${godColor}">${godPan[i]}</span>
@@ -1011,6 +1066,7 @@
 
         } catch (e) { alert("起盤錯誤: " + e.message); console.error(e); }
     }
+    
     function copyPan() {
         const ACTIVE_PALACES = useXianTian ? PALACES_XIAN : PALACES_HOU;
         const baziLine = panData.bazi + (panData.special ? " " + panData.special : "") + (panData.stemStatus ? " " + panData.stemStatus : "");
@@ -1023,6 +1079,34 @@
         }
         navigator.clipboard.writeText(text).then(() => alert("資料已複製！")).catch(() => { let t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); document.execCommand("Copy"); t.remove(); alert("資料已複製！"); });
     }
+
+    function sharePan() {
+        const y = document.getElementById('sel-year').value;
+        const m = document.getElementById('sel-month').value;
+        const d = document.getElementById('sel-day').value;
+        const h = document.getElementById('sel-hour24').value;
+        const min = document.getElementById('sel-minute').value;
+        
+        const url = new URL(window.location.href);
+        url.searchParams.set('y', y);
+        url.searchParams.set('m', m);
+        url.searchParams.set('d', d);
+        url.searchParams.set('h', h);
+        url.searchParams.set('min', min);
+        
+        navigator.clipboard.writeText(url.toString()).then(() => {
+            alert("分享連結已複製！貼上即可分享目前的排盤時間。");
+        }).catch(() => {
+            let t = document.createElement("textarea"); 
+            t.value = url.toString(); 
+            document.body.appendChild(t); 
+            t.select(); 
+            document.execCommand("Copy"); 
+            t.remove(); 
+            alert("分享連結已複製！貼上即可分享目前的排盤時間。");
+        });
+    }
+
     window.onload = initSelectors;
 </script>
 </body>
