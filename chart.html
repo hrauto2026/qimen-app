@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>奇門遁甲 - 拆補法排盤 (v21)</title>
+    <title>奇門遁甲 - 拆補法排盤 (v22)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
     <style>
@@ -418,7 +418,7 @@
     const BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
     const YI_LIU = ['戊', '己', '庚', '辛', '壬', '癸', '丁', '丙', '乙']; 
     
-    // --- 載入師傅傳授之奇門典籍格局陣列 ---
+    // --- 載入奇門典籍格局陣列 ---
     const RAW_GEJU_DATA = [
         [
             "值符伏吟 (戊+戊)。《奇門遁甲秘笈大全》(戊+戊)：『凡事閉塞，靜守為吉。』(凶)",
@@ -629,8 +629,9 @@
         document.getElementById('pm-star').innerHTML = data.star ? `<span class="text-${STAR_COLORS[data.star.split('/')[0]] || 'black'}">${data.star}</span>` : "-";
         document.getElementById('pm-door').innerHTML = data.door ? `<span class="text-${DOOR_COLORS[data.door] || 'black'}">${data.door}</span>` : "-";
         document.getElementById('pm-angan').innerHTML = colorizeGanZhi(data.anGan || "-");
-        document.getElementById('pm-hstem').innerHTML = data.hStems ? data.hStems.map(s => colorizeGanZhi(s)).join(' / ') : "-";
-        document.getElementById('pm-estem').innerHTML = data.eStems ? data.eStems.map(s => colorizeGanZhi(s)).join(' / ') : "-";
+// 彈窗UI仍維持：陣列複製並反轉，讓寄干呈現在最前面並以 "/" 分隔
+document.getElementById('pm-hstem').innerHTML = data.hStems ? [...data.hStems].reverse().map(s => colorizeGanZhi(s)).join(' / ') : "-";
+document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].reverse().map(s => colorizeGanZhi(s)).join(' / ') : "-";
 
         let harmsHTML = "";
         const tagStyle = "px-2 py-0.5 rounded text-xs font-bold text-white shadow-sm";
@@ -719,8 +720,6 @@
         if (pNum === 9 && hasA('丁')) {
             results.push({ name: '奇游祿位 (丁)', type: '大吉', desc: '丁奇臨離宮祿位。求財吉利，官職高陞。' });
         }
-
-        let hHasQi = data.hStems.some(s => isSanQi(s));
 
         if (isJiMen && hasH('丙') && (hasE('丁') || god === '九地' || god === '太陰')) {
             results.push({ name: '天遁', type: '吉', desc: '《奇門遁甲秘笈大全》：『開休生三吉門，天盤丙奇下臨地盤丁奇者，皆名「天遁」，得月精所蔽。或臨地盤九地、太陰者，亦名「天遁」，可以遁跡、隱形。』' });
@@ -1211,7 +1210,8 @@
                 }
                 
                 let pDoor = doorPan[i], isKong = ACTIVE_PALACES[i].branch.includes(kw1) || ACTIVE_PALACES[i].branch.includes(kw2), isMa = ACTIVE_PALACES[i].branch.includes(ma);
-                let hStems = Array.isArray(heavenPan[i]) ? heavenPan[i] : [heavenPan[i]], eStems = Array.isArray(earthPan[i]) ? earthPan[i] : (i===2 ? [earthPan[2], earthPan[5]] : [earthPan[i]]);
+                let hStems = Array.isArray(heavenPan[i]) ? heavenPan[i] : [heavenPan[i]];
+                let eStems = Array.isArray(earthPan[i]) ? earthPan[i] : (i===2 ? [earthPan[2], earthPan[5]] : [earthPan[i]]);
                 let pStars = Array.isArray(starPan[i]) ? starPan[i] : [starPan[i]];
                 if(isMa) currentYiMaPalace = ACTIVE_PALACES[i].name;
                 
@@ -1241,6 +1241,7 @@
                     palaceNum: i
                 };
 
+                // UI陣列複製並反轉，讓寄干呈現在最前面並以 "/" 分隔
                 el.innerHTML = `${getBranchHTML(i)}
                     <div class="emoji-container">
                         ${isKong ? '<span>🈳</span>' : ''}
@@ -1259,17 +1260,26 @@
                         <div class="flex justify-between items-end mt-auto">
                             <div class="mb-1">${renderStem(anGan, i, true)}</div>
                             <div class="flex flex-col items-end leading-tight text-main font-bold">
-                                <div class="mb-1">${hStems.map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
-                                <div class="border-t-[1.5px] border-gray-300 min-w-[2.5rem] text-right pt-0.5">${eStems.map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
+                                <div class="mb-1">${[...hStems].reverse().map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
+                                <div class="border-t-[1.5px] border-gray-300 min-w-[2.5rem] text-right pt-0.5">${[...eStems].reverse().map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
                             </div>
                         </div>
                     </div>`;
                 
                 let doorTextForCopy = pDoorDisplay + (isMenPo(pDoor, i) ? "(迫)" : "");
-                let hStemsForCopy = hStems.map(s => (useEnergy ? (STEM_ENERGY[s] ? STEM_ENERGY[s][i] : s) : s) + getStemTagsText(s, i)).join('+');
-                let eStemsForCopy = eStems.map(s => (useEnergy ? (STEM_ENERGY[s] ? STEM_ENERGY[s][(i===5)?2:i] : s) : s) + getStemTagsText(s, i)).join('+');
+                
+                // 複製字串邏輯：依序讀取天盤/地盤陣列，索引0為本干加上(天)/(地)，若有索引1則為寄干加上(寄天)/(寄地)，並以「+」連接
+                let hStemsForCopy = hStems.map((s, idx) => {
+                    let txt = (useEnergy ? (STEM_ENERGY[s] ? STEM_ENERGY[s][i] : s) : s) + getStemTagsText(s, i);
+                    return txt + (idx === 0 ? "(天)" : "(寄天)");
+                }).join('+');
 
-                panData.palaces[ACTIVE_PALACES[i].name] = `${godPan[i]}/${starTextDisplay}/${doorTextForCopy}/${hStemsForCopy}(天)/${eStemsForCopy}(地)${isMa?'/**驛馬**':''}${isKong?'/**空亡**':''}`;
+                let eStemsForCopy = eStems.map((s, idx) => {
+                    let txt = (useEnergy ? (STEM_ENERGY[s] ? STEM_ENERGY[s][(i===5)?2:i] : s) : s) + getStemTagsText(s, i);
+                    return txt + (idx === 0 ? "(地)" : "(寄地)");
+                }).join('+');
+
+                panData.palaces[ACTIVE_PALACES[i].name] = `${godPan[i]}/${starTextDisplay}/${doorTextForCopy}/${hStemsForCopy}/${eStemsForCopy}${isMa?'/**驛馬**':''}${isKong?'/**空亡**':''}`;
             }
 
             document.querySelectorAll('.palace').forEach(p => p.classList.remove('palace-active'));
