@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>奇門遁甲 - 拆補法排盤 (v22)</title>
+    <title>奇門遁甲 - 拆補法排盤 (v21)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
     <style>
@@ -328,7 +328,7 @@
 
     <div class="flex justify-center items-center mt-6 hidden gap-4 flex-wrap" id="action-footer">
         <button onclick="copyPan()" class="bg-slate-800 hover:bg-black text-white py-2.5 px-6 rounded-full shadow-lg transition active:scale-95 flex items-center justify-center text-base">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
             複製盤面資料
         </button>
         <button onclick="sharePan()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 px-6 rounded-full shadow-lg transition active:scale-95 flex items-center justify-center text-base">
@@ -721,43 +721,9 @@ document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].r
             results.push({ name: '奇游祿位 (丁)', type: '大吉', desc: '丁奇臨離宮祿位。求財吉利，官職高陞。' });
         }
 
-        if (isJiMen && hasH('丙') && (hasE('丁') || god === '九地' || god === '太陰')) {
-            results.push({ name: '天遁', type: '吉', desc: '《奇門遁甲秘笈大全》：『開休生三吉門，天盤丙奇下臨地盤丁奇者，皆名「天遁」，得月精所蔽。或臨地盤九地、太陰者，亦名「天遁」，可以遁跡、隱形。』' });
-        }
-        if (isJiMen && hasH('乙') && (god === '六合' || god === '九地' || god === '太陰')) {
-            results.push({ name: '地遁', type: '吉', desc: '《奇門遁甲秘笈大全》：『開休生合乙奇，下臨地盤六合、九地、太陰宮者，皆名「地遁」，宜修築、起造、埋葬之事。』' });
-        }
-        if ((isJiMen && hHasQi && god === '六合') || (door === '生' && hHasQi && god === '太陰') || (door === '生' && hasH('乙') && god === '九地')) {
-            results.push({ name: '人遁', type: '吉', desc: '《奇門遁甲秘笈大全》：『開休生合三奇，下臨地盤六合者，名為「人遁」。』' });
-        }
-        if ((door === '開' && hasH('乙') && (data.star.includes('心') || data.star.includes('禽')) && god === '九天' && pNum === 6) || (door === '生' && hasH('丙') && (data.star.includes('心') || data.star.includes('禽')) && god === '九天')) {
-            results.push({ name: '神遁', type: '吉', desc: '《奇門遁甲秘笈大全》：『開門、乙奇合天心星或天禽星，下臨地盤九天於乾宮，名為「神遁」。此方宜驅神遣將。』' });
-        }
-        if ((door === '休' && data.star.includes('輔') && hasH('辛') && hasE('丁') && pNum === 8) || (door === '生' && god === '太陰' && hasE('丁')) || (door === '生' && god === '九地' && hasE('丁'))) {
-            results.push({ name: '鬼遁', type: '吉', desc: '《奇門遁甲秘笈大全》：『休門、天輔，六辛下臨地盤丁奇，於艮宮者，名為鬼遁。宜實行間謀。』' });
-        }
-        if (isJiMen && hasH('乙') && hasE('辛') && pNum === 4) {
-            results.push({ name: '風遁', type: '吉', desc: '《奇門遁甲秘笈大全》：『開休生合乙奇，下臨地盤六辛，落於巽宮者為「風遁」。』' });
-        }
-        if ((isJiMen && hasH('乙') && hasE('辛')) || (door === '生' && data.star.includes('芮') && hasH('壬') && pNum === 2) || (isJiMen && hasH('辛') && hasE('乙')) || (data.star.includes('芮') && door === '生' && god === '九地' && pNum === 2)) {
-            results.push({ name: '雲遁', type: '吉', desc: '《奇門遁甲秘笈大全》：『開休生合乙奇，下臨六辛宮者，名為「雲遁」。』' });
-        }
-        if ((isJiMen && data.star.includes('心') && hasH('壬') && god === '六合' && pNum === 1) || (door === '休' && hasH('乙') && pNum === 2) || (door === '開' && hasH('戊') && god === '九地') || (door === '休' && hasH('丁') && god === '九地' && pNum === 1)) {
-            results.push({ name: '龍遁', type: '吉', desc: '《奇門遁甲秘笈大全》：『開休生合天心星、六合於坎宮為「龍遁」。此方祈雨必應。』' });
-        }
-        if ((door === '開' && hasH('庚') && pNum === 7) || (door === '休' && hasH('乙') && hasE('辛') && pNum === 8) || (door === '生' && hasH('辛') && hasE('乙') && pNum === 8)) {
-            results.push({ name: '虎遁', type: '吉', desc: '《奇門遁甲秘笈大全》：『開門、甲申庚，下臨地盤兌宮為「虎遁」。此方宜安宅、剿巢。』' });
-        }
+        let hHasQi = data.hStems.some(s => isSanQi(s)); // ✨✨就是這一行剛剛漏掉了！✨✨
 
-        if (hHasQi && isJiMen && god === '太陰') results.push({ name: '真詐', type: '吉', desc: '隱遁身形、求仙修道。' });
-        if (hHasQi && isJiMen && god === '九地') results.push({ name: '重詐', type: '吉', desc: '進兵劫營、埋伏刺殺。' });
-        if (hHasQi && isJiMen && god === '六合') results.push({ name: '休詐', type: '吉', desc: '合謀定計、聯絡盟友。' });
-        
-        if (hHasQi && door === '景' && god === '九天') results.push({ name: '天假', type: '吉', desc: '借天之威，發布命令。' });
-        if (['丁','己','癸'].some(hasH) && door === '杜' && god === '九地') results.push({ name: '地假', type: '吉', desc: '借地之隱，逃亡避難。' });
-        if (['丁','己','癸'].some(hasH) && door === '傷' && god === '九天') results.push({ name: '神假', type: '吉', desc: '借神之怒，索債、捕捉盜賊。' });
-        if (['丁','己','癸'].some(hasH) && door === '死' && god === '九地') results.push({ name: '鬼假', type: '吉', desc: '借鬼之幽，超度亡魂。' });
-        if (['壬','癸'].some(hasH) && door === '驚' && god === '六合') results.push({ name: '人假', type: '吉', desc: '借人之和，捕捉逃亡。' });
+
 
         if (data.isZhiShi && hasE('丁')) results.push({ name: '玉女守門', type: '吉', desc: '利私下謀劃、宴會、和解。' });
         if (data.isZhiShi && hHasQi) results.push({ name: '三奇得使', type: '吉', desc: '奇兵得主將調遣，化險為夷。' });
