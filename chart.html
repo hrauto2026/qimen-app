@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>奇門遁甲 - 拆補法排盤 (v21)</title>
+    <title>奇門遁甲 - 拆補法排盤 (v21 + 穿壬天將環繞版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
     <style>
@@ -19,20 +19,32 @@
         .main-container {
             transition: all 0.5s ease;
         }
-        .grid-wrapper { padding: 30px 28px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        @media (max-width: 640px) {
-            .grid-wrapper { padding: 20px 25px; }
-            .grid-qimen { gap: 6px !important; margin: 0 auto; width: calc(100% - 10px); }
-            .palace { min-height: 150px !important; padding: 6px !important; }
-            .branch-label { font-size: 0.8rem !important; }
+        
+        /* 增加 grid-wrapper 的 padding 以容納四周突出的地支與天將 */
+        .grid-wrapper { 
+            padding: 50px 60px; 
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch; 
         }
-        .grid-qimen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 550px; min-width: 300px; margin: auto; }
+        @media (max-width: 640px) {
+            .grid-wrapper { padding: 40px 35px; } /* 手機版內收縮放 */
+            .grid-qimen { gap: 10px !important; margin: 0 auto; width: calc(100% - 10px); }
+            .palace { min-height: 160px !important; padding: 6px !important; }
+            .branch-label { font-size: 1rem !important; }
+            .tian-jiang { font-size: 0.7rem !important; }
+            .pos-left { left: -25px !important; }
+            .pos-right { right: -25px !important; }
+            .pos-top { top: -25px !important; }
+            .pos-bottom { bottom: -25px !important; }
+        }
+
+        .grid-qimen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 600px; min-width: 300px; margin: auto; }
         
         /* 宮位基礎樣式 */
         .palace { 
-            position: relative; border-radius: 10px; padding: 8px; min-height: 200px; 
+            position: relative; border-radius: 10px; padding: 10px; min-height: 200px; 
             display: flex; flex-direction: column; box-shadow: 0 3px 10px rgba(0,0,0,0.08); 
-            border: 1.5px solid; background-color: rgba(255, 255, 255, 0.85); 
+            border: 1.5px solid; background-color: rgba(255, 255, 255, 0.95); 
             transition: all 0.3s ease; cursor: pointer;
         }
         .palace-active { border: 4px solid #3b82f6 !important; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); z-index: 30; }
@@ -45,217 +57,52 @@
         .bg-metal { background-color: #fffbeb; border-color: #fde68a; } .text-metal { color: #b45309; }
         .bg-white-palace { background-color: #ffffff; border-color: #e2e8f0; } 
         
-        .text-main { font-size: clamp(0.95rem, 2.5vw, 1.45rem); line-height: 1.1; }
+        .text-main { font-size: clamp(0.95rem, 2.5vw, 1.35rem); line-height: 1.1; }
         .text-palace-name { font-weight: 900; }
         
         .day-stem { display: inline-block; background-color: #f3e8ff; border: 1.5px solid #a855f7; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         .hour-stem { display: inline-block; background-color: #ffedd5; border: 1.5px solid #f97316; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         
         .emoji-container { position: absolute; top: 6px; right: 6px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 1.3rem; line-height: 1; z-index: 10; }
-        .branch-label { position: absolute; color: #4b5563; font-size: 0.9rem; pointer-events: none; opacity: 0.9; z-index: 10; }
 
-        /* ==========================================
-           🌌 賽博玄學 (Cyber-Fengshui) 暗黑主題樣式
-           ========================================== */
-        .theme-cyber {
-            background: radial-gradient(circle at center, #070710 0%, #020205 100%) !important;
-            color: #cbd5e1 !important;
-        }
-
-        /* 賽博卡片 */
-        .theme-cyber .main-container {
-            background-color: rgba(11, 11, 24, 0.9) !important;
-            border-color: rgba(226, 232, 240, 0.15) !important;
-            box-shadow: 0 0 30px rgba(0, 82, 255, 0.1), inset 0 0 15px rgba(255, 255, 255, 0.02) !important;
+        /* ================= 外圍標籤(地支+天將) 基礎樣式 ================= */
+        .branch-label {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            font-weight: 900;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 20;
         }
 
-        /* 賽博標題 */
-        .theme-cyber h1 {
-            color: #e2e8f0 !important;
-            text-shadow: 0 0 12px rgba(255, 255, 255, 0.3), 0 0 3px rgba(255, 255, 255, 0.5) !important;
-            letter-spacing: 0.25em;
-        }
-        .theme-cyber .title-link {
-            color: #a78bfa !important;
-        }
-        .theme-cyber .title-link:hover {
-            color: #ffffff !important;
-            text-shadow: 0 0 8px rgba(167, 139, 250, 0.8) !important;
+        /* 天將文字樣式 */
+        .tian-jiang {
+            font-size: 0.75rem;
+            color: #7e22ce; /* purple-700 */
+            margin-left: 4px;
         }
 
-        /* 控制列與資訊面板 */
-        .theme-cyber select, .theme-cyber input[type="text"] {
-            background-color: #0f0f20 !important;
-            border-color: #2a2a4e !important;
-            color: #f1f5f9 !important;
+        /* 垂直排列的容器 (套用於左右兩側) */
+        .vertical-label {
+            flex-direction: column;
+            line-height: 1.1;
         }
-        .theme-cyber .bg-indigo-50\/50 {
-            background-color: rgba(15, 15, 32, 0.7) !important;
-            border-color: rgba(167, 139, 250, 0.15) !important;
-        }
-        .theme-cyber #pan-header {
-            background-color: rgba(12, 12, 28, 0.95) !important;
-            border-left-color: #a855f7 !important;
-            border-color: rgba(168, 85, 247, 0.2);
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.08) !important;
-            color: #cbd5e1 !important;
-        }
-        .theme-cyber #pan-header span.text-indigo-900,
-        .theme-cyber #pan-header span.text-indigo-800 {
-            color: #c084fc !important;
-            text-shadow: 0 0 5px rgba(192, 132, 252, 0.3) !important;
+        .vertical-label .tian-jiang {
+            margin-left: 0;
+            margin-top: 4px;
+            writing-mode: vertical-lr; /* 垂直書寫 */
+            letter-spacing: 2px;
         }
 
-        /* 賽博宮位基本卡片 */
-        .theme-cyber .palace {
-            background-color: rgba(7, 7, 18, 0.9) !important;
-            box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.01), 0 4px 15px rgba(0, 0, 0, 0.7) !important;
-            border-width: 1.5px !important;
-        }
+        /* ================= 極致對稱定位設定 ================= */
+        .pos-top { top: -35px; left: 50%; transform: translateX(-50%); }
+        .pos-bottom { bottom: -35px; left: 50%; transform: translateX(-50%); }
+        .pos-left { top: 50%; left: -35px; transform: translateY(-50%); }
+        .pos-right { top: 50%; right: -35px; transform: translateY(-50%); }
 
-        /* ==========================================
-           🌌 賽博五行電學配色 (配合傳統五行概念)
-           ========================================== */
-        
-        /* 水 (坎一) - 電光深藍 */
-        .theme-cyber .bg-water { 
-            border-color: #0052ff !important; 
-            box-shadow: 0 0 15px rgba(0, 82, 255, 0.35), inset 0 0 8px rgba(0, 82, 255, 0.15) !important; 
-        } 
-        .theme-cyber .text-water { 
-            color: #38bdf8 !important; 
-            text-shadow: 0 0 8px rgba(56, 189, 248, 0.7) !important; 
-        }
-        
-        /* 木 (震三/巽四) - 量子熒光綠 */
-        .theme-cyber .bg-wood { 
-            border-color: #00e676 !important; 
-            box-shadow: 0 0 15px rgba(0, 230, 118, 0.35), inset 0 0 8px rgba(0, 230, 118, 0.15) !important; 
-        } 
-        .theme-cyber .text-wood { 
-            color: #69f0ae !important; 
-            text-shadow: 0 0 8px rgba(105, 240, 174, 0.7) !important; 
-        }
-
-        /* 火 (離九) - 脈衝熱核紅 */
-        .theme-cyber .bg-fire { 
-            border-color: #ff1744 !important; 
-            box-shadow: 0 0 15px rgba(255, 23, 68, 0.35), inset 0 0 8px rgba(255, 23, 68, 0.15) !important; 
-        } 
-        .theme-cyber .text-fire { 
-            color: #ff5252 !important; 
-            text-shadow: 0 0 8px rgba(255, 82, 82, 0.7) !important; 
-        }
-
-        /* 土 (坤二/艮八) - 賽博土黃/暖琥珀 */
-        .theme-cyber .bg-brown { 
-            border-color: #5B2F1A !important; 
-            box-shadow: 0 0 18px rgba(251, 146, 60, 0.45), inset 0 0 8px rgba(251, 146, 60, 0.2) !important; 
-        } 
-        .theme-cyber .text-brown { 
-            color: #5B2F1A !important; 
-            text-shadow: 0 0 8px rgba(180, 83, 9, 0.3) !important; 
-        }
-
-        /* 金 (乾六/兌七) - 鈦極亮銀白 */
-        .theme-cyber .bg-metal { 
-            border-color: #fb923c !important; 
-            box-shadow: 0 0 18px rgba(251, 146, 60, 0.45), inset 0 0 8px rgba(251, 146, 60, 0.2) !important; 
-        } 
-        .theme-cyber .text-metal { 
-            color: #fb923c !important; 
-            text-shadow: 0 0 10px rgba(245, 158, 11, 0.4) !important; 
-        }
-
-        /* 中五宮 (中性鈦灰) */
-        .theme-cyber .bg-white-palace {
-            background-color: #0c0c1b !important;
-            border-color: #475569 !important;
-            box-shadow: 0 0 10px rgba(71, 85, 105, 0.2) !important;
-        }
-
-        /* ========================================== */
-
-        /* 量子活躍落宮 (極致呼吸霓虹燈) */
-        .theme-cyber .palace-active { 
-            border: 3px solid #00f5ff !important; 
-            box-shadow: 0 0 25px rgba(0, 245, 255, 0.8), inset 0 0 10px rgba(0, 245, 255, 0.3) !important; 
-            z-index: 30;
-            animation: cyber-pulse 2s infinite alternate;
-        }
-        @keyframes cyber-pulse {
-            0% { box-shadow: 0 0 12px rgba(0, 245, 255, 0.35), inset 0 0 5px rgba(0, 245, 255, 0.15); }
-            100% { box-shadow: 0 0 28px rgba(0, 245, 255, 0.85), inset 0 0 12px rgba(0, 245, 255, 0.35); }
-        }
-
-        /* 賽博天干高亮 */
-        .theme-cyber .day-stem { 
-            background-color: rgba(168, 85, 247, 0.15) !important; 
-            border-color: #a855f7 !important; 
-            box-shadow: 0 0 8px rgba(168, 85, 247, 0.5) !important;
-            color: #e9d5ff !important;
-        }
-        .theme-cyber .hour-stem { 
-            background-color: rgba(249, 115, 22, 0.15) !important; 
-            border-color: #f97316 !important; 
-            box-shadow: 0 0 8px rgba(249, 115, 22, 0.5) !important;
-            color: #ffedd5 !important;
-        }
-
-        /* 賽博按鈕 */
-        .theme-cyber button {
-            transition: all 0.3s ease;
-        }
-        .theme-cyber button:hover {
-            box-shadow: 0 0 12px rgba(139, 92, 246, 0.4) !important;
-            transform: scale(1.02);
-        }
-
-        /* 賽博地支標籤 */
-        .theme-cyber .branch-label {
-            color: #64748b !important;
-            opacity: 0.7;
-        }
-
-        /* 彈窗深色賽博化 */
-        .theme-cyber #palace-modal > div,
-        .theme-cyber #jieqi-modal > div {
-            background-color: #080815 !important;
-            border-color: #38bdf8 !important;
-            color: #cbd5e1 !important;
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.25) !important;
-        }
-        .theme-cyber #palace-modal h3,
-        .theme-cyber #palace-modal h4 {
-            color: #38bdf8 !important;
-            text-shadow: 0 0 8px rgba(56, 189, 248, 0.3) !important;
-        }
-        .theme-cyber #palace-modal .bg-indigo-50\/80 {
-            background-color: #0f0f24 !important;
-            border-color: #1e1b4b !important;
-        }
-        .theme-cyber #pm-geju > div {
-            background-color: #0e0e20 !important;
-            border-color: #1d1d3b !important;
-        }
-
-        /* 賽博特殊狀態欄字樣發光 */
-        .theme-cyber #info-special span.text-red-700 {
-            color: #ff5252 !important;
-            text-shadow: 0 0 6px rgba(255, 82, 82, 0.5) !important;
-        }
-        .theme-cyber #info-special span.text-amber-700 {
-            color: #fbbf24 !important;
-            text-shadow: 0 0 6px rgba(251, 191, 36, 0.5) !important;
-        }
-        .theme-cyber #info-special span.text-purple-700 {
-            color: #c084fc !important;
-            text-shadow: 0 0 6px rgba(192, 132, 252, 0.5) !important;
-        }
-        .theme-cyber #info-special span.text-blue-700 {
-            color: #60a5fa !important;
-            text-shadow: 0 0 6px rgba(96, 165, 250, 0.5) !important;
-        }
     </style>
 </head>
 <body class="p-2 md:p-8">
@@ -335,14 +182,6 @@
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
             分享起盤連結
         </button>
-        
-        <div class="flex items-center gap-2 bg-purple-950/20 px-4 py-2 rounded-full shadow border border-purple-500/30">
-            <span class="text-sm font-bold text-purple-700" id="cyber-label">晚間模式</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="toggle-cyber" class="sr-only peer" onchange="toggleCyberTheme()">
-                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed shadow-inner"></div>
-            </label>
-        </div>
 
         <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow border border-indigo-100">
             <span class="text-sm font-bold text-gray-700" id="bagua-label">先天八卦數</span>
@@ -460,7 +299,7 @@
             "奇入太陰 (丁+丁)。《奇門遁甲秘笈大全》(丁+丁)：『文書即至，喜事遂心。』(吉)",
             "朱雀入墓 (己+丁)。《奇門遁甲秘笈大全》(己+丁)：『文狀詞訟，先曲後直。』；《奇門法竅》：『己加丁，為星奇入墓，凡事宜緩謀，詞訟主先直後曲。』(平)",
             "亭亭之格 (庚+丁)。《奇門遁甲秘笈大全》(庚+丁)：『因私暱起官司，門吉有救。』；《奇門法竅》：『庚加丁，為凡事無一就，門制害非輕，星奇被格，侵戰固守無驚。』(平)",
-            "獄神得奇 (辛+丁)。《奇門遁甲秘笈大全》(辛+丁)：『經商獲倍利，因人逢赦宥。』；《奇門法竅》：『辛加丁，為獄神得奇，經商或倍利，囚人逢赦宥，凡事主驚憂。』(吉)",
+            "狱神得奇 (辛+丁)。《奇門遁甲秘笈大全》(辛+丁)：『經商獲倍利，因人逢赦宥。』；《奇門法竅》：『辛加丁，為獄神得奇，經商或倍利，囚人逢赦宥，凡事主驚憂。』(吉)",
             "干合蛇刑 (壬+丁)。《奇門遁甲秘笈大全》(壬+丁)：『文書牽連，貴人匆匆，男凶女吉。』；《奇門法竅》：『壬加丁，為玉女合獄神，求謀貴人親，主客威聲震。』(凶)",
             "螣蛇妖矯 (癸+丁)。《奇門遁甲秘笈大全》(癸+丁)：『文書官司，火焚莫逃。』；《奇門法竅》：『癸加丁，為騰蛇妖蹻，文書官司，大禁莫逃，三門若相合，謀為得半祥。』(凶)"
         ],
@@ -562,7 +401,7 @@
 
     const BRANCH_POSITIONS_TEMPLATE = { 1: `子`, 8: `丑寅`, 3: `卯`, 4: `辰巳`, 9: `午`, 2: `未申`, 7: `酉`, 6: `戌亥`, 5: `` };
     const STAR_COLORS = { "天蓬": "water", "天任": "brown", "天衝": "wood", "天輔": "wood", "天英": "fire", "天芮": "brown", "天柱": "metal", "天心": "metal", "天禽": "brown" };
-    const GOD_COLORS = { "值符": "wood", "螣蛇": "fire", "太陰": "metal", "六合": "wood", "白虎": "metal", "玄武": "water", "九地": "brown", "九天": "metal" };
+    const GOD_COLORS = { "值符": "brown", "螣蛇": "fire", "太陰": "metal", "六合": "wood", "白虎": "metal", "玄武": "water", "九地": "brown", "九天": "metal" };
     const DOOR_COLORS = { "休門": "water", "生門": "brown", "傷門": "wood", "杜門": "wood", "景門": "fire", "死門": "brown", "驚門": "metal", "開門": "metal" };
     const BASE_STARS = { 1: "天蓬", 8: "天任", 3: "天衝", 4: "天輔", 9: "天英", 2: "天芮", 7: "天柱", 6: "天心", 5: "天禽" };
     const RING_ORDER = [1, 8, 3, 4, 9, 2, 7, 6];
@@ -571,6 +410,23 @@
     const TRAD_JIEQI = { "冬至": "冬至", "小寒": "小寒", "大寒": "大寒", "立春": "立春", "雨水": "雨水", "惊蛰": "驚蟄", "驚蟄": "驚蟄", "春分": "春分", "清明": "清明", "谷雨": "穀雨", "穀雨": "穀雨", "立夏": "立夏", "小满": "小滿", "小滿": "小滿", "芒种": "芒種", "芒種": "芒種", "夏至": "夏至", "小暑": "小暑", "大暑": "大暑", "立秋": "立秋", "处暑": "處暑", "處暑": "處暑", "白露": "白露", "秋分": "秋分", "寒露": "寒露", "霜降": "霜降", "立冬": "立冬", "小雪": "小雪", "大雪": "大雪", "DONG_ZHI": "冬至" };
     const WUXING_COLORS = { '甲': '#15803d', '乙': '#15803d', '寅': '#15803d', '卯': '#15803d', '丙': '#b91c1c', '丁': '#b91c1c', '巳': '#b91c1c', '午': '#b91c1c', '戊': '#78350f', '己': '#78350f', '辰': '#78350f', '戌': '#78350f', '丑': '#78350f', '未': '#78350f', '庚': '#d97706', '辛': '#d97706', '申': '#d97706', '酉': '#d97706', '壬': '#0369a1', '癸': '#0369a1', '亥': '#0369a1', '子': '#0369a1' };
     const CLASH_MAP = { "子":"午", "午":"子", "丑":"未", "未":"丑", "寅":"申", "申":"寅", "卯":"酉", "酉":"卯", "辰":"戌", "戌":"辰", "巳":"亥", "亥":"巳" };
+
+    // --- 大六壬十二天將相關陣列 ---
+    const TIAN_JIANG_LIST = ['貴人', '螣蛇', '朱雀', '六合', '勾陳', '青龍', '天空', '白虎', '太常', '玄武', '太陰', '天后'];
+    const ZQ_MAP = {"雨水": "亥", "春分": "戌", "谷雨": "酉", "穀雨": "酉", "小满": "申", "小滿": "申", "夏至": "未", "大暑": "午", "处暑": "巳", "處暑": "巳", "秋分": "辰", "霜降": "卯", "小雪": "寅", "冬至": "丑", "大寒": "子"};
+    const GUI_REN_MAP = {
+        '甲': { day: '丑', night: '未' },
+        '乙': { day: '子', night: '申' },
+        '丙': { day: '亥', night: '酉' },
+        '丁': { day: '亥', night: '酉' },
+        '戊': { day: '丑', night: '未' },
+        '己': { day: '子', night: '申' },
+        '庚': { day: '丑', night: '未' },
+        '辛': { day: '午', night: '寅' },
+        '壬': { day: '巳', night: '卯' },
+        '癸': { day: '巳', night: '卯' }
+    };
+    const BRANCH_TO_PALACE = { '子': 1, '丑': 8, '寅': 8, '卯': 3, '辰': 4, '巳': 4, '午': 9, '未': 2, '申': 2, '酉': 7, '戌': 6, '亥': 6 };
 
     // --- 能量狀態字典 ---
     const STAR_ENERGY = {
@@ -629,9 +485,8 @@
         document.getElementById('pm-star').innerHTML = data.star ? `<span class="text-${STAR_COLORS[data.star.split('/')[0]] || 'black'}">${data.star}</span>` : "-";
         document.getElementById('pm-door').innerHTML = data.door ? `<span class="text-${DOOR_COLORS[data.door] || 'black'}">${data.door}</span>` : "-";
         document.getElementById('pm-angan').innerHTML = colorizeGanZhi(data.anGan || "-");
-// 彈窗UI仍維持：陣列複製並反轉，讓寄干呈現在最前面並以 "/" 分隔
-document.getElementById('pm-hstem').innerHTML = data.hStems ? [...data.hStems].reverse().map(s => colorizeGanZhi(s)).join(' / ') : "-";
-document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].reverse().map(s => colorizeGanZhi(s)).join(' / ') : "-";
+        document.getElementById('pm-hstem').innerHTML = data.hStems ? [...data.hStems].map(s => colorizeGanZhi(s)).join(' / ') : "-"; // 移除 .reverse() 保持正寄順序
+        document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].map(s => colorizeGanZhi(s)).join(' / ') : "-"; // 移除 .reverse() 保持正寄順序
 
         let harmsHTML = "";
         const tagStyle = "px-2 py-0.5 rounded text-xs font-bold text-white shadow-sm";
@@ -721,9 +576,7 @@ document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].r
             results.push({ name: '奇游祿位 (丁)', type: '大吉', desc: '丁奇臨離宮祿位。求財吉利，官職高陞。' });
         }
 
-        let hHasQi = data.hStems.some(s => isSanQi(s)); // ✨✨就是這一行剛剛漏掉了！✨✨
-
-
+        let hHasQi = data.hStems.some(s => isSanQi(s)); 
 
         if (data.isZhiShi && hasE('丁')) results.push({ name: '玉女守門', type: '吉', desc: '利私下謀劃、宴會、和解。' });
         if (data.isZhiShi && hHasQi) results.push({ name: '三奇得使', type: '吉', desc: '奇兵得主將調遣，化險為夷。' });
@@ -780,19 +633,6 @@ document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].r
 
     function togglePalaceModal() {
         enablePalaceModal = document.getElementById('toggle-palacemodal').checked;
-    }
-
-    // --- 晚間模式主題切換 ---
-    function toggleCyberTheme() {
-        const isCyber = document.getElementById('toggle-cyber').checked;
-        if (isCyber) {
-            document.body.classList.add('theme-cyber');
-            document.getElementById('cyber-label').innerText = "晚間模式";
-        } else {
-            document.body.classList.remove('theme-cyber');
-            document.getElementById('cyber-label').innerText = "晚間模式";
-        }
-        generatePan(); // 重新繪製盤面以使樣式套用更完美
     }
 
     function initSelectors() {
@@ -956,6 +796,32 @@ document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].r
             if (h >= 23) ziMark = "晚子";
             else if (h === 0) ziMark = "早子";
 
+            // --- 大六壬穿壬：十二天將排佈邏輯 ---
+            let prevQi = exactLunar.getPrevQi(true);
+            let zqName = prevQi.getName();
+            let yueJiangBranchCalculated = ZQ_MAP[zqName] || "亥";
+            
+            let timeBranchIdxForDayNight = BRANCHES.indexOf(timeBranch);
+            let isDay = (timeBranchIdxForDayNight >= 3 && timeBranchIdxForDayNight <= 8);
+            
+            let guiRenBaseBranch = GUI_REN_MAP[dayStem][isDay ? 'day' : 'night'];
+            
+            let yjIdx = BRANCHES.indexOf(yueJiangBranchCalculated);
+            let tbIdx = BRANCHES.indexOf(timeBranch);
+            let grBaseIdx = BRANCHES.indexOf(guiRenBaseBranch);
+            let guiRenEarthIdx = (grBaseIdx - yjIdx + tbIdx + 12) % 12;
+            
+            let isForward = [11, 0, 1, 2, 3, 4].includes(guiRenEarthIdx);
+            let dir = isForward ? 1 : -1;
+            
+            let branchToTianJiang = {};
+            for(let i=0; i<12; i++) {
+                let currentEarthIdx = (guiRenEarthIdx + i * dir + 12) % 12;
+                let currentEarthBranch = BRANCHES[currentEarthIdx];
+                branchToTianJiang[currentEarthBranch] = TIAN_JIANG_LIST[i];
+            }
+            // ------------------------------------
+
             const baziRawStr = `${yearGZ}年 ${monthGZ}月 ${dayGZ}日 ${timeGZ_string}時`;
             const coloredBaziStr = `${colorizeGanZhi(yearGZ)}年 ${colorizeGanZhi(monthGZ)}月 ${colorizeGanZhi(dayGZ)}日 ${colorizeGanZhi(timeGZ_string)}時`;
             
@@ -1029,12 +895,10 @@ document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].r
             let fuyinHTML = "";
             let rawFuyin = "";
             
-            // 伏吟判定
             if (isMenFuyin) { fuyinHTML += "<span class='text-red-700 mr-2'>【門伏吟】</span>"; rawFuyin += "【門伏吟】"; }
             if (isStarFuyin) { fuyinHTML += "<span class='text-amber-700 mr-2'>【星伏吟】</span>"; rawFuyin += "【星伏吟】"; }
             if (isGanFuyin) { fuyinHTML += "<span class='text-purple-700 mr-2'>【干伏吟】</span>"; rawFuyin += "【干伏吟】"; }
 
-            // 反吟判定
             if (isMenFanyin) { fuyinHTML += "<span class='text-red-700 mr-2'>【門反吟】</span>"; rawFuyin += "【門反吟】"; }
             if (isStarFanyin) { fuyinHTML += "<span class='text-amber-700 mr-2'>【星反吟】</span>"; rawFuyin += "【星反吟】"; }
             if (isGanFanyin) { fuyinHTML += "<span class='text-purple-700 mr-2'>【干反吟】</span>"; rawFuyin += "【干反吟】"; }
@@ -1059,7 +923,6 @@ document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].r
             if (isZuo) { stemStatusStr = "<span class='text-blue-700'>【日干落月令之宮】</span>"; rawStemStatus = "【日干落月令之宮】"; }
             if (isChong) { stemStatusStr = "<span class='text-red-700'>【月令沖日干】</span>"; rawStemStatus = "【月令沖日干】"; }
 
-            // 整合特殊狀態
             let combinedStatusHTML = fuyinHTML + stemStatusStr;
             let combinedRawStatus = rawFuyin + rawStemStatus;
 
@@ -1108,22 +971,48 @@ document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].r
             let copyBaziLine = `${baziRawStr} (${y}年${m}月${d}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}${ziMark ? ' ' + ziMark : ''})`;
             panData = { bazi: copyBaziLine, ju: juStr, xun: xunShouGZ+xunShouStem, zf: zhiFuStar, zs: doorPan[currentD_val], kw: kw1+"、"+kw2, special: rawSpecialInfo, stemStatus: combinedRawStatus, palaces: {} };
             const currentMonthBranch = monthGZ.substring(1, 2);
+            
+            // 🌟 極致對稱的「外圍環繞」地支與天將生成邏輯
             const getBranchHTML = (i) => {
-                let text = BRANCH_POSITIONS_TEMPLATE[i], html = "";
+                let text = BRANCH_POSITIONS_TEMPLATE[i];
+                let html = "";
+                if (!text) return "";
+                
+                const branchConfig = {
+                    '子': { class: 'pos-bottom', vertical: false },
+                    '丑': { class: 'pos-bottom', vertical: false },
+                    '寅': { class: 'pos-left', vertical: true },
+                    '卯': { class: 'pos-left', vertical: true },
+                    '辰': { class: 'pos-left', vertical: true },
+                    '巳': { class: 'pos-top', vertical: false },
+                    '午': { class: 'pos-top', vertical: false },
+                    '未': { class: 'pos-top', vertical: false },
+                    '申': { class: 'pos-right', vertical: true },
+                    '酉': { class: 'pos-right', vertical: true },
+                    '戌': { class: 'pos-right', vertical: true },
+                    '亥': { class: 'pos-bottom', vertical: false }
+                };
+
                 for(let b of text) {
-                    let wColor = WUXING_COLORS[b], style = `color: ${wColor}; font-weight: bold;`;
-                    if(b === currentMonthBranch) html += `<div class="branch-label palace-${i}-${b} bg-yellow-200 px-1 rounded shadow border border-yellow-400 font-extrabold" style="${style}">${b}</div>`;
-                    else html += `<div class="branch-label palace-${i}-${b}" style="${style}">${b}</div>`;
+                    let wColor = WUXING_COLORS[b];
+                    let conf = branchConfig[b];
+                    let tjText = branchToTianJiang[b] ? branchToTianJiang[b] : "";
+                    
+                    let tjHtml = tjText ? `<span class="tian-jiang">${tjText}</span>` : "";
+                    let baseClasses = `branch-label ${conf.class}`;
+                    if (conf.vertical) baseClasses += ` vertical-label`;
+                    
+                    let hlClasses = "";
+                    if (b === currentMonthBranch) {
+                        hlClasses = " bg-yellow-200 px-1.5 py-0.5 rounded shadow-sm border border-yellow-400 z-30";
+                    }
+                    
+                    html += `<div class="${baseClasses}${hlClasses}" style="color: ${wColor};">
+                                <span>${b}</span>
+                                ${tjHtml}
+                             </div>`;
                 }
-                if(i===1) return html.replace('label palace-1-子', 'label -bottom-6 left-1/2 -translate-x-1/2');
-                if(i===8) return html.replace('label palace-8-丑', 'label -bottom-5 left-1/4').replace('label palace-8-寅', 'label top-3/4 -left-5');
-                if(i===3) return html.replace('label palace-3-卯', 'label top-1/2 -left-5 -translate-y-1/2');
-                if(i===4) return html.replace('label palace-4-辰', 'label bottom-3/4 -left-5').replace('label palace-4-巳', 'label -top-5 left-1/4');
-                if(i===9) return html.replace('label palace-9-午', 'label -top-6 left-1/2 -translate-x-1/2');
-                if(i===2) return html.replace('label palace-2-未', 'label -top-5 right-1/4').replace('label palace-2-申', 'label bottom-3/4 -right-5');
-                if(i===7) return html.replace('label palace-7-酉', 'label top-1/2 -right-5 -translate-y-1/2');
-                if(i===6) return html.replace('label palace-6-戌', 'label top-3/4 -right-5').replace('label palace-6-亥', 'label -bottom-5 right-1/4');
-                return "";
+                return html;
             };
 
             for (let i = 1; i <= 9; i++) {
@@ -1207,7 +1096,6 @@ document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].r
                     palaceNum: i
                 };
 
-                // UI陣列複製並反轉，讓寄干呈現在最前面並以 "/" 分隔
                 el.innerHTML = `${getBranchHTML(i)}
                     <div class="emoji-container">
                         ${isKong ? '<span>🈳</span>' : ''}
@@ -1226,15 +1114,15 @@ document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].r
                         <div class="flex justify-between items-end mt-auto">
                             <div class="mb-1">${renderStem(anGan, i, true)}</div>
                             <div class="flex flex-col items-end leading-tight text-main font-bold">
-                                <div class="mb-1">${[...hStems].reverse().map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
-                                <div class="border-t-[1.5px] border-gray-300 min-w-[2.5rem] text-right pt-0.5">${[...eStems].reverse().map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
+                                <!-- 🌟 移除 .reverse() 保持正干在前 / 寄干在後 -->
+                                <div class="mb-1">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
+                                <div class="border-t-[1.5px] border-gray-300 min-w-[2.5rem] text-right pt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
                             </div>
                         </div>
                     </div>`;
                 
                 let doorTextForCopy = pDoorDisplay + (isMenPo(pDoor, i) ? "(迫)" : "");
                 
-                // 複製字串邏輯：依序讀取天盤/地盤陣列，索引0為本干加上(天)/(地)，若有索引1則為寄干加上(寄天)/(寄地)，並以「+」連接
                 let hStemsForCopy = hStems.map((s, idx) => {
                     let txt = (useEnergy ? (STEM_ENERGY[s] ? STEM_ENERGY[s][i] : s) : s) + getStemTagsText(s, i);
                     return txt + (idx === 0 ? "(天)" : "(寄天)");
@@ -1245,7 +1133,18 @@ document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].r
                     return txt + (idx === 0 ? "(地)" : "(寄地)");
                 }).join('+');
 
-                panData.palaces[ACTIVE_PALACES[i].name] = `${godPan[i]}/${starTextDisplay}/${doorTextForCopy}/${hStemsForCopy}/${eStemsForCopy}${isMa?'/**驛馬**':''}${isKong?'/**空亡**':''}`;
+                // 複製排版：[天將(地支)/天將(地支)]
+                let tianJiangStrs = [];
+                if(BRANCH_POSITIONS_TEMPLATE[i]){
+                    for(let b of BRANCH_POSITIONS_TEMPLATE[i]){
+                        if(branchToTianJiang[b]) {
+                            tianJiangStrs.push(`${branchToTianJiang[b]}(${b})`);
+                        }
+                    }
+                }
+                let tianJiangCopyStr = tianJiangStrs.length ? `[${tianJiangStrs.join('/')}] ` : "";
+
+                panData.palaces[ACTIVE_PALACES[i].name] = `${tianJiangCopyStr}${godPan[i]}/${starTextDisplay}/${doorTextForCopy}/${hStemsForCopy}/${eStemsForCopy}${isMa?'/**驛馬**':''}${isKong?'/**空亡**':''}`;
             }
 
             document.querySelectorAll('.palace').forEach(p => p.classList.remove('palace-active'));
