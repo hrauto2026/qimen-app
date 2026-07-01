@@ -1169,7 +1169,7 @@
     function copyPan() {
         const ACTIVE_PALACES = useXianTian ? PALACES_XIAN : PALACES_HOU;
         const baziLine = panData.bazi + (panData.special ? " " + panData.special : "") + (panData.stemStatus ? " " + panData.stemStatus : "");
-        let text = `【奇門遁甲 - 拆補法排盤】\n時間：${baziLine}\n局數：${panData.ju}\n旬首：${panData.xun}\n值符：${panData.zf} | 值使：${panData.zs}\n空亡：${panData.kw} | 驛馬：${currentYiMaPalace}\n----------------------\n`;
+        let text = `【奇門遁甲 - 拆補法排盤[+穿壬十二天將]】\n時間：${baziLine}\n局數：${panData.ju}\n旬首：${panData.xun}\n值符：${panData.zf} | 值使：${panData.zs}\n空亡：${panData.kw} | 驛馬：${currentYiMaPalace}\n----------------------\n`;
         for (let i = 1; i <= 9; i++) {
             if(i!==5) {
                 let pName = ACTIVE_PALACES[i].name;
