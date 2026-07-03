@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>奇門遁甲 - 拆補法排盤 (v25)</title>
+    <title>奇門遁甲 - 拆補法排盤 (v26)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
     <style>
-        /* 基礎古典優雅主題 */
         body { 
             font-family: 'BiauKai', 'DFKai-SB', 'Kaiti', 'STKaiti', 'Noto Serif TC', serif; 
             background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
@@ -20,29 +19,27 @@
             transition: all 0.5s ease;
         }
         
-        /* 增加 grid-wrapper 的 padding 以容納四周突出的地支與天將 */
         .grid-wrapper { 
-            padding: 50px 60px; 
+            padding: 40px 50px; 
             overflow-x: auto; 
             -webkit-overflow-scrolling: touch; 
         }
         @media (max-width: 640px) {
-            .grid-wrapper { padding: 40px 35px; } /* 手機版內收縮放 */
-            .grid-qimen { gap: 10px !important; margin: 0 auto; width: calc(100% - 10px); }
-            .palace { min-height: 160px !important; padding: 6px !important; }
-            .branch-label { font-size: 1rem !important; }
-            .tian-jiang { font-size: 0.7rem !important; }
-            .pos-left { left: -25px !important; }
-            .pos-right { right: -25px !important; }
-            .pos-top { top: -25px !important; }
-            .pos-bottom { bottom: -25px !important; }
+            .grid-wrapper { padding: 30px 25px; }
+            .grid-qimen { gap: 8px !important; margin: 0 auto; width: calc(100% - 6px); }
+            .palace { min-height: 150px !important; padding: 5px !important; }
+            .branch-label { font-size: 0.9rem !important; }
+            .tian-jiang { font-size: 0.65rem !important; }
+            .pos-left { left: -22px !important; }
+            .pos-right { right: -22px !important; }
+            .pos-top { top: -22px !important; }
+            .pos-bottom { bottom: -22px !important; }
         }
 
-        .grid-qimen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 600px; min-width: 300px; margin: auto; }
+        .grid-qimen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 550px; min-width: 280px; margin: auto; }
         
-        /* 宮位基礎樣式 */
         .palace { 
-            position: relative; border-radius: 10px; padding: 10px; min-height: 200px; 
+            position: relative; border-radius: 10px; padding: 10px; min-height: 180px; 
             display: flex; flex-direction: column; box-shadow: 0 3px 10px rgba(0,0,0,0.08); 
             border: 1.5px solid; background-color: rgba(255, 255, 255, 0.95); 
             transition: all 0.3s ease; cursor: pointer;
@@ -57,188 +54,370 @@
         .bg-metal { background-color: #fffbeb; border-color: #fde68a; } .text-metal { color: #b45309; }
         .bg-white-palace { background-color: #ffffff; border-color: #e2e8f0; } 
         
-        .text-main { font-size: clamp(0.95rem, 2.5vw, 1.35rem); line-height: 1.1; }
+        .text-main { font-size: clamp(0.9rem, 2.2vw, 1.25rem); line-height: 1.1; }
         .text-palace-name { font-weight: 900; }
         
         .day-stem { display: inline-block; background-color: #f3e8ff; border: 1.5px solid #a855f7; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         .hour-stem { display: inline-block; background-color: #ffedd5; border: 1.5px solid #f97316; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         
-        .emoji-container { position: absolute; top: 6px; right: 6px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 1.3rem; line-height: 1; z-index: 10; }
+        .emoji-container { position: absolute; top: 6px; right: 6px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 1.1rem; line-height: 1; z-index: 10; }
 
-        /* ================= 外圍標籤(地支+天將) 基礎樣式 ================= */
         .branch-label {
             position: absolute;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             font-weight: 900;
             pointer-events: none;
             white-space: nowrap;
             z-index: 20;
         }
 
-        /* 天將文字樣式 */
         .tian-jiang {
-            font-size: 0.75rem;
-            color: #7e22ce; /* purple-700 */
-            margin-left: 4px;
+            font-size: 0.7rem;
+            color: #7e22ce; 
+            margin-left: 3px;
         }
 
-        /* 垂直排列的容器 (套用於左右兩側) */
         .vertical-label {
             flex-direction: column;
             line-height: 1.1;
         }
         .vertical-label .tian-jiang {
             margin-left: 0;
-            margin-top: 4px;
-            writing-mode: vertical-lr; /* 垂直書寫 */
-            letter-spacing: 2px;
+            margin-top: 3px;
+            writing-mode: vertical-lr; 
+            letter-spacing: 1px;
         }
 
-        /* ================= 極致對稱定位設定 ================= */
-        .pos-top { top: -35px; left: 50%; transform: translateX(-50%); }
-        .pos-bottom { bottom: -35px; left: 50%; transform: translateX(-50%); }
-        .pos-left { top: 50%; left: -35px; transform: translateY(-50%); }
-        .pos-right { top: 50%; right: -35px; transform: translateY(-50%); }
+        .pos-top { top: -30px; left: 50%; transform: translateX(-50%); }
+        .pos-bottom { bottom: -30px; left: 50%; transform: translateX(-50%); }
+        .pos-left { top: 50%; left: -30px; transform: translateY(-50%); }
+        .pos-right { top: 50%; right: -30px; transform: translateY(-50%); }
 
+        /* Slide Panel Transition */
+        .slide-panel {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+
+        /* 篩選條件 Checkbox 標籤樣式 */
+        .chk-label {
+            display: inline-flex; align-items: center; gap: 3px;
+            background-color: #fff; border: 1px solid #e5e7eb;
+            padding: 2px 6px; border-radius: 6px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chk-label:hover { background-color: #fef3c7; border-color: #fcd34d; }
+        .chk-label input:checked + span { color: #d97706; font-weight: 900; }
+        .chk-label input { accent-color: #f59e0b; width: 12px; height: 12px; }
     </style>
 </head>
-<body class="p-2 md:p-8">
+<body class="p-2 md:p-6">
 
-<div class="max-w-4xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-4 md:p-8 border border-white main-container">
-    <h1 class="text-2xl md:text-4xl text-center mb-6 text-indigo-900 tracking-widest">
-        奇門遁甲 - 拆補法排盤(<a href="https://hrauto2026.github.io/qimen-app/index.html" class="title-link hover:text-indigo-600 transition-colors duration-300">返回主頁</a>)
-    </h1>
+<!-- 全局主容器，在大螢幕開啟篩選面板時自動切換為雙欄 -->
+<div id="app-workspace" class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     
-    <div class="flex flex-wrap justify-center items-center gap-2 mb-4 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100 shadow-inner">
-        <!-- Mode Toggle Button -->
-        <button id="btn-mode-toggle" onclick="toggleInputMode()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold py-1.5 px-4 rounded-lg shadow-sm text-sm transition-colors border border-indigo-200">四柱方式</button>
+    <!-- 左欄/主欄：原本的起盤工具與奇門盤面 (佔 8 欄或全寬) -->
+    <div id="main-panel" class="lg:col-span-12 space-y-6 transition-all duration-500">
+        <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-4 md:p-6 border border-white main-container">
+            <h1 class="text-2xl md:text-3xl text-center mb-4 text-indigo-900 tracking-widest">
+                奇門遁甲 - 拆補法排盤(<a href="https://hrauto2026.github.io/qimen-app/index.html" class="title-link hover:text-indigo-600 transition-colors duration-300">返回主頁</a>)
+            </h1>
+            
+            <div class="flex flex-wrap justify-center items-center gap-2 mb-4 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100 shadow-inner">
+                <!-- Mode Toggle Button -->
+                <button id="btn-mode-toggle" onclick="toggleInputMode()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold py-1.5 px-4 rounded-lg shadow-sm text-sm transition-colors border border-indigo-200">四柱方式</button>
 
-        <!-- Standard Date Selectors -->
-        <div id="date-selectors" class="flex flex-wrap justify-center items-center gap-2">
-            <div class="flex items-center gap-1">
-                <select id="sel-year" class="p-1 border border-gray-300 rounded bg-white text-base outline-none" onchange="updateJieQiYearBtn()"></select>
-                <span class="text-gray-600 text-sm">年</span>
-            </div>
-            <div class="flex items-center gap-1">
-                <select id="sel-month" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
-                <span class="text-gray-600 text-sm">月</span>
-            </div>
-            <div class="flex items-center gap-1">
-                <select id="sel-day" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
-                <span class="text-gray-600 text-sm">日</span>
-            </div>
-            <div class="flex items-center gap-1">
-                <select id="sel-hour24" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
-                <span class="text-gray-600 text-sm">時</span>
-            </div>
-            <div class="flex items-center gap-1">
-                <select id="sel-minute" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
-                <span class="text-gray-600 text-sm">分</span>
-            </div>
-        </div>
+                <!-- Standard Date Selectors -->
+                <div id="date-selectors" class="flex flex-wrap justify-center items-center gap-2">
+                    <div class="flex items-center gap-1">
+                        <select id="sel-year" class="p-1 border border-gray-300 rounded bg-white text-base outline-none" onchange="updateJieQiYearBtn()"></select>
+                        <span class="text-gray-600 text-sm">年</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <select id="sel-month" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
+                        <span class="text-gray-600 text-sm">月</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <select id="sel-day" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
+                        <span class="text-gray-600 text-sm">日</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <select id="sel-hour24" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
+                        <span class="text-gray-600 text-sm">時</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <select id="sel-minute" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
+                        <span class="text-gray-600 text-sm">分</span>
+                    </div>
+                </div>
 
-        <!-- Bazi Selectors (Hidden by default) -->
-        <div id="bazi-selectors" class="hidden justify-center items-center gap-2 flex-wrap">
-            <div class="flex items-center gap-1">
-                <select id="sel-bazi-y" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
-                <span class="text-gray-600 text-sm font-bold">年</span>
-            </div>
-            <div class="flex items-center gap-1">
-                <select id="sel-bazi-m" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
-                <span class="text-gray-600 text-sm font-bold">月</span>
-            </div>
-            <div class="flex items-center gap-1">
-                <select id="sel-bazi-d" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
-                <span class="text-gray-600 text-sm font-bold">日</span>
-            </div>
-            <div class="flex items-center gap-1">
-                <select id="sel-bazi-h" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
-                <span class="text-gray-600 text-sm font-bold">時</span>
-            </div>
-        </div>
+                <!-- Bazi Selectors (Hidden by default) -->
+                <div id="bazi-selectors" class="hidden justify-center items-center gap-2 flex-wrap">
+                    <div class="flex items-center gap-1">
+                        <select id="sel-bazi-y" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
+                        <span class="text-gray-600 text-sm font-bold">年</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <select id="sel-bazi-m" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
+                        <span class="text-gray-600 text-sm font-bold">月</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <select id="sel-bazi-d" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
+                        <span class="text-gray-600 text-sm font-bold">日</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <select id="sel-bazi-h" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
+                        <span class="text-gray-600 text-sm font-bold">時</span>
+                    </div>
+                </div>
 
-        <!-- Action Buttons -->
-        <div class="w-full sm:w-auto flex justify-center gap-2 mt-2 sm:mt-0 transition-opacity" id="action-buttons-group">
-            <button id="btn-now" onclick="resetToNow()" class="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-3 rounded-lg shadow text-sm transition-all">現在時間</button>
-            <!-- Modified click handler to branch logic based on mode -->
-            <button onclick="handleGenerateBtn()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-1.5 px-5 rounded-lg shadow text-sm">起盤</button>
-            <button id="btn-show-jieqi" onclick="showJieQiModal()" class="bg-teal-600 hover:bg-teal-700 text-white py-1.5 px-3 rounded-lg shadow text-xs transition-all">🗓️ <span id="btn-jieqi-year"></span>年廿四節氣</button>
+                <!-- Action Buttons -->
+                <div class="w-full sm:w-auto flex flex-wrap justify-center gap-2 mt-2 sm:mt-0 transition-opacity" id="action-buttons-group">
+                    <button id="btn-now" onclick="resetToNow()" class="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-3 rounded-lg shadow text-sm transition-all">現在時間</button>
+                    <button onclick="handleGenerateBtn()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-1.5 px-5 rounded-lg shadow text-sm font-bold">起盤</button>
+                    <button id="btn-show-jieqi" onclick="showJieQiModal()" class="bg-teal-600 hover:bg-teal-700 text-white py-1.5 px-3 rounded-lg shadow text-xs transition-all">🗓️ <span id="btn-jieqi-year"></span>年廿四節氣</button>
+                    <!-- 項目 3 條件篩選面板開啟鈕 -->
+                    <button id="btn-toggle-filter" onclick="toggleFilterPanel()" class="bg-amber-500 hover:bg-amber-600 text-white py-1.5 px-3 rounded-lg shadow text-xs font-bold flex items-center gap-1">🔍 條件篩選起盤</button>
+                </div>
+            </div>
+
+            <div id="pan-header" class="hidden mb-4 p-4 border-l-4 border-indigo-500 bg-indigo-50/80 rounded-r-lg text-gray-800 shadow-sm">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-2 gap-2">
+                    <h2 class="text-base sm:text-lg md:text-xl text-indigo-900 font-bold" id="info-bazi"></h2>
+                    <div class="flex space-x-2">
+                        <button onclick="shiftHour(-1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">◀ 前一時辰</button>
+                        <button onclick="shiftHour(1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">後一時辰 ▶</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2 text-sm sm:text-base md:text-lg leading-tight">
+                    <div><span class="text-gray-500">節氣：</span><span id="info-jieqi" class="text-indigo-800 font-bold"></span></div>
+                    <div><span class="text-gray-500">局數：</span><span id="info-ju" class="text-red-600 font-bold"></span></div>
+                    <div><span class="text-gray-500">旬首：</span><span id="info-xunshou"></span></div>
+                    <div><span class="text-gray-500">值符：</span><span id="info-zhifu"></span></div>
+                    <div><span class="text-gray-500">值使：</span><span id="info-zhishi"></span></div>
+                    <div><span class="text-gray-500">空亡：</span><span id="info-kongwang"></span></div>
+                </div>
+                <div id="info-special" class="hidden text-sm sm:text-base md:text-lg mt-1 border-t border-indigo-200 pt-1 font-bold"></div>
+            </div>
+
+            <div class="grid-wrapper">
+                <div id="qimen-grid" class="grid-qimen hidden">
+                    <div id="palace-4" class="palace bg-wood" onclick="highlightPalace(this)"></div>
+                    <div id="palace-9" class="palace bg-fire" onclick="highlightPalace(this)"></div>
+                    <div id="palace-2" class="palace bg-brown" onclick="highlightPalace(this)"></div>
+                    <div id="palace-3" class="palace bg-wood" onclick="highlightPalace(this)"></div>
+                    <div id="palace-5" class="palace bg-white-palace" onclick="highlightPalace(this)"></div>
+                    <div id="palace-7" class="palace bg-metal" onclick="highlightPalace(this)"></div>
+                    <div id="palace-8" class="palace bg-brown" onclick="highlightPalace(this)"></div>
+                    <div id="palace-1" class="palace bg-water" onclick="highlightPalace(this)"></div>
+                    <div id="palace-6" class="palace bg-metal" onclick="highlightPalace(this)"></div>
+                </div>
+            </div>
+
+            <div class="flex justify-center items-center mt-6 hidden gap-4 flex-wrap" id="action-footer">
+                <button onclick="copyPan()" class="bg-slate-800 hover:bg-black text-white py-2 px-4 rounded-full shadow-lg transition active:scale-95 flex items-center justify-center text-sm">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    複製盤面資料
+                </button>
+                <button onclick="sharePan()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-full shadow-lg transition active:scale-95 flex items-center justify-center text-sm">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                    分享起盤連結
+                </button>
+
+                <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-indigo-100">
+                    <span class="text-xs font-bold text-gray-700" id="bagua-label">先天八卦數</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle-bagua" class="sr-only peer" onchange="toggleBaGua()">
+                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 shadow-inner"></div>
+                    </label>
+                </div>
+                <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-orange-100">
+                    <span class="text-xs font-bold text-gray-700" id="energy-label">能量狀態</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle-energy" class="sr-only peer" onchange="toggleEnergy()">
+                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500 shadow-inner"></div>
+                    </label>
+                </div>
+                <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-green-100">
+                    <span class="text-xs font-bold text-gray-700">內外盤</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle-neiwai" class="sr-only peer" onchange="toggleNeiWai()">
+                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500 shadow-inner"></div>
+                    </label>
+                </div>
+                <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-blue-100">
+                    <span class="text-xs font-bold text-gray-700">按宮看格局</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle-palacemodal" class="sr-only peer" onchange="togglePalaceModal()">
+                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500 shadow-inner"></div>
+                    </label>
+                </div>
+                <div class="w-full text-center mt-2">
+                    <span class="text-xs text-gray-400 font-normal">(created by RS2026)</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="pan-header" class="hidden mb-4 p-4 border-l-4 border-indigo-500 bg-indigo-50/80 rounded-r-lg text-gray-800 shadow-sm">
-        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-2 gap-2">
-            <h2 class="text-base sm:text-lg md:text-xl text-indigo-900 font-bold" id="info-bazi"></h2>
-            <div class="flex space-x-2">
-                <button onclick="shiftHour(-1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">◀ 前一時辰</button>
-                <button onclick="shiftHour(1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">後一時辰 ▶</button>
+    <!-- 右欄：條件篩選控制面板 (預設隱藏，點擊起盤按鈕側邊劃出) -->
+    <div id="filter-panel" class="hidden lg:col-span-4 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-5 border border-amber-200 slide-panel overflow-y-auto max-h-[90vh]">
+        <div class="flex justify-between items-center mb-4 pb-2 border-b-2 border-amber-100">
+            <h3 class="text-lg font-black text-amber-900 flex items-center gap-1.5">
+                <span>🔍 條件篩選</span>
+            </h3>
+            <button onclick="toggleFilterPanel()" class="text-gray-400 hover:text-black font-bold text-lg">✖</button>
+        </div>
+
+        <!-- 篩選條件設定窗 -->
+        <div class="space-y-4">
+            <!-- 搜尋區間 -->
+            <div>
+                <label class="block text-xs text-amber-800 font-bold mb-1">開始日期 (YYYY/MM/DD)</label>
+                <input type="text" id="filter-start-date" class="w-full p-2 border border-amber-300 rounded-lg text-sm bg-white outline-none focus:ring-2 focus:ring-amber-500" value="">
+                <p class="text-[11px] text-gray-500 mt-1">※ 系統將自動搜尋此日期起算 <span class="font-bold text-amber-600">30 天</span> 內所有時辰符合條件之盤面。</p>
+            </div>
+
+            <!-- 宮位條件定義 -->
+            <div class="p-3 bg-amber-50/50 rounded-xl border border-amber-100/80 space-y-3">
+                <div class="flex items-center gap-1 mb-2">
+                    <span class="text-xs font-bold text-amber-800">1. 指定宮位：</span>
+                    <select id="filter-target-palace" class="p-1 border border-amber-200 rounded text-xs bg-white outline-none font-bold text-amber-900 focus:ring-1 focus:ring-amber-500">
+                        <option value="1">坎一宮</option>
+                        <option value="8">艮八宮</option>
+                        <option value="3">震三宮</option>
+                        <option value="4">巽四宮</option>
+                        <option value="9" selected>離九宮</option>
+                        <option value="2">坤二宮</option>
+                        <option value="7">兌七宮</option>
+                        <option value="6">乾六宮</option>
+                    </select>
+                </div>
+
+                <span class="block text-[11px] font-bold text-gray-500 border-t border-amber-200/50 pt-2 mb-1">2. 該宮內包含之元素 (可複選，皆留空表無限制)：</span>
+                
+                <div class="flex flex-col gap-1.5">
+                    <!-- 八神 (摺疊選單) -->
+                    <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm" open>
+                        <summary class="p-2 cursor-pointer text-xs font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none">
+                            <span>八神</span>
+                            <span class="transform group-open:rotate-180 transition-transform duration-200 text-[10px]">▼</span>
+                        </summary>
+                        <div class="p-2.5 flex flex-wrap gap-1.5" id="chk-group-god">
+                            <label class="chk-label"><input type="checkbox" value="值符"><span class="text-[11px] text-gray-700">值符</span></label>
+                            <label class="chk-label"><input type="checkbox" value="螣蛇"><span class="text-[11px] text-gray-700">螣蛇</span></label>
+                            <label class="chk-label"><input type="checkbox" value="太陰"><span class="text-[11px] text-gray-700">太陰</span></label>
+                            <label class="chk-label"><input type="checkbox" value="六合"><span class="text-[11px] text-gray-700">六合</span></label>
+                            <label class="chk-label"><input type="checkbox" value="白虎"><span class="text-[11px] text-gray-700">白虎</span></label>
+                            <label class="chk-label"><input type="checkbox" value="玄武"><span class="text-[11px] text-gray-700">玄武</span></label>
+                            <label class="chk-label"><input type="checkbox" value="九地"><span class="text-[11px] text-gray-700">九地</span></label>
+                            <label class="chk-label"><input type="checkbox" value="九天"><span class="text-[11px] text-gray-700">九天</span></label>
+                        </div>
+                    </details>
+
+                    <!-- 九星 (摺疊選單) -->
+                    <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
+                        <summary class="p-2 cursor-pointer text-xs font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none">
+                            <span>九星</span>
+                            <span class="transform group-open:rotate-180 transition-transform duration-200 text-[10px]">▼</span>
+                        </summary>
+                        <div class="p-2.5 flex flex-wrap gap-1.5" id="chk-group-star">
+                            <label class="chk-label"><input type="checkbox" value="天蓬"><span class="text-[11px] text-gray-700">天蓬</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天任"><span class="text-[11px] text-gray-700">天任</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天衝"><span class="text-[11px] text-gray-700">天衝</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天輔"><span class="text-[11px] text-gray-700">天輔</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天英"><span class="text-[11px] text-gray-700">天英</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天芮"><span class="text-[11px] text-gray-700">天芮</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天柱"><span class="text-[11px] text-gray-700">天柱</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天心"><span class="text-[11px] text-gray-700">天心</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天禽"><span class="text-[11px] text-gray-700">天禽</span></label>
+                        </div>
+                    </details>
+
+                    <!-- 八門 (摺疊選單) -->
+                    <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
+                        <summary class="p-2 cursor-pointer text-xs font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none">
+                            <span>八門</span>
+                            <span class="transform group-open:rotate-180 transition-transform duration-200 text-[10px]">▼</span>
+                        </summary>
+                        <div class="p-2.5 flex flex-wrap gap-1.5" id="chk-group-door">
+                            <label class="chk-label"><input type="checkbox" value="休門"><span class="text-[11px] text-gray-700">休門</span></label>
+                            <label class="chk-label"><input type="checkbox" value="生門"><span class="text-[11px] text-gray-700">生門</span></label>
+                            <label class="chk-label"><input type="checkbox" value="傷門"><span class="text-[11px] text-gray-700">傷門</span></label>
+                            <label class="chk-label"><input type="checkbox" value="杜門"><span class="text-[11px] text-gray-700">杜門</span></label>
+                            <label class="chk-label"><input type="checkbox" value="景門"><span class="text-[11px] text-gray-700">景門</span></label>
+                            <label class="chk-label"><input type="checkbox" value="死門"><span class="text-[11px] text-gray-700">死門</span></label>
+                            <label class="chk-label"><input type="checkbox" value="驚門"><span class="text-[11px] text-gray-700">驚門</span></label>
+                            <label class="chk-label"><input type="checkbox" value="開門"><span class="text-[11px] text-gray-700">開門</span></label>
+                        </div>
+                    </details>
+
+                    <!-- 天盤干 (摺疊選單) -->
+                    <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
+                        <summary class="p-2 cursor-pointer text-xs font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none">
+                            <span>天盤干</span>
+                            <span class="transform group-open:rotate-180 transition-transform duration-200 text-[10px]">▼</span>
+                        </summary>
+                        <div class="p-2.5 flex flex-wrap gap-1.5" id="chk-group-hstem">
+                            <label class="chk-label"><input type="checkbox" value="甲"><span class="text-[11px] text-gray-700">甲</span></label>
+                            <label class="chk-label"><input type="checkbox" value="乙"><span class="text-[11px] text-gray-700">乙</span></label>
+                            <label class="chk-label"><input type="checkbox" value="丙"><span class="text-[11px] text-gray-700">丙</span></label>
+                            <label class="chk-label"><input type="checkbox" value="丁"><span class="text-[11px] text-gray-700">丁</span></label>
+                            <label class="chk-label"><input type="checkbox" value="戊"><span class="text-[11px] text-gray-700">戊</span></label>
+                            <label class="chk-label"><input type="checkbox" value="己"><span class="text-[11px] text-gray-700">己</span></label>
+                            <label class="chk-label"><input type="checkbox" value="庚"><span class="text-[11px] text-gray-700">庚</span></label>
+                            <label class="chk-label"><input type="checkbox" value="辛"><span class="text-[11px] text-gray-700">辛</span></label>
+                            <label class="chk-label"><input type="checkbox" value="壬"><span class="text-[11px] text-gray-700">壬</span></label>
+                            <label class="chk-label"><input type="checkbox" value="癸"><span class="text-[11px] text-gray-700">癸</span></label>
+                        </div>
+                    </details>
+
+                    <!-- 地盤干 (摺疊選單) -->
+                    <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
+                        <summary class="p-2 cursor-pointer text-xs font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none">
+                            <span>地盤干</span>
+                            <span class="transform group-open:rotate-180 transition-transform duration-200 text-[10px]">▼</span>
+                        </summary>
+                        <div class="p-2.5 flex flex-wrap gap-1.5" id="chk-group-estem">
+                            <label class="chk-label"><input type="checkbox" value="甲"><span class="text-[11px] text-gray-700">甲</span></label>
+                            <label class="chk-label"><input type="checkbox" value="乙"><span class="text-[11px] text-gray-700">乙</span></label>
+                            <label class="chk-label"><input type="checkbox" value="丙"><span class="text-[11px] text-gray-700">丙</span></label>
+                            <label class="chk-label"><input type="checkbox" value="丁"><span class="text-[11px] text-gray-700">丁</span></label>
+                            <label class="chk-label"><input type="checkbox" value="戊"><span class="text-[11px] text-gray-700">戊</span></label>
+                            <label class="chk-label"><input type="checkbox" value="己"><span class="text-[11px] text-gray-700">己</span></label>
+                            <label class="chk-label"><input type="checkbox" value="庚"><span class="text-[11px] text-gray-700">庚</span></label>
+                            <label class="chk-label"><input type="checkbox" value="辛"><span class="text-[11px] text-gray-700">辛</span></label>
+                            <label class="chk-label"><input type="checkbox" value="壬"><span class="text-[11px] text-gray-700">壬</span></label>
+                            <label class="chk-label"><input type="checkbox" value="癸"><span class="text-[11px] text-gray-700">癸</span></label>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <!-- 篩選搜尋按鈕列 -->
+            <div class="flex gap-2 w-full">
+                <button onclick="resetFilter()" class="w-1/3 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl shadow transition active:scale-[0.98] flex items-center justify-center gap-1 text-sm border border-gray-300">
+                    <span>清除重置</span>
+                </button>
+                <button onclick="executeRealSearch()" class="w-2/3 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow transition active:scale-[0.98] flex items-center justify-center gap-1 text-sm">
+                    <span>⚡ 開始篩選</span>
+                </button>
             </div>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2 text-sm sm:text-base md:text-lg leading-tight">
-            <div><span class="text-gray-500">節氣：</span><span id="info-jieqi" class="text-indigo-800 font-bold"></span></div>
-            <div><span class="text-gray-500">局數：</span><span id="info-ju" class="text-red-600 font-bold"></span></div>
-            <div><span class="text-gray-500">旬首：</span><span id="info-xunshou"></span></div>
-            <div><span class="text-gray-500">值符：</span><span id="info-zhifu"></span></div>
-            <div><span class="text-gray-500">值使：</span><span id="info-zhishi"></span></div>
-            <div><span class="text-gray-500">空亡：</span><span id="info-kongwang"></span></div>
-        </div>
-        <div id="info-special" class="hidden text-sm sm:text-base md:text-lg mt-1 border-t border-indigo-200 pt-1 font-bold"></div>
-    </div>
 
-    <div class="grid-wrapper">
-        <div id="qimen-grid" class="grid-qimen hidden">
-            <div id="palace-4" class="palace bg-wood" onclick="highlightPalace(this)"></div>
-            <div id="palace-9" class="palace bg-fire" onclick="highlightPalace(this)"></div>
-            <div id="palace-2" class="palace bg-brown" onclick="highlightPalace(this)"></div>
-            <div id="palace-3" class="palace bg-wood" onclick="highlightPalace(this)"></div>
-            <div id="palace-5" class="palace bg-white-palace" onclick="highlightPalace(this)"></div>
-            <div id="palace-7" class="palace bg-metal" onclick="highlightPalace(this)"></div>
-            <div id="palace-8" class="palace bg-brown" onclick="highlightPalace(this)"></div>
-            <div id="palace-1" class="palace bg-water" onclick="highlightPalace(this)"></div>
-            <div id="palace-6" class="palace bg-metal" onclick="highlightPalace(this)"></div>
-        </div>
-    </div>
-
-    <div class="flex justify-center items-center mt-6 hidden gap-4 flex-wrap" id="action-footer">
-        <button onclick="copyPan()" class="bg-slate-800 hover:bg-black text-white py-2.5 px-6 rounded-full shadow-lg transition active:scale-95 flex items-center justify-center text-base">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-            複製盤面資料
-        </button>
-        <button onclick="sharePan()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 px-6 rounded-full shadow-lg transition active:scale-95 flex items-center justify-center text-base">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-            分享起盤連結
-        </button>
-
-        <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow border border-indigo-100">
-            <span class="text-sm font-bold text-gray-700" id="bagua-label">先天八卦數</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="toggle-bagua" class="sr-only peer" onchange="toggleBaGua()">
-                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed shadow-inner"></div>
-            </label>
-        </div>
-        <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow border border-orange-100">
-            <span class="text-sm font-bold text-gray-700" id="energy-label">能量狀態</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="toggle-energy" class="sr-only peer" onchange="toggleEnergy()">
-                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed shadow-inner"></div>
-            </label>
-        </div>
-        <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow border border-green-100">
-            <span class="text-sm font-bold text-gray-700">內外盤</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="toggle-neiwai" class="sr-only peer" onchange="toggleNeiWai()">
-                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed shadow-inner"></div>
-            </label>
-        </div>
-        <div class="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow border border-blue-100">
-            <span class="text-sm font-bold text-gray-700">按宮看格局</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="toggle-palacemodal" class="sr-only peer" onchange="togglePalaceModal()">
-                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed shadow-inner"></div>
-            </label>
+        <!-- 搜尋成果列表 -->
+        <div class="mt-5 pt-4 border-t border-gray-100">
+            <h4 class="text-xs font-bold text-gray-500 mb-2 flex justify-between items-center">
+                <span>📋 符合條件之奇門遁甲組合</span>
+                <span id="filter-results-count" class="text-xs bg-amber-100 text-amber-800 px-1.5 rounded-full font-black">0 筆</span>
+            </h4>
+            
+            <div id="filter-results-list" class="space-y-2 max-h-[30vh] overflow-y-auto pr-1">
+                <div class="p-3 text-center text-gray-400 text-xs bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                    設定好上方的條件<br>然後按下按鈕即可獲得符合之奇門遁甲列表！
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -281,14 +460,12 @@
     </div>
 </div>
 
-<!-- 新增：四柱搜尋結果 Modal -->
 <div id="bazi-modal" class="fixed inset-0 bg-gray-900/60 hidden flex justify-center items-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-5 max-w-md w-full max-h-[80vh] overflow-y-auto relative border-t-8 border-amber-500">
         <button onclick="document.getElementById('bazi-modal').classList.add('hidden')" class="absolute top-3 right-4 text-gray-400 hover:text-black text-2xl">✖</button>
         <h3 class="text-xl mb-2 text-center text-amber-800 font-bold tracking-widest">四柱搜尋結果</h3>
         <p class="text-xs text-gray-500 text-center mb-4">搜尋範圍：1930年至2050年</p>
         <div id="bazi-result-list" class="flex flex-col border border-gray-100 rounded-lg overflow-hidden max-h-[50vh] overflow-y-auto">
-            <!-- Results injected here -->
         </div>
     </div>
 </div>
@@ -300,7 +477,7 @@
     const JIA_ZI_ARRAY = []; 
     for(let i=0; i<60; i++) JIA_ZI_ARRAY.push(STEMS[i%10] + BRANCHES[i%12]);
 
-    // --- 載入奇門典籍格局陣列 ---
+    // 格局字典
     const RAW_GEJU_DATA = [
         [
             "值符伏吟 (戊+戊)。《奇門遁甲秘笈大全》(戊+戊)：『凡事閉塞，靜守為吉。』(凶)",
@@ -328,7 +505,7 @@
             "青龍返首 (戊+丙)。《奇門遁甲秘笈大全》(戊+丙)：『動作大吉，若逢迫、墓、擊、刑，吉事成凶。』(吉)",
             "奇儀順遂 (乙+丙)。《奇門遁甲秘笈大全》(乙+丙)：『吉星遷官進職，凶星夫妻離別。』(吉)",
             "月奇孛師 (丙+丙)。《奇門遁甲秘笈大全》(丙+丙)：『文書逼迫，破耗遺失。』；《奇門法竅》：『丙加丙，為悖格，主客相傷，諸事逆理，不吉，出入往返，戰敗自傷。』(凶)",
-            "星隨月轉 (丁+丙)。《奇門遁甲秘笈大全》(丁+丙)：『貴人越級高升，常人樂里生悲。』；《奇門法竅》：『丁加丙，為星隨月轉，貴人越級超升，主客皆利，諸謀遂心，三門合，享太平。』(吉)",
+            "星隨月轉 (丁+丙)。《奇門遁甲秘笈大全》(丁+丙)：『貴人越級高升，常人樂里生悲。』；《奇門法竅}：『丁加丙，為星隨月轉，貴人越級超升，主客皆利，諸謀遂心，三門合，享太平。』(吉)",
             "火孛地戶 (己+丙)。《奇門遁甲秘笈大全》(己+丙)：『陽人冤枉相害，陰人必致淫污。』；《奇門法竅》：『己加丙，為火孛入地戶，陽人有相害之事，女人有被淫之占，凡為不亨，遇回首可得安康。』(凶)",
             "太白入熒 (庚+丙)。《奇門遁甲秘笈大全》(庚+丙)：『占賊必來，為客進利，為主破財。』(凶)",
             "干合孛師 (辛+丙)。《奇門遁甲秘笈大全》(辛+丙)：『熒惑出現，占雨無，占晴旱，占事必因財致訟。』(凶)",
@@ -366,7 +543,7 @@
             "太白同宮 (庚+庚)。《奇門遁甲秘笈大全》(庚+庚)：『官災橫禍，兄弟雷攻。』(凶)",
             "白虎出力 (辛+庚)。《奇門遁甲秘笈大全》(辛+庚)：『刀刃相接，主客相殘，遜讓退步，稍可強進，血濺衣衫。』(凶)",
             "太白擒蛇 (壬+庚)。《奇門遁甲秘笈大全》(壬+庚)：『刑獄公平，立剖邪正。』(平)",
-            "太白入網 (癸+庚)。《奇門遁甲秘笈大全》(癸+庚)：『以暴爭訟力平。』；《奇門法竅》：『癸加庚，為大格，凡謀事無成就，吉事定成空。』(凶)"
+            "太白入網 (癸+庚)。《奇門遁甲秘笈大全》(癸+庚)：『以暴爭訟力平。』；《奇門法竅》：『癸加庚，為大格，凡謀事無成就，吉事定成空.』(凶)"
         ],
         [
             "青龍折足 (戊+辛)。《奇門遁甲秘笈大全》(戊+辛)：『吉門生助尚可謀為，若逢凶門，主招災、失財、有足疾。』(凶)",
@@ -454,7 +631,7 @@
     const WUXING_COLORS = { '甲': '#15803d', '乙': '#15803d', '寅': '#15803d', '卯': '#15803d', '丙': '#b91c1c', '丁': '#b91c1c', '巳': '#b91c1c', '午': '#b91c1c', '戊': '#78350f', '己': '#78350f', '辰': '#78350f', '戌': '#78350f', '丑': '#78350f', '未': '#78350f', '庚': '#d97706', '辛': '#d97706', '申': '#d97706', '酉': '#d97706', '壬': '#0369a1', '癸': '#0369a1', '亥': '#0369a1', '子': '#0369a1' };
     const CLASH_MAP = { "子":"午", "午":"子", "丑":"未", "未":"丑", "寅":"申", "申":"寅", "卯":"酉", "酉":"卯", "辰":"戌", "戌":"辰", "巳":"亥", "亥":"巳" };
 
-    // --- 大六壬十二天將相關陣列 ---
+    // 大六壬天將
     const TIAN_JIANG_LIST = ['貴人', '螣蛇', '朱雀', '六合', '勾陳', '青龍', '天空', '白虎', '太常', '玄武', '太陰', '天后'];
     const ZQ_MAP = {"雨水": "亥", "春分": "戌", "谷雨": "酉", "穀雨": "酉", "小满": "申", "小滿": "申", "夏至": "未", "大暑": "午", "处暑": "巳", "處暑": "巳", "秋分": "辰", "霜降": "卯", "小雪": "寅", "冬至": "丑", "大寒": "子"};
     const GUI_REN_MAP = {
@@ -469,9 +646,8 @@
         '壬': { day: '巳', night: '卯' },
         '癸': { day: '巳', night: '卯' }
     };
-    const BRANCH_TO_PALACE = { '子': 1, '丑': 8, '寅': 8, '卯': 3, '辰': 4, '巳': 4, '午': 9, '未': 2, '申': 2, '酉': 7, '戌': 6, '亥': 6 };
 
-    // --- 能量狀態字典 ---
+    // 能量狀態字典
     const STAR_ENERGY = {
         '天蓬': {1:'相', 8:'囚', 3:'旺', 4:'旺', 9:'休', 2:'囚', 7:'廢', 6:'廢'},
         '天芮': {1:'休', 8:'相', 3:'囚', 4:'囚', 9:'廢', 2:'相', 7:'旺', 6:'旺'},
@@ -511,9 +687,244 @@
     let globalPalaceData = {};
     let useNeiWai = false;
     let enablePalaceModal = false;
-    let isBaziMode = false; // 新增：追蹤目前是否處於四柱設定模式
+    let isBaziMode = false; 
+    let isFilterPanelOpen = false;
 
-    // 關閉宮位 Modal
+    // 項目 3 條件篩選面板切換控制
+    function toggleFilterPanel() {
+        const filterPanel = document.getElementById('filter-panel');
+        const mainPanel = document.getElementById('main-panel');
+        const appWorkspace = document.getElementById('app-workspace');
+
+        // 初始化當日日期 (若尚未設定)
+        const dateInput = document.getElementById('filter-start-date');
+        if (!dateInput.value) {
+            const t = new Date();
+            dateInput.value = `${t.getFullYear()}/${(t.getMonth()+1).toString().padStart(2,'0')}/${t.getDate().toString().padStart(2,'0')}`;
+        }
+
+        isFilterPanelOpen = !isFilterPanelOpen;
+
+        if (isFilterPanelOpen) {
+            filterPanel.classList.remove('hidden');
+            mainPanel.classList.replace('lg:col-span-12', 'lg:col-span-8');
+            document.getElementById('btn-toggle-filter').classList.replace('bg-amber-500', 'bg-amber-700');
+            
+            if (window.innerWidth < 1024) {
+                setTimeout(() => {
+                    filterPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 150);
+            }
+        } else {
+            filterPanel.classList.add('hidden');
+            mainPanel.classList.replace('lg:col-span-8', 'lg:col-span-12');
+            document.getElementById('btn-toggle-filter').classList.replace('bg-amber-700', 'bg-amber-500');
+        }
+    }
+
+    // 取得指定時辰單一宮位的核心算盤資料 (用於背後無介面運算)
+    function getQimenElements(y, m, d, h, min, pNumStr) {
+        const pNum = parseInt(pNumStr);
+        try {
+            const exactLunar = Solar.fromYmdHms(y, m, d, h, min, 0).getLunar();
+            const noonLunar = Solar.fromYmdHms(y, m, d, 12, 0, 0).getLunar();
+            
+            const yearGZ = exactLunar.getYearInGanZhiExact();
+            const monthGZ = exactLunar.getMonthInGanZhiExact();
+            const dayGZ = noonLunar.getDayInGanZhiExact(); 
+            const dayStem = dayGZ.substring(0, 1);
+
+            const hIdx = Math.floor((h + 1) % 24 / 2);
+            const timeBranch = BRANCHES[hIdx];
+            
+            let wushuDate = new Date(y, m - 1, d, h, min);
+            if (h >= 23) wushuDate.setDate(wushuDate.getDate() + 1);
+            const wushuLunar = Solar.fromYmdHms(wushuDate.getFullYear(), wushuDate.getMonth() + 1, wushuDate.getDate(), 12, 0, 0).getLunar();
+            const wushuDayStem = wushuLunar.getDayInGanZhi().substring(0, 1);
+            const wushuDayStemIdx = STEMS.indexOf(wushuDayStem);
+            
+            const timeStemIdx = ((wushuDayStemIdx % 5) * 2 + hIdx) % 10;
+            const timeGZ_string = STEMS[timeStemIdx] + timeBranch;
+            const timeStem = timeGZ_string.substring(0, 1);
+            const timeBranchIdx = BRANCHES.indexOf(timeBranch);
+
+            const jqData = getAccurateJieQi(new Date(y, m - 1, d, h, min));
+            const jieQi = jqData.name;
+            const JIA_ZI = []; for(let i=0; i<60; i++) JIA_ZI.push(STEMS[i%10] + BRANCHES[i%12]);
+            const dIdx = JIA_ZI.indexOf(dayGZ), fuTouIdx = dIdx - (dIdx % 5), fuTouBranch = BRANCHES[fuTouIdx % 12];
+            let yuan = ["子", "午", "卯", "酉"].includes(fuTouBranch) ? "上元" : (["寅", "申", "巳", "亥"].includes(fuTouBranch) ? "中元" : "下元");
+            
+            const JU_TABLE = { "冬至": { 陽: true, 上元: 1, 中元: 7, 下元: 4 }, "小寒": { 陽: true, 上元: 2, 中元: 8, 下元: 5 }, "大寒": { 陽: true, 上元: 3, 中元: 9, 下元: 6 }, "立春": { 陽: true, 上元: 8, 中元: 5, 下元: 2 }, "雨水": { 陽: true, 上元: 9, 中元: 6, 下元: 3 }, "驚蟄": { 陽: true, 上元: 1, 中元: 7, 下元: 4 }, "春分": { 陽: true, 上元: 3, 中元: 9, 下元: 6 }, "清明": { 陽: true, 上元: 4, 中元: 1, 下元: 7 }, "穀雨": { 陽: true, 上元: 5, 中元: 2, 下元: 8 }, "立夏": { 陽: true, 上元: 4, 中元: 1, 下元: 7 }, "小滿": { 陽: true, 上元: 5, 中元: 2, 下元: 8 }, "芒種": { 陽: true, 上元: 6, 中元: 3, 下元: 9 }, "夏至": { 陽: false, 上元: 9, 中元: 3, 下元: 6 }, "小暑": { 陽: false, 上元: 8, 中元: 2, 下元: 5 }, "大暑": { 陽: false, 上元: 7, 中元: 1, 下元: 4 }, "立秋": { 陽: false, 上元: 2, 中元: 5, 下元: 8 }, "處暑": { 陽: false, 上元: 1, 中元: 4, 下元: 7 }, "白露": { 陽: false, 上元: 9, 中元: 3, 下元: 6 }, "秋分": { 陽: false, 上元: 7, 中元: 1, 下元: 4 }, "寒露": { 陽: false, 上元: 6, 中元: 9, 下元: 3 }, "霜降": { 陽: false, 上元: 5, 中元: 8, 下元: 2 }, "立冬": { 陽: false, 上元: 6, 中元: 9, 下元: 3 }, "小雪": { 陽: false, 上元: 5, 中元: 8, 下元: 2 }, "大雪": { 陽: false, 上元: 4, 中元: 7, 下元: 1 } };
+            const juConfig = JU_TABLE[jieQi] || {陽: true, 上元: 1, 中元: 1, 下元: 1};
+            const isYang = juConfig["陽"];
+            const juNum = juConfig[yuan];
+            
+            let earthPan = {}; let currentPalaceNum = juNum;
+            for (let i = 0; i < 9; i++) { earthPan[currentPalaceNum] = YI_LIU[i]; currentPalaceNum = isYang ? currentPalaceNum + 1 : currentPalaceNum - 1; if (currentPalaceNum > 9) currentPalaceNum = 1; else if (currentPalaceNum < 1) currentPalaceNum = 9; }
+            
+            const xunShouIdx = (timeBranchIdx - timeStemIdx + 12) % 12;
+            const xunShouGZ = "甲" + BRANCHES[xunShouIdx];
+            const XUN_MAP = { "甲子": "戊", "甲戌": "己", "甲申": "庚", "甲午": "辛", "甲辰": "壬", "甲寅": "癸" };
+            const xunShouStem = XUN_MAP[xunShouGZ];
+            
+            let xunShouPalace = parseInt(Object.keys(earthPan).find(k => earthPan[k] === xunShouStem));
+            let effectiveXunShouPalace = xunShouPalace === 5 ? 2 : xunShouPalace;
+            let heavenPan = {}, starPan = {};
+            let targetPalace = parseInt(Object.keys(earthPan).find(k => earthPan[k] === (timeStem === '甲' ? xunShouStem : timeStem)));
+            if(targetPalace === 5) targetPalace = 2;
+            
+            const rIdxTarget = RING_ORDER.indexOf(targetPalace), rIdxOrigin = RING_ORDER.indexOf(effectiveXunShouPalace), offset = (rIdxTarget - rIdxOrigin + 8) % 8;
+            for (let i = 0; i < 8; i++) {
+                const originP = RING_ORDER[i], targetP = RING_ORDER[(i + offset) % 8];
+                starPan[targetP] = (originP === 2) ? [BASE_STARS[2], BASE_STARS[5]] : BASE_STARS[originP];
+                heavenPan[targetP] = (originP === 2) ? [earthPan[2], earthPan[5]] : earthPan[originP];
+            }
+            
+            let godPan = {}; for (let i = 0; i < 8; i++) godPan[RING_ORDER[(rIdxTarget + (isYang ? i : 8 - i)) % 8]] = GODS_YANG[i];
+            
+            let currentD_val = xunShouPalace;
+            for(let i=0; i<timeStemIdx; i++) { currentD_val = isYang ? currentD_val + 1 : currentD_val - 1; if(currentD_val > 9) currentD_val = 1; else if(currentD_val < 1) currentD_val = 9; }
+            if(currentD_val === 5) currentD_val = 2;
+            const doorOriginIdx = RING_ORDER.indexOf(effectiveXunShouPalace), doorTargetIdx = RING_ORDER.indexOf(currentD_val), doorOffset = (doorTargetIdx - doorOriginIdx + 8) % 8;
+            let doorPan = {};
+            for (let i = 0; i < 8; i++) doorPan[RING_ORDER[(i + doorOffset) % 8]] = DOORS_ORDER[i];
+            
+            let resGod = godPan[pNum] || "";
+            let resStar = Array.isArray(starPan[pNum]) ? starPan[pNum] : [starPan[pNum]];
+            let resDoor = doorPan[pNum] || "";
+            let resHStems = Array.isArray(heavenPan[pNum]) ? heavenPan[pNum] : [heavenPan[pNum]];
+            let resEStems = Array.isArray(earthPan[pNum]) ? (pNum===2 ? [earthPan[2], earthPan[5]] : [earthPan[pNum]]) : [earthPan[pNum]];
+
+            // 處理中五宮例外
+            if (pNum === 5) {
+                resGod = "";
+                resStar = [];
+                resDoor = "";
+                resHStems = [earthPan[5]];
+                resEStems = [earthPan[5]];
+            }
+
+            return {
+                god: resGod,
+                star: resStar,
+                door: resDoor,
+                hStems: resHStems,
+                eStems: resEStems,
+                bazi: `${yearGZ}年 ${monthGZ}月 ${dayGZ}日 ${timeGZ_string}時`
+            };
+        } catch(e) {
+            console.error(e);
+            return null;
+        }
+    }
+
+    // 項目 3 真實 D+30 日窮舉搜尋器
+    function executeRealSearch() {
+        const resultsList = document.getElementById('filter-results-list');
+        const resultsCount = document.getElementById('filter-results-count');
+        
+        const startDateStr = document.getElementById('filter-start-date').value;
+        const pNum = document.getElementById('filter-target-palace').value;
+        
+        const parts = startDateStr.split('/');
+        if (parts.length !== 3) {
+            alert('請輸入正確的開始日期格式，例如 2026/07/03');
+            return;
+        }
+        const sYear = parseInt(parts[0]);
+        const sMonth = parseInt(parts[1]);
+        const sDay = parseInt(parts[2]);
+        
+        const getChecked = (groupId) => Array.from(document.querySelectorAll(`#${groupId} input:checked`)).map(cb => cb.value);
+        const selectedGods = getChecked('chk-group-god');
+        const selectedStars = getChecked('chk-group-star');
+        const selectedDoors = getChecked('chk-group-door');
+        const selectedHStems = getChecked('chk-group-hstem');
+        const selectedEStems = getChecked('chk-group-estem');
+
+        resultsList.innerHTML = '<div class="p-6 text-center text-amber-600 font-bold flex flex-col items-center justify-center gap-2"><svg class="animate-spin h-6 w-6 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>運算 30 日內全時辰資料中...</span></div>';
+        resultsCount.innerText = `計算中`;
+
+        setTimeout(() => {
+            let matchedResults = [];
+            let currentD = new Date(sYear, sMonth - 1, sDay);
+            
+            // 掃描 D+30 天
+            for(let i = 0; i < 30; i++) {
+                let y = currentD.getFullYear();
+                let m = currentD.getMonth() + 1;
+                let d = currentD.getDate();
+                
+                // 每日 12 個時辰 (每兩小時一次)
+                for(let j = 0; j < 12; j++) {
+                    let h = j * 2;
+                    let min = 30; // 安全落在時辰正中間
+                    
+                    let elements = getQimenElements(y, m, d, h, min, pNum);
+                    if(!elements) continue;
+                    
+                    let isMatch = true;
+                    // 若設定了條件陣列，該宮位必須符合其中之一 (OR logic within category, AND logic across categories)
+                    if (selectedGods.length > 0 && !selectedGods.includes(elements.god)) isMatch = false;
+                    if (isMatch && selectedStars.length > 0 && !elements.star.some(s => selectedStars.includes(s))) isMatch = false;
+                    if (isMatch && selectedDoors.length > 0 && !selectedDoors.includes(elements.door)) isMatch = false;
+                    if (isMatch && selectedHStems.length > 0 && !elements.hStems.some(s => selectedHStems.includes(s))) isMatch = false;
+                    if (isMatch && selectedEStems.length > 0 && !elements.eStems.some(s => selectedEStems.includes(s))) isMatch = false;
+                    
+                    if (isMatch) {
+                        let branchName = BRANCHES[j];
+                        matchedResults.push({
+                            y, m, d, h, min,
+                            dStr: `${y}年 ${m.toString().padStart(2,'0')}月 ${d.toString().padStart(2,'0')}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} (${branchName}時)`,
+                            bazi: elements.bazi
+                        });
+                    }
+                }
+                currentD.setDate(currentD.getDate() + 1);
+            }
+            
+            resultsList.innerHTML = '';
+            resultsCount.innerText = `${matchedResults.length} 筆`;
+            
+            if (matchedResults.length === 0) {
+                resultsList.innerHTML = '<div class="p-4 text-center text-gray-500 text-xs bg-gray-50 rounded-lg border border-dashed border-gray-200">在此 30 天的範圍內，未找到符合全部所選條件的時辰。</div>';
+            } else {
+                matchedResults.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left p-3 border border-amber-200/60 rounded-xl hover:bg-amber-50 focus:bg-amber-100 active:scale-[0.99] transition duration-150 shadow-sm text-xs bg-white block mb-2";
+                    btn.innerHTML = `
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-amber-900 text-sm">${item.dStr}</span>
+                            <span class="text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded border border-green-200 font-bold">符合</span>
+                        </div>
+                        <div class="text-gray-500 font-bold">四柱：${item.bazi}</div>
+                    `;
+                    btn.onclick = () => {
+                        applyBaziResult(item.y, item.m, item.d, item.h, item.min);
+                        if (window.innerWidth < 1024) {
+                            toggleFilterPanel();
+                            setTimeout(() => {
+                                document.getElementById('app-workspace').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }, 150);
+                        }
+                    };
+                    resultsList.appendChild(btn);
+                });
+            }
+        }, 80); 
+    }
+
+    function resetFilter() {
+        const today = new Date();
+        document.getElementById('filter-start-date').value = `${today.getFullYear()}/${(today.getMonth()+1).toString().padStart(2,'0')}/${today.getDate().toString().padStart(2,'0')}`;
+        document.getElementById('filter-target-palace').value = "9";
+        
+        document.querySelectorAll('.chk-label input[type="checkbox"]').forEach(cb => cb.checked = false);
+        
+        document.getElementById('filter-results-list').innerHTML = '<div class="p-3 text-center text-gray-400 text-xs bg-gray-50 rounded-lg border border-dashed border-gray-200">已重置。<br>設定好上方的條件然後按下按鈕即可獲得符合之奇門遁甲列表！</div>';
+        document.getElementById('filter-results-count').innerText = "0 筆";
+    }
+
     function closePalaceModal() {
         document.getElementById('palace-modal').classList.add('hidden');
     }
@@ -679,7 +1090,7 @@
         enablePalaceModal = document.getElementById('toggle-palacemodal').checked;
     }
 
-    // 新增：切換輸入模式 (時間/四柱)
+    // 切換輸入模式 (時間/四柱)
     function toggleInputMode() {
         isBaziMode = !isBaziMode;
         const btn = document.getElementById('btn-mode-toggle');
@@ -699,8 +1110,8 @@
             baziSels.classList.remove('hidden');
             baziSels.classList.add('flex');
             
-            nowBtn.disabled = true;
-            nowBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            // 完全隱藏現在時間按鈕
+            nowBtn.classList.add('hidden');
             jqBtn.classList.add('hidden');
         } else {
             btn.innerText = "四柱方式";
@@ -713,8 +1124,8 @@
             baziSels.classList.remove('flex');
             dateSels.classList.remove('hidden');
             
-            nowBtn.disabled = false;
-            nowBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            // 恢復顯示現在時間按鈕
+            nowBtn.classList.remove('hidden');
             jqBtn.classList.remove('hidden');
         }
     }
@@ -747,9 +1158,8 @@
         }
     }
 
-    // 新增：初始化四柱下拉選單
+    // 初始化四柱下拉選單 (依照天干排序，甲子、甲戌... 乙丑、乙亥...)
     function initBaziSelectors() {
-        // 將六十甲子按天干排序 (甲子, 甲戌... 乙丑, 乙亥...)
         const sortedJiaZi = [...JIA_ZI_ARRAY].sort((a, b) => {
             const stemA = STEMS.indexOf(a[0]);
             const stemB = STEMS.indexOf(b[0]);
@@ -764,7 +1174,6 @@
             });
         });
         
-        // 設定預設為現在時間的四柱
         try {
             const nowLunar = Solar.fromDate(new Date()).getLunar();
             const noonLunar = Solar.fromYmdHms(new Date().getFullYear(), new Date().getMonth()+1, new Date().getDate(), 12, 0, 0).getLunar();
@@ -773,7 +1182,6 @@
             document.getElementById('sel-bazi-m').value = nowLunar.getMonthInGanZhiExact();
             document.getElementById('sel-bazi-d').value = noonLunar.getDayInGanZhiExact();
             
-            // 近似取時柱
             let hIdx = Math.floor((new Date().getHours() + 1) % 24 / 2);
             let timeBranch = BRANCHES[hIdx];
             let dayStem = noonLunar.getDayInGanZhiExact().charAt(0);
@@ -811,7 +1219,7 @@
         }
     }
 
-    // 新增：處理起盤按鈕邏輯
+    // 起盤按鈕分流
     function handleGenerateBtn() {
         if (isBaziMode) {
             executeBaziSearch();
@@ -820,7 +1228,7 @@
         }
     }
 
-    // 新增：執行四柱搜尋
+    // 四柱搜尋落實
     function executeBaziSearch() {
         const tgtY = document.getElementById('sel-bazi-y').value;
         const tgtM = document.getElementById('sel-bazi-m').value;
@@ -855,14 +1263,13 @@
         document.getElementById('bazi-modal').classList.remove('hidden');
     }
 
-    // 新增：尋找符合的四柱日期
+    // 尋找符合的四柱曆法日期
     function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
         let results = [];
         let start = new Date(1930, 0, 1);
         let end = new Date(2050, 11, 31);
         let firstMatch = null;
 
-        // 尋找 1930 年第一個符合日柱的日子
         for (let i = 0; i < 60; i++) {
             let d = new Date(start);
             d.setDate(start.getDate() + i);
@@ -875,7 +1282,6 @@
 
         if (firstMatch) {
             let curr = new Date(firstMatch);
-            // 每次跳躍 60 天 (因為日柱每60天重複一次)
             while (curr <= end) {
                 let y = curr.getFullYear();
                 let m = curr.getMonth() + 1;
@@ -886,7 +1292,6 @@
                 let mGZ = exactLunar.getMonthInGanZhiExact();
 
                 if (yGZ === tgtY && mGZ === tgtM) {
-                    // 年月日皆符合，檢查時柱是否合理
                     let dayStem = tgtD.charAt(0);
                     let hBranch = tgtH.charAt(1);
                     let hIdx = BRANCHES.indexOf(hBranch);
@@ -896,7 +1301,6 @@
 
                     if (expectedHStem === tgtH.charAt(0)) {
                         let hourInt = hIdx * 2;
-                        // 處理時辰的中心點時間(避免邊界交接問題)
                         let minInt = 30;
                         if (hourInt === 24) hourInt = 0;
                         results.push(new Date(y, m - 1, d, hourInt, minInt));
@@ -908,16 +1312,14 @@
         return results;
     }
 
-    // 新增：套用四柱結果至主畫面
+    // 套用起盤結果
     function applyBaziResult(y, m, d, h, min) {
         document.getElementById('bazi-modal').classList.add('hidden');
         
-        // 切換回時間模式
         if (isBaziMode) {
             toggleInputMode();
         }
 
-        // 設定時間下拉選單
         document.getElementById('sel-year').value = y;
         document.getElementById('sel-month').value = m;
         document.getElementById('sel-day').value = d;
@@ -1033,7 +1435,7 @@
             if (h >= 23) ziMark = "晚子";
             else if (h === 0) ziMark = "早子";
 
-            // --- 大六壬穿壬：十二天將排佈邏輯 ---
+            // 大六壬天將排定
             let prevQi = exactLunar.getPrevQi(true);
             let zqName = prevQi.getName();
             let yueJiangBranchCalculated = ZQ_MAP[zqName] || "亥";
@@ -1057,7 +1459,6 @@
                 let currentEarthBranch = BRANCHES[currentEarthIdx];
                 branchToTianJiang[currentEarthBranch] = TIAN_JIANG_LIST[i];
             }
-            // ------------------------------------
 
             const baziRawStr = `${yearGZ}年 ${monthGZ}月 ${dayGZ}日 ${timeGZ_string}時`;
             const coloredBaziStr = `${colorizeGanZhi(yearGZ)}年 ${colorizeGanZhi(monthGZ)}月 ${colorizeGanZhi(dayGZ)}日 ${colorizeGanZhi(timeGZ_string)}時`;
@@ -1111,7 +1512,7 @@
             if (isTianXian) { specialStr += "<span class='text-green-600 font-bold ml-2'>【✅天顯時格】</span>"; rawSpecialInfo += "【✅天顯時格】"; }
             if (isWuBuYu) { specialStr += "<span class='text-red-600 font-bold ml-2'>【❌五不遇時】</span>"; rawSpecialInfo += "【❌五不遇時】"; }
             
-            let displayZiMark = ziMark ? `<span class="text-orange-600 font-bold ml-1">【${ziMark}</span>` : "";
+            let displayZiMark = ziMark ? `<span class="text-orange-600 font-bold ml-1">【${ziMark}】</span>` : "";
             document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} ｜ ${coloredBaziStr}${displayZiMark}${specialStr}`;
             document.getElementById('info-jieqi').innerHTML = `${jieQi} <span class="text-[10px] text-gray-500 font-normal">(交節：${jqData.time})</span>`;
             document.getElementById('info-ju').innerText = juStr;
@@ -1120,7 +1521,7 @@
             document.getElementById('info-zhishi').innerText = doorPan[currentD_val];
             document.getElementById('info-kongwang').innerText = kw1 + "、" + kw2;
 
-            // --- 伏吟與反吟判定邏輯 ---
+            // 伏吟與反吟
             let isMenFuyin = (doorOffset === 0);
             let isStarFuyin = (offset === 0);
             let isGanFuyin = (offset === 0);
@@ -1440,7 +1841,7 @@
         });
     }
 
-    // 初始化下拉選單
+    // 初始化載入
     window.onload = function() {
         initSelectors();
         initBaziSelectors();
