@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>奇門遁甲 - 拆補法排盤 (v26.1)</title>
+    <title>奇門遁甲 - 拆補法排盤 (v26.2)</title>
     <link rel="icon" type="image/jpeg" href="icon.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
@@ -97,12 +97,11 @@
         .pos-left { top: 50%; left: -30px; transform: translateY(-50%); }
         .pos-right { top: 50%; right: -30px; transform: translateY(-50%); }
 
-        /* Slide Panel Transition */
         .slide-panel {
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
         }
 
-        /* 篩選條件 Checkbox 標籤樣式 (加大版本) */
+        /* 篩選條件 Checkbox 標籤樣式 */
         .chk-label {
             display: inline-flex; align-items: center; gap: 4px;
             background-color: #fff; border: 1px solid #e5e7eb;
@@ -112,15 +111,13 @@
         .chk-label:hover { background-color: #fef3c7; border-color: #fcd34d; }
         .chk-label input:checked + span { color: #d97706; font-weight: 900; }
         .chk-label input { accent-color: #f59e0b; width: 14px; height: 14px; }
-        .chk-label-disabled { opacity: 0.5; cursor: not-allowed !important; background-color: #f9fafb !important; }
+        .chk-label-disabled { opacity: 0.5; cursor: not-allowed !important; background-color: #f9fafb !important; pointer-events: none; }
     </style>
 </head>
 <body class="p-2 md:p-6">
 
-<!-- 全局主容器 -->
 <div id="app-workspace" class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     
-    <!-- 左欄/主欄 -->
     <div id="main-panel" class="lg:col-span-12 space-y-6 transition-all duration-500">
         <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-4 md:p-6 border border-white main-container">
             <h1 class="text-2xl md:text-3xl text-center mb-4 text-indigo-900 tracking-widest">
@@ -155,7 +152,6 @@
                     </div>
                 </div>
 
-                <!-- Bazi Selectors -->
                 <div id="bazi-selectors" class="hidden justify-center items-center gap-2 flex-wrap">
                     <div class="flex items-center gap-1">
                         <select id="sel-bazi-y" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
@@ -256,13 +252,12 @@
                     </label>
                 </div>
                 <div class="w-full text-center mt-2">
-                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.1)</span>
+                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.2)</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 右欄：條件篩選控制面板 -->
     <div id="filter-panel" class="hidden lg:col-span-4 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-5 border border-amber-200 slide-panel overflow-y-auto max-h-[90vh]">
         <div class="flex justify-between items-center mb-4 pb-2 border-b-2 border-amber-100">
             <h3 class="text-xl font-black text-amber-900 flex items-center gap-1.5">
@@ -272,14 +267,12 @@
         </div>
 
         <div class="space-y-4">
-            <!-- 搜尋區間 -->
             <div>
                 <label class="block text-sm text-amber-800 font-bold mb-1">開始日期 (YYYY/MM/DD)</label>
                 <input type="text" id="filter-start-date" class="w-full p-2 border border-amber-300 rounded-lg text-base bg-white outline-none focus:ring-2 focus:ring-amber-500" value="">
                 <p class="text-xs text-gray-500 mt-1">※ 系統將自動搜尋此日期起算 <span class="font-bold text-amber-600">30 天</span> 內所有時辰符合條件之盤面。</p>
             </div>
 
-            <!-- 雙條件邏輯控制器 -->
             <div id="logic-op-container" class="hidden flex items-center gap-2 p-2 bg-gray-100 rounded-lg border border-gray-300">
                 <span class="text-sm font-bold text-gray-700 whitespace-nowrap">雙條件邏輯：</span>
                 <select id="filter-logic-operator" class="w-full p-1.5 border border-gray-300 rounded text-sm bg-white outline-none font-bold text-gray-800 focus:ring-1 focus:ring-gray-400">
@@ -288,7 +281,6 @@
                 </select>
             </div>
 
-            <!-- 大條件一 (琥珀色主題) -->
             <div class="p-3 bg-amber-50/50 rounded-xl border border-amber-200 space-y-3">
                 <div class="flex items-center gap-2 mb-2 border-b border-amber-200 pb-2">
                     <h4 class="text-base font-black text-amber-800 tracking-wider">【條件一】</h4>
@@ -306,46 +298,56 @@
                 </div>
 
                 <div class="flex flex-col gap-1.5">
-                    <!-- 特殊狀態-1 -->
                     <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm" open>
                         <summary class="p-2 cursor-pointer text-sm font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none">
                             <span>特殊狀態</span>
                             <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span>
                         </summary>
-                        <div class="p-3 flex flex-wrap gap-1.5">
-                            <label class="chk-label"><input type="checkbox" id="chk-kong-1" value="空亡"><span class="text-xs text-gray-700">空亡</span></label>
-                            <label class="chk-label"><input type="checkbox" id="chk-ma-1" value="驛馬"><span class="text-xs text-gray-700">驛馬</span></label>
+                        <div class="p-3 flex flex-col gap-1.5">
+                            <div class="flex flex-wrap gap-1.5 pb-1.5 border-b border-amber-100/60">
+                                <label class="chk-label"><input type="checkbox" id="chk-kong-1" onchange="syncSpecialConditions(1)"><span class="text-xs text-gray-700">空亡</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-nokong-1" onchange="syncSpecialConditions(1)"><span class="text-xs text-gray-700">沒有空亡</span></label>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pb-1.5 border-b border-amber-100/60">
+                                <label class="chk-label"><input type="checkbox" id="chk-jixing-1" onchange="syncSpecialConditions(1)"><span class="text-xs text-gray-700">擊刑</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-nojixing-1" onchange="syncSpecialConditions(1)"><span class="text-xs text-gray-700">沒有擊刑</span></label>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pb-1.5 border-b border-amber-100/60">
+                                <label class="chk-label"><input type="checkbox" id="chk-rumu-1" onchange="syncSpecialConditions(1)"><span class="text-xs text-gray-700">入墓</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-norumu-1" onchange="syncSpecialConditions(1)"><span class="text-xs text-gray-700">沒有入墓</span></label>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pb-1.5 border-b border-amber-100/60">
+                                <label class="chk-label"><input type="checkbox" id="chk-ma-1" onchange="syncSpecialConditions(1)"><span class="text-xs text-gray-700">驛馬</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-noma-1" onchange="syncSpecialConditions(1)"><span class="text-xs text-gray-700">沒有驛馬</span></label>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pb-1.5 border-b border-amber-100/60">
+                                <label class="chk-label"><input type="checkbox" id="chk-menpo-1" onchange="syncSpecialConditions(1)"><span class="text-xs text-gray-700">門迫</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-nomenpo-1" onchange="syncSpecialConditions(1)"><span class="text-xs text-gray-700">沒有門迫</span></label>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pb-1.5 border-b border-amber-100/60">
+                                <label class="chk-label"><input type="checkbox" id="chk-chong-1" onchange="syncSpecialConditions(1)"><span class="text-xs text-gray-700">宮位被月令所沖</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-nochong-1" onchange="syncSpecialConditions(1)"><span class="text-xs text-gray-700">宮位沒有被月令所沖</span></label>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5">
+                                <label class="chk-label"><input type="checkbox" id="chk-tianxian-1"><span class="text-xs text-gray-700">天顯時格</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-wubuyu-1"><span class="text-xs text-gray-700">五不遇時</span></label>
+                            </div>
                         </div>
                     </details>
                     <!-- 八神-1 -->
-                    <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
-                        <summary class="p-2 cursor-pointer text-sm font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none"><span>八神</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
-                        <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-god-1">
-                            <label class="chk-label"><input type="checkbox" value="值符"><span class="text-xs text-gray-700">值符</span></label><label class="chk-label"><input type="checkbox" value="螣蛇"><span class="text-xs text-gray-700">螣蛇</span></label><label class="chk-label"><input type="checkbox" value="太陰"><span class="text-xs text-gray-700">太陰</span></label><label class="chk-label"><input type="checkbox" value="六合"><span class="text-xs text-gray-700">六合</span></label><label class="chk-label"><input type="checkbox" value="白虎"><span class="text-xs text-gray-700">白虎</span></label><label class="chk-label"><input type="checkbox" value="玄武"><span class="text-xs text-gray-700">玄武</span></label><label class="chk-label"><input type="checkbox" value="九地"><span class="text-xs text-gray-700">九地</span></label><label class="chk-label"><input type="checkbox" value="九天"><span class="text-xs text-gray-700">九天</span></label>
-                        </div>
                     </details>
-                    <!-- 九星-1 -->
-                    <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
-                        <summary class="p-2 cursor-pointer text-sm font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none"><span>九星</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
-                        <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-star-1">
-                            <label class="chk-label"><input type="checkbox" value="天蓬"><span class="text-xs text-gray-700">天蓬</span></label><label class="chk-label"><input type="checkbox" value="天任"><span class="text-xs text-gray-700">天任</span></label><label class="chk-label"><input type="checkbox" value="天衝"><span class="text-xs text-gray-700">天衝</span></label><label class="chk-label"><input type="checkbox" value="天輔"><span class="text-xs text-gray-700">天輔</span></label><label class="chk-label"><input type="checkbox" value="天英"><span class="text-xs text-gray-700">天英</span></label><label class="chk-label"><input type="checkbox" value="天芮"><span class="text-xs text-gray-700">天芮</span></label><label class="chk-label"><input type="checkbox" value="天柱"><span class="text-xs text-gray-700">天柱</span></label><label class="chk-label"><input type="checkbox" value="天心"><span class="text-xs text-gray-700">天心</span></label><label class="chk-label"><input type="checkbox" value="天禽"><span class="text-xs text-gray-700">天禽</span></label>
-                        </div>
-                    </details>
-                    <!-- 八門-1 -->
                     <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
                         <summary class="p-2 cursor-pointer text-sm font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none"><span>八門</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
                         <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-door-1">
                             <label class="chk-label"><input type="checkbox" value="休門"><span class="text-xs text-gray-700">休門</span></label><label class="chk-label"><input type="checkbox" value="生門"><span class="text-xs text-gray-700">生門</span></label><label class="chk-label"><input type="checkbox" value="傷門"><span class="text-xs text-gray-700">傷門</span></label><label class="chk-label"><input type="checkbox" value="杜門"><span class="text-xs text-gray-700">杜門</span></label><label class="chk-label"><input type="checkbox" value="景門"><span class="text-xs text-gray-700">景門</span></label><label class="chk-label"><input type="checkbox" value="死門"><span class="text-xs text-gray-700">死門</span></label><label class="chk-label"><input type="checkbox" value="驚門"><span class="text-xs text-gray-700">驚門</span></label><label class="chk-label"><input type="checkbox" value="開門"><span class="text-xs text-gray-700">開門</span></label>
                         </div>
                     </details>
-                    <!-- 天盤干-1 -->
                     <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
                         <summary class="p-2 cursor-pointer text-sm font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none"><span>天盤干</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
                         <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-hstem-1">
                             <label class="chk-label"><input type="checkbox" value="乙"><span class="text-xs text-gray-700">乙</span></label><label class="chk-label"><input type="checkbox" value="丙"><span class="text-xs text-gray-700">丙</span></label><label class="chk-label"><input type="checkbox" value="丁"><span class="text-xs text-gray-700">丁</span></label><label class="chk-label"><input type="checkbox" value="戊"><span class="text-xs text-gray-700">戊</span></label><label class="chk-label"><input type="checkbox" value="己"><span class="text-xs text-gray-700">己</span></label><label class="chk-label"><input type="checkbox" value="庚"><span class="text-xs text-gray-700">庚</span></label><label class="chk-label"><input type="checkbox" value="辛"><span class="text-xs text-gray-700">辛</span></label><label class="chk-label"><input type="checkbox" value="壬"><span class="text-xs text-gray-700">壬</span></label><label class="chk-label"><input type="checkbox" value="癸"><span class="text-xs text-gray-700">癸</span></label><label class="chk-label"><input type="checkbox" value="=年干"><span class="text-xs text-gray-700">=年干</span></label><label class="chk-label"><input type="checkbox" value="=月干"><span class="text-xs text-gray-700">=月干</span></label><label class="chk-label"><input type="checkbox" value="=日干"><span class="text-xs text-gray-700">=日干</span></label><label class="chk-label"><input type="checkbox" value="=時干"><span class="text-xs text-gray-700">=時干</span></label>
                         </div>
                     </details>
-                    <!-- 地盤干-1 -->
                     <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
                         <summary class="p-2 cursor-pointer text-sm font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none"><span>地盤干</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
                         <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-estem-1">
@@ -355,7 +357,6 @@
                 </div>
             </div>
 
-            <!-- 大條件二 (藍色主題) -->
             <div class="p-3 bg-blue-50/50 rounded-xl border border-blue-200 space-y-3">
                 <div class="flex items-center gap-2 mb-2 border-b border-blue-200 pb-2">
                     <h4 class="text-base font-black text-blue-800 tracking-wider">【條件二】</h4>
@@ -380,40 +381,50 @@
                             <span>特殊狀態</span>
                             <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span>
                         </summary>
-                        <div class="p-3 flex flex-wrap gap-1.5">
-                            <label class="chk-label"><input type="checkbox" id="chk-kong-2" value="空亡"><span class="text-xs text-gray-700">空亡</span></label>
-                            <label class="chk-label"><input type="checkbox" id="chk-ma-2" value="驛馬"><span class="text-xs text-gray-700">驛馬</span></label>
+                        <div class="p-3 flex flex-col gap-1.5">
+                            <div class="flex flex-wrap gap-1.5 pb-1.5 border-b border-blue-100/60">
+                                <label class="chk-label"><input type="checkbox" id="chk-kong-2" onchange="syncSpecialConditions(2)"><span class="text-xs text-gray-700">空亡</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-nokong-2" onchange="syncSpecialConditions(2)"><span class="text-xs text-gray-700">沒有空亡</span></label>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pb-1.5 border-b border-blue-100/60">
+                                <label class="chk-label"><input type="checkbox" id="chk-jixing-2" onchange="syncSpecialConditions(2)"><span class="text-xs text-gray-700">擊刑</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-nojixing-2" onchange="syncSpecialConditions(2)"><span class="text-xs text-gray-700">沒有擊刑</span></label>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pb-1.5 border-b border-blue-100/60">
+                                <label class="chk-label"><input type="checkbox" id="chk-rumu-2" onchange="syncSpecialConditions(2)"><span class="text-xs text-gray-700">入墓</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-norumu-2" onchange="syncSpecialConditions(2)"><span class="text-xs text-gray-700">沒有入墓</span></label>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pb-1.5 border-b border-blue-100/60">
+                                <label class="chk-label"><input type="checkbox" id="chk-ma-2" onchange="syncSpecialConditions(2)"><span class="text-xs text-gray-700">驛馬</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-noma-2" onchange="syncSpecialConditions(2)"><span class="text-xs text-gray-700">沒有驛馬</span></label>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pb-1.5 border-b border-blue-100/60">
+                                <label class="chk-label"><input type="checkbox" id="chk-menpo-2" onchange="syncSpecialConditions(2)"><span class="text-xs text-gray-700">門迫</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-nomenpo-2" onchange="syncSpecialConditions(2)"><span class="text-xs text-gray-700">沒有門迫</span></label>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pb-1.5 border-b border-blue-100/60">
+                                <label class="chk-label"><input type="checkbox" id="chk-chong-2" onchange="syncSpecialConditions(2)"><span class="text-xs text-gray-700">宮位被月令所沖</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-nochong-2" onchange="syncSpecialConditions(2)"><span class="text-xs text-gray-700">宮位沒有被月令所沖</span></label>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5">
+                                <label class="chk-label"><input type="checkbox" id="chk-tianxian-2"><span class="text-xs text-gray-700">天顯時格</span></label>
+                                <label class="chk-label"><input type="checkbox" id="chk-wubuyu-2"><span class="text-xs text-gray-700">五不遇時</span></label>
+                            </div>
                         </div>
                     </details>
                     <!-- 八神-2 -->
-                    <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
-                        <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 bg-blue-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-blue-100 flex justify-between items-center select-none"><span>八神</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
-                        <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-god-2">
-                            <label class="chk-label"><input type="checkbox" value="值符"><span class="text-xs text-gray-700">值符</span></label><label class="chk-label"><input type="checkbox" value="螣蛇"><span class="text-xs text-gray-700">螣蛇</span></label><label class="chk-label"><input type="checkbox" value="太陰"><span class="text-xs text-gray-700">太陰</span></label><label class="chk-label"><input type="checkbox" value="六合"><span class="text-xs text-gray-700">六合</span></label><label class="chk-label"><input type="checkbox" value="白虎"><span class="text-xs text-gray-700">白虎</span></label><label class="chk-label"><input type="checkbox" value="玄武"><span class="text-xs text-gray-700">玄武</span></label><label class="chk-label"><input type="checkbox" value="九地"><span class="text-xs text-gray-700">九地</span></label><label class="chk-label"><input type="checkbox" value="九天"><span class="text-xs text-gray-700">九天</span></label>
-                        </div>
-                    </details>
-                    <!-- 九星-2 -->
-                    <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
-                        <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 bg-blue-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-blue-100 flex justify-between items-center select-none"><span>九星</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
-                        <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-star-2">
-                            <label class="chk-label"><input type="checkbox" value="天蓬"><span class="text-xs text-gray-700">天蓬</span></label><label class="chk-label"><input type="checkbox" value="天任"><span class="text-xs text-gray-700">天任</span></label><label class="chk-label"><input type="checkbox" value="天衝"><span class="text-xs text-gray-700">天衝</span></label><label class="chk-label"><input type="checkbox" value="天輔"><span class="text-xs text-gray-700">天輔</span></label><label class="chk-label"><input type="checkbox" value="天英"><span class="text-xs text-gray-700">天英</span></label><label class="chk-label"><input type="checkbox" value="天芮"><span class="text-xs text-gray-700">天芮</span></label><label class="chk-label"><input type="checkbox" value="天柱"><span class="text-xs text-gray-700">天柱</span></label><label class="chk-label"><input type="checkbox" value="天心"><span class="text-xs text-gray-700">天心</span></label><label class="chk-label"><input type="checkbox" value="天禽"><span class="text-xs text-gray-700">天禽</span></label>
-                        </div>
-                    </details>
-                    <!-- 八門-2 -->
                     <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
                         <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 bg-blue-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-blue-100 flex justify-between items-center select-none"><span>八門</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
                         <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-door-2">
                             <label class="chk-label"><input type="checkbox" value="休門"><span class="text-xs text-gray-700">休門</span></label><label class="chk-label"><input type="checkbox" value="生門"><span class="text-xs text-gray-700">生門</span></label><label class="chk-label"><input type="checkbox" value="傷門"><span class="text-xs text-gray-700">傷門</span></label><label class="chk-label"><input type="checkbox" value="杜門"><span class="text-xs text-gray-700">杜門</span></label><label class="chk-label"><input type="checkbox" value="景門"><span class="text-xs text-gray-700">景門</span></label><label class="chk-label"><input type="checkbox" value="死門"><span class="text-xs text-gray-700">死門</span></label><label class="chk-label"><input type="checkbox" value="驚門"><span class="text-xs text-gray-700">驚門</span></label><label class="chk-label"><input type="checkbox" value="開門"><span class="text-xs text-gray-700">開門</span></label>
                         </div>
                     </details>
-                    <!-- 天盤干-2 -->
                     <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
                         <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 bg-blue-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-blue-100 flex justify-between items-center select-none"><span>天盤干</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
                         <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-hstem-2">
                             <label class="chk-label"><input type="checkbox" value="乙"><span class="text-xs text-gray-700">乙</span></label><label class="chk-label"><input type="checkbox" value="丙"><span class="text-xs text-gray-700">丙</span></label><label class="chk-label"><input type="checkbox" value="丁"><span class="text-xs text-gray-700">丁</span></label><label class="chk-label"><input type="checkbox" value="戊"><span class="text-xs text-gray-700">戊</span></label><label class="chk-label"><input type="checkbox" value="己"><span class="text-xs text-gray-700">己</span></label><label class="chk-label"><input type="checkbox" value="庚"><span class="text-xs text-gray-700">庚</span></label><label class="chk-label"><input type="checkbox" value="辛"><span class="text-xs text-gray-700">辛</span></label><label class="chk-label"><input type="checkbox" value="壬"><span class="text-xs text-gray-700">壬</span></label><label class="chk-label"><input type="checkbox" value="癸"><span class="text-xs text-gray-700">癸</span></label><label class="chk-label"><input type="checkbox" value="=年干"><span class="text-xs text-gray-700">=年干</span></label><label class="chk-label"><input type="checkbox" value="=月干"><span class="text-xs text-gray-700">=月干</span></label><label class="chk-label"><input type="checkbox" value="=日干"><span class="text-xs text-gray-700">=日干</span></label><label class="chk-label"><input type="checkbox" value="=時干"><span class="text-xs text-gray-700">=時干</span></label>
                         </div>
                     </details>
-                    <!-- 地盤干-2 -->
                     <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
                         <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 bg-blue-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-blue-100 flex justify-between items-center select-none"><span>地盤干</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
                         <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-estem-2">
@@ -423,7 +434,6 @@
                 </div>
             </div>
 
-            <!-- 篩選搜尋按鈕列 -->
             <div class="flex gap-2 w-full pt-2">
                 <button onclick="resetFilter()" class="w-1/3 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl shadow transition active:scale-[0.98] flex items-center justify-center gap-1 text-sm border border-gray-300">
                     <span>清除重置</span>
@@ -434,7 +444,6 @@
             </div>
         </div>
 
-        <!-- 搜尋成果列表 -->
         <div class="mt-5 pt-4 border-t border-gray-200">
             <h4 class="text-sm font-bold text-gray-500 mb-2 flex justify-between items-center">
                 <span>📋 符合條件之奇門遁甲組合</span>
@@ -608,7 +617,6 @@
         ]
     ];
 
-    // 解析資料建立字典
     const GEJU_MAP = {};
     RAW_GEJU_DATA.flat().forEach(str => {
         const match = str.match(/^(.*?)\s*\((.)\+(.)\)[。]?\s*(.*?)\(([^)]+)\)$/);
@@ -621,7 +629,6 @@
         }
     });
 
-    // 後天八卦方位
     const PALACES_HOU = {
         1: { name: "坎一", num: "一", gua: "☵", type: "water", branch: ["子"], baseDoor: "休門" },
         8: { name: "艮八", num: "八", gua: "☶", type: "brown", branch: ["丑", "寅"], baseDoor: "生門" },
@@ -634,7 +641,6 @@
         5: { name: "中五", num: "五", gua: "", type: "brown", branch: [], baseDoor: "死門" }
     };
 
-    // 先天八卦方位
     const PALACES_XIAN = {
         1: { name: "坤八", num: "八", gua: "☷", type: "brown", branch: ["子"], baseDoor: "休門" },
         8: { name: "震四", num: "四", gua: "☳", type: "wood", branch: ["丑", "寅"], baseDoor: "生門" },
@@ -659,7 +665,6 @@
     const WUXING_COLORS = { '甲': '#15803d', '乙': '#15803d', '寅': '#15803d', '卯': '#15803d', '丙': '#b91c1c', '丁': '#b91c1c', '巳': '#b91c1c', '午': '#b91c1c', '戊': '#78350f', '己': '#78350f', '辰': '#78350f', '戌': '#78350f', '丑': '#78350f', '未': '#78350f', '庚': '#d97706', '辛': '#d97706', '申': '#d97706', '酉': '#d97706', '壬': '#0369a1', '癸': '#0369a1', '亥': '#0369a1', '子': '#0369a1' };
     const CLASH_MAP = { "子":"午", "午":"子", "丑":"未", "未":"丑", "寅":"申", "申":"寅", "卯":"酉", "酉":"卯", "辰":"戌", "戌":"辰", "巳":"亥", "亥":"巳" };
 
-    // 大六壬天將
     const TIAN_JIANG_LIST = ['貴人', '螣蛇', '朱雀', '六合', '勾陳', '青龍', '天空', '白虎', '太常', '玄武', '太陰', '天后'];
     const ZQ_MAP = {"雨水": "亥", "春分": "戌", "谷雨": "酉", "穀雨": "酉", "小满": "申", "小滿": "申", "夏至": "未", "大暑": "午", "处暑": "巳", "處暑": "巳", "秋分": "辰", "霜降": "卯", "小雪": "寅", "冬至": "丑", "大寒": "子"};
     const GUI_REN_MAP = {
@@ -675,7 +680,6 @@
         '癸': { day: '巳', night: '卯' }
     };
 
-    // 能量狀態字典
     const STAR_ENERGY = {
         '天蓬': {1:'相', 8:'囚', 3:'旺', 4:'旺', 9:'休', 2:'囚', 7:'廢', 6:'廢'},
         '天芮': {1:'休', 8:'相', 3:'囚', 4:'囚', 9:'廢', 2:'相', 7:'旺', 6:'旺'},
@@ -718,6 +722,54 @@
     let isBaziMode = false; 
     let isFilterPanelOpen = false;
 
+    // 同步特殊狀態之互斥選項與宮位規則
+    function syncSpecialConditions(idx) {
+        const pNum = document.getElementById(`filter-target-palace-${idx}`).value;
+        if (pNum === "0") return;
+
+        const pairs = [
+            { pos: `chk-kong-${idx}`, neg: `chk-nokong-${idx}`, allowed: pNum !== '5' },
+            { pos: `chk-ma-${idx}`, neg: `chk-noma-${idx}`, allowed: ['8','4','2','6'].includes(pNum) && pNum !== '5' },
+            { pos: `chk-jixing-${idx}`, neg: `chk-nojixing-${idx}`, allowed: ['8','3','4','9','2'].includes(pNum) && pNum !== '5' },
+            { pos: `chk-rumu-${idx}`, neg: `chk-norumu-${idx}`, allowed: ['8','4','2','6'].includes(pNum) && pNum !== '5' },
+            { pos: `chk-menpo-${idx}`, neg: `chk-nomenpo-${idx}`, allowed: pNum !== '5' },
+            { pos: `chk-chong-${idx}`, neg: `chk-nochong-${idx}`, allowed: pNum !== '5' }
+        ];
+
+        pairs.forEach(pair => {
+            const posEl = document.getElementById(pair.pos);
+            const negEl = document.getElementById(pair.neg);
+
+            if (!posEl || !negEl) return;
+
+            if (!pair.allowed) {
+                posEl.checked = false;
+                negEl.checked = false;
+                posEl.disabled = true;
+                negEl.disabled = true;
+                posEl.parentElement.classList.add('chk-label-disabled');
+                negEl.parentElement.classList.add('chk-label-disabled');
+            } else {
+                if (posEl.checked) {
+                    negEl.disabled = true;
+                    negEl.parentElement.classList.add('chk-label-disabled');
+                    posEl.disabled = false;
+                    posEl.parentElement.classList.remove('chk-label-disabled');
+                } else if (negEl.checked) {
+                    posEl.disabled = true;
+                    posEl.parentElement.classList.add('chk-label-disabled');
+                    negEl.disabled = false;
+                    negEl.parentElement.classList.remove('chk-label-disabled');
+                } else {
+                    posEl.disabled = false;
+                    negEl.disabled = false;
+                    posEl.parentElement.classList.remove('chk-label-disabled');
+                    negEl.parentElement.classList.remove('chk-label-disabled');
+                }
+            }
+        });
+    }
+
     // 宮位切換時動態鎖定/解鎖空亡與驛馬功能，並控制條件二的展開
     function handleFilterPalaceChange(idx) {
         const pNum = document.getElementById(`filter-target-palace-${idx}`).value;
@@ -734,23 +786,8 @@
             }
         }
 
-        if (pNum === "0") return;
-
-        const chkKong = document.getElementById(`chk-kong-${idx}`);
-        const chkMa = document.getElementById(`chk-ma-${idx}`);
-        
-        if (pNum === '5') {
-            chkKong.disabled = true;
-            chkKong.checked = false;
-            chkMa.disabled = true;
-            chkMa.checked = false;
-            chkKong.parentElement.classList.add('chk-label-disabled');
-            chkMa.parentElement.classList.add('chk-label-disabled');
-        } else {
-            chkKong.disabled = false;
-            chkMa.disabled = false;
-            chkKong.parentElement.classList.remove('chk-label-disabled');
-            chkMa.parentElement.classList.remove('chk-label-disabled');
+        if (pNum !== "0") {
+            syncSpecialConditions(idx);
         }
     }
 
@@ -759,7 +796,6 @@
         const filterPanel = document.getElementById('filter-panel');
         const mainPanel = document.getElementById('main-panel');
 
-        // 初始化當日日期 (若尚未設定)
         const dateInput = document.getElementById('filter-start-date');
         if (!dateInput.value) {
             const t = new Date();
@@ -785,7 +821,6 @@
         }
     }
 
-    // 取得指定時辰單一宮位的核心算盤資料
     function getQimenElements(y, m, d, h, min, pNumStr) {
         const pNum = parseInt(pNumStr);
         try {
@@ -856,14 +891,16 @@
             let doorPan = {};
             for (let i = 0; i < 8; i++) doorPan[RING_ORDER[(i + doorOffset) % 8]] = DOORS_ORDER[i];
             
-            // 計算空亡及驛馬
             const kwIdx = (xunShouIdx + 10) % 12, kw1 = BRANCHES[kwIdx], kw2 = BRANCHES[kwIdx+1];
             const maMap = { "申": "寅", "子": "寅", "辰": "寅", "亥": "巳", "卯": "巳", "未": "巳", "寅": "申", "午": "申", "戌": "申", "巳": "亥", "酉": "亥", "丑": "亥" }, ma = maMap[timeBranch];
             
-            let isKong = false, isMa = false;
+            let isKong = false, isMa = false, isChong = false;
+            let monthBranch = monthGZ.substring(1, 2);
+            let clashBranch = CLASH_MAP[monthBranch];
             if (pNum !== 5) {
                 isKong = PALACES_HOU[pNum].branch.includes(kw1) || PALACES_HOU[pNum].branch.includes(kw2);
                 isMa = PALACES_HOU[pNum].branch.includes(ma);
+                isChong = PALACES_HOU[pNum].branch.includes(clashBranch);
             }
 
             let resGod = godPan[pNum] || "";
@@ -880,6 +917,57 @@
                 resEStems = [earthPan[5]];
             }
 
+            const isMenPoFn = (door, num) => {
+                const fire = num===9, water = num===1, earth = num===2||num===8, metal = num===6||num===7, wood = num===3||num===4;
+                if (door==="休門" && fire) return true; if ((door==="生門"||door==="死門") && water) return true; if ((door==="傷門"||door==="杜門") && earth) return true; if (door==="景門" && metal) return true; if ((door==="驚門"||door==="開門") && wood) return true; return false;
+            };
+
+            const isJiXingFn = (stem, num) => {
+                if (stem === '戊' && num === 3) return true; 
+                if (stem === '己' && num === 2) return true; 
+                if (stem === '庚' && num === 8) return true; 
+                if (stem === '辛' && num === 9) return true; 
+                if (['壬', '癸'].includes(stem) && num === 4) return true; 
+                return false;
+            };
+
+            const isRuMuFn = (stem, num) => {
+                if (['乙', '丙', '戊'].includes(stem) && num === 6) return true; 
+                if (['丁', '己', '庚'].includes(stem) && num === 8) return true; 
+                if (['辛', '壬'].includes(stem) && num === 4) return true; 
+                if (stem === '癸' && num === 2) return true; 
+                return false;
+            };
+
+            let evalPNum = pNum === 5 ? 2 : pNum;
+            let isMenPo = false;
+            let hasJiXing = false;
+            let hasRuMu = false;
+
+            if (pNum !== 5) {
+                isMenPo = isMenPoFn(resDoor, evalPNum);
+                for (let s of resHStems) {
+                    if (isJiXingFn(s, evalPNum)) hasJiXing = true;
+                    if (isRuMuFn(s, evalPNum)) hasRuMu = true;
+                }
+                for (let s of resEStems) {
+                    if (isJiXingFn(s, evalPNum)) hasJiXing = true;
+                    if (isRuMuFn(s, evalPNum)) hasRuMu = true;
+                }
+            }
+
+            // 新增：天顯時格與五不遇時判斷
+            const isWuBuYu = (timeStemIdx === (STEMS.indexOf(dayStem) + 6) % 10);
+            let isTianXian = false;
+            const dStemTX = dayGZ.substring(0, 1);
+            if (((dStemTX === '甲' || dStemTX === '己') && (timeGZ_string === '己巳')) ||
+                ((dStemTX === '乙' || dStemTX === '庚') && timeGZ_string === '甲申') ||
+                ((dStemTX === '丙' || dStemTX === '辛') && timeGZ_string === '甲午') ||
+                ((dStemTX === '丁' || dStemTX === '壬') && timeGZ_string === '甲辰') ||
+                ((dStemTX === '戊' || dStemTX === '癸') && timeGZ_string === '甲寅')) {
+                isTianXian = true;
+            }
+
             return {
                 god: resGod,
                 star: resStar,
@@ -893,7 +981,13 @@
                 hStem: timeStem,
                 isKong: isKong,
                 isMa: isMa,
-                ziMark: ziMark
+                isMenPo: isMenPo,
+                hasJiXing: hasJiXing,
+                hasRuMu: hasRuMu,
+                isChong: isChong,
+                ziMark: ziMark,
+                isTianXian: isTianXian,
+                isWuBuYu: isWuBuYu
             };
         } catch(e) {
             console.error(e);
@@ -901,7 +995,6 @@
         }
     }
 
-    // 將單獨一組條件判定獨立成涵式
     function evalCriteria(elements, c) {
         if (!elements) return false;
         let isMatch = true;
@@ -922,6 +1015,21 @@
         
         if (isMatch && c.kong && !elements.isKong) isMatch = false;
         if (isMatch && c.ma && !elements.isMa) isMatch = false;
+        if (isMatch && c.jiXing && !elements.hasJiXing) isMatch = false;
+        if (isMatch && c.ruMu && !elements.hasRuMu) isMatch = false;
+        if (isMatch && c.chong && !elements.isChong) isMatch = false;
+        if (isMatch && c.menPo && !elements.isMenPo) isMatch = false;
+        
+        if (isMatch && c.noKong && elements.isKong) isMatch = false;
+        if (isMatch && c.noMa && elements.isMa) isMatch = false;
+        if (isMatch && c.noJiXing && elements.hasJiXing) isMatch = false;
+        if (isMatch && c.noRuMu && elements.hasRuMu) isMatch = false;
+        if (isMatch && c.noChong && elements.isChong) isMatch = false;
+        if (isMatch && c.noMenPo && elements.isMenPo) isMatch = false;
+        
+        // 天顯時格與五不遇時
+        if (isMatch && c.tianXian && !elements.isTianXian) isMatch = false;
+        if (isMatch && c.wuBuYu && !elements.isWuBuYu) isMatch = false;
         
         return isMatch;
     }
@@ -954,8 +1062,20 @@
             doors: getChecked('chk-group-door-1'),
             hStems: getChecked('chk-group-hstem-1'),
             eStems: getChecked('chk-group-estem-1'),
-            kong: document.getElementById('chk-kong-1').checked,
-            ma: document.getElementById('chk-ma-1').checked
+            kong: document.getElementById('chk-kong-1')?.checked,
+            noKong: document.getElementById('chk-nokong-1')?.checked,
+            ma: document.getElementById('chk-ma-1')?.checked,
+            noMa: document.getElementById('chk-noma-1')?.checked,
+            jiXing: document.getElementById('chk-jixing-1')?.checked,
+            noJiXing: document.getElementById('chk-nojixing-1')?.checked,
+            ruMu: document.getElementById('chk-rumu-1')?.checked,
+            noRuMu: document.getElementById('chk-norumu-1')?.checked,
+            chong: document.getElementById('chk-chong-1')?.checked,
+            noChong: document.getElementById('chk-nochong-1')?.checked,
+            menPo: document.getElementById('chk-menpo-1')?.checked,
+            noMenPo: document.getElementById('chk-nomenpo-1')?.checked,
+            tianXian: document.getElementById('chk-tianxian-1')?.checked,
+            wuBuYu: document.getElementById('chk-wubuyu-1')?.checked
         };
 
         // 擷取條件二
@@ -965,8 +1085,20 @@
             doors: getChecked('chk-group-door-2'),
             hStems: getChecked('chk-group-hstem-2'),
             eStems: getChecked('chk-group-estem-2'),
-            kong: document.getElementById('chk-kong-2').checked,
-            ma: document.getElementById('chk-ma-2').checked
+            kong: document.getElementById('chk-kong-2')?.checked,
+            noKong: document.getElementById('chk-nokong-2')?.checked,
+            ma: document.getElementById('chk-ma-2')?.checked,
+            noMa: document.getElementById('chk-noma-2')?.checked,
+            jiXing: document.getElementById('chk-jixing-2')?.checked,
+            noJiXing: document.getElementById('chk-nojixing-2')?.checked,
+            ruMu: document.getElementById('chk-rumu-2')?.checked,
+            noRuMu: document.getElementById('chk-norumu-2')?.checked,
+            chong: document.getElementById('chk-chong-2')?.checked,
+            noChong: document.getElementById('chk-nochong-2')?.checked,
+            menPo: document.getElementById('chk-menpo-2')?.checked,
+            noMenPo: document.getElementById('chk-nomenpo-2')?.checked,
+            tianXian: document.getElementById('chk-tianxian-2')?.checked,
+            wuBuYu: document.getElementById('chk-wubuyu-2')?.checked
         } : null;
 
         resultsList.innerHTML = '<div class="p-6 text-center text-amber-600 font-bold flex flex-col items-center justify-center gap-2"><svg class="animate-spin h-6 w-6 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>運算 30 日內全時辰資料中...</span></div>';
@@ -1007,7 +1139,6 @@
                     let match1 = evalCriteria(elements1, criteria1);
                     let matchOverall = match1;
 
-                    // 若條件二啟動，則進行條件二之判定與邏輯運算
                     if (pNum2 !== "0") {
                         let elements2 = getQimenElements(y, m, d, h, min, pNum2);
                         let match2 = elements2 ? evalCriteria(elements2, criteria2) : false;
@@ -1083,7 +1214,6 @@
         document.getElementById('palace-modal').classList.add('hidden');
     }
 
-    // 顯示宮位 Modal 與計算格局
     function showPalaceDetails(pNum) {
         const data = globalPalaceData[pNum];
         if (!data) return;
@@ -1244,7 +1374,6 @@
         enablePalaceModal = document.getElementById('toggle-palacemodal').checked;
     }
 
-    // 切換輸入模式 (時間/四柱)
     function toggleInputMode() {
         isBaziMode = !isBaziMode;
         const btn = document.getElementById('btn-mode-toggle');
@@ -1264,7 +1393,6 @@
             baziSels.classList.remove('hidden');
             baziSels.classList.add('flex');
             
-            // 完全隱藏現在時間按鈕
             nowBtn.classList.add('hidden');
             jqBtn.classList.add('hidden');
         } else {
@@ -1278,7 +1406,6 @@
             baziSels.classList.remove('flex');
             dateSels.classList.remove('hidden');
             
-            // 恢復顯示現在時間按鈕
             nowBtn.classList.remove('hidden');
             jqBtn.classList.remove('hidden');
         }
@@ -1312,7 +1439,6 @@
         }
     }
 
-    // 初始化四柱下拉選單 (依照天干排序)
     function initBaziSelectors() {
         const sortedJiaZi = [...JIA_ZI_ARRAY].sort((a, b) => {
             const stemA = STEMS.indexOf(a[0]);
@@ -1373,7 +1499,6 @@
         }
     }
 
-    // 起盤按鈕分流
     function handleGenerateBtn() {
         if (isBaziMode) {
             executeBaziSearch();
@@ -1382,7 +1507,6 @@
         }
     }
 
-    // 四柱搜尋落實
     function executeBaziSearch() {
         const tgtY = document.getElementById('sel-bazi-y').value;
         const tgtM = document.getElementById('sel-bazi-m').value;
@@ -1417,7 +1541,6 @@
         document.getElementById('bazi-modal').classList.remove('hidden');
     }
 
-    // 尋找符合的四柱曆法日期
     function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
         let results = [];
         let start = new Date(1930, 0, 1);
@@ -1466,7 +1589,6 @@
         return results;
     }
 
-    // 套用起盤結果
     function applyBaziResult(y, m, d, h, min) {
         document.getElementById('bazi-modal').classList.add('hidden');
         
@@ -1589,7 +1711,6 @@
             if (h >= 23) ziMark = "晚子";
             else if (h === 0) ziMark = "早子";
 
-            // 大六壬天將排定
             let prevQi = exactLunar.getPrevQi(true);
             let zqName = prevQi.getName();
             let yueJiangBranchCalculated = ZQ_MAP[zqName] || "亥";
@@ -1675,7 +1796,6 @@
             document.getElementById('info-zhishi').innerText = doorPan[currentD_val];
             document.getElementById('info-kongwang').innerText = kw1 + "、" + kw2;
 
-            // 伏吟與反吟
             let isMenFuyin = (doorOffset === 0);
             let isStarFuyin = (offset === 0);
             let isGanFuyin = (offset === 0);
@@ -1887,7 +2007,6 @@
                     palaceNum: i
                 };
 
-                // 修正了能量狀態下的排版：使用 flex-col 搭配 items-stretch 確保上下最長寬度一致貼齊，並統一向右對齊 (Req 3)
                 el.innerHTML = `${getBranchHTML(i)}
                     <div class="emoji-container">
                         ${isKong ? '<span>🈳</span>' : ''}
@@ -1996,7 +2115,6 @@
         });
     }
 
-    // 初始化載入
     window.onload = function() {
         initSelectors();
         initBaziSelectors();
@@ -2004,7 +2122,7 @@
         handleFilterPalaceChange(2);
     };
 </script>
-    <script data-goatcounter="https://qimenchart.goatcounter.com/count"
+<script data-goatcounter="https://qimenchart.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
