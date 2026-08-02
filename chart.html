@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>奇門遁甲 - 拆補法排盤 (v26.2)</title>
+    <title>奇門遁甲 - 拆補法排盤 (v26.3)</title>
     <link rel="icon" type="image/jpeg" href="icon.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
@@ -252,7 +252,7 @@
                     </label>
                 </div>
                 <div class="w-full text-center mt-2">
-                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.2)</span>
+                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.3)</span>
                 </div>
             </div>
         </div>
@@ -335,6 +335,11 @@
                         </div>
                     </details>
                     <!-- 八神-1 -->
+                    <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
+                        <summary class="p-2 cursor-pointer text-sm font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none"><span>八神</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
+                        <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-god-1">
+                            <label class="chk-label"><input type="checkbox" value="值符"><span class="text-xs text-gray-700">值符</span></label><label class="chk-label"><input type="checkbox" value="螣蛇"><span class="text-xs text-gray-700">螣蛇</span></label><label class="chk-label"><input type="checkbox" value="太陰"><span class="text-xs text-gray-700">太陰</span></label><label class="chk-label"><input type="checkbox" value="六合"><span class="text-xs text-gray-700">六合</span></label><label class="chk-label"><input type="checkbox" value="白虎"><span class="text-xs text-gray-700">白虎</span></label><label class="chk-label"><input type="checkbox" value="玄武"><span class="text-xs text-gray-700">玄武</span></label><label class="chk-label"><input type="checkbox" value="九地"><span class="text-xs text-gray-700">九地</span></label><label class="chk-label"><input type="checkbox" value="九天"><span class="text-xs text-gray-700">九天</span></label>
+                        </div>
                     </details>
                     <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
                         <summary class="p-2 cursor-pointer text-sm font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none"><span>八門</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
@@ -413,6 +418,12 @@
                         </div>
                     </details>
                     <!-- 八神-2 -->
+                    <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
+                        <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 bg-blue-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-blue-100 flex justify-between items-center select-none"><span>八神</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
+                        <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-god-2">
+                            <label class="chk-label"><input type="checkbox" value="值符"><span class="text-xs text-gray-700">值符</span></label><label class="chk-label"><input type="checkbox" value="螣蛇"><span class="text-xs text-gray-700">螣蛇</span></label><label class="chk-label"><input type="checkbox" value="太陰"><span class="text-xs text-gray-700">太陰</span></label><label class="chk-label"><input type="checkbox" value="六合"><span class="text-xs text-gray-700">六合</span></label><label class="chk-label"><input type="checkbox" value="白虎"><span class="text-xs text-gray-700">白虎</span></label><label class="chk-label"><input type="checkbox" value="玄武"><span class="text-xs text-gray-700">玄武</span></label><label class="chk-label"><input type="checkbox" value="九地"><span class="text-xs text-gray-700">九地</span></label><label class="chk-label"><input type="checkbox" value="九天"><span class="text-xs text-gray-700">九天</span></label>
+                        </div>
+                    </details>
                     <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
                         <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 bg-blue-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-blue-100 flex justify-between items-center select-none"><span>八門</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
                         <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-door-2">
@@ -715,6 +726,38 @@
         '壬': {1:'帝旺', 8:'衰/病', 3:'死', 4:'墓/絕', 9:'胎', 2:'養/長生', 7:'沐浴', 6:'冠帶/臨官'},
         '癸': {1:'臨官', 8:'冠帶/沐浴', 3:'長生', 4:'養/胎', 9:'絕', 2:'墓/死', 7:'病', 6:'衰/帝旺'}
     };
+
+    const isRuMu = (stem, pNum) => {
+        if (['乙', '丙', '戊'].includes(stem) && pNum === 6) return true; 
+        if (['丁', '己', '庚'].includes(stem) && pNum === 8) return true; 
+        if (['辛', '壬'].includes(stem) && pNum === 4) return true; 
+        if (stem === '癸' && pNum === 2) return true; 
+        return false;
+    };
+
+    function resolveStemEnergy(stem, pNum, timeBranch) {
+        if (!STEM_ENERGY[stem]) return stem;
+        let energyPNum = (pNum === 5) ? 2 : pNum;
+        
+        // 方案 A：天干若在該宮位觸發奇門「入墓」，能量狀態優先顯示「墓」
+        if (isRuMu(stem, energyPNum)) {
+            return '墓';
+        }
+
+        let energyStr = STEM_ENERGY[stem][energyPNum];
+        if (energyStr && energyStr.includes('/')) {
+            const timeIsYang = ['子', '寅', '辰', '午', '申', '戌'].includes(timeBranch);
+            const parts = energyStr.split('/');
+            // 8: 丑(Yin)/寅(Yang), 4: 辰(Yang)/巳(Yin)
+            // 2: 未(Yin)/申(Yang), 6: 戌(Yang)/亥(Yin)
+            if (energyPNum === 8 || energyPNum === 2) {
+                return timeIsYang ? parts[1] : parts[0];
+            } else if (energyPNum === 4 || energyPNum === 6) {
+                return timeIsYang ? parts[0] : parts[1];
+            }
+        }
+        return energyStr;
+    }
 
     let globalPalaceData = {};
     let useNeiWai = false;
@@ -1865,14 +1908,6 @@
                 return false;
             };
 
-            const isRuMu = (stem, pNum) => {
-                if (['乙', '丙', '戊'].includes(stem) && pNum === 6) return true; 
-                if (['丁', '己', '庚'].includes(stem) && pNum === 8) return true; 
-                if (['辛', '壬'].includes(stem) && pNum === 4) return true; 
-                if (stem === '癸' && pNum === 2) return true; 
-                return false;
-            };
-
             const getStemTagsText = (stem, pNum) => {
                 let tags = [];
                 if(isJiXing(stem, pNum)) tags.push("刑");
@@ -1950,8 +1985,7 @@
                     
                     let displayChar = s;
                     if (useEnergy) {
-                        let energyPNum = (pNum === 5) ? 2 : pNum; 
-                        displayChar = STEM_ENERGY[s] ? STEM_ENERGY[s][energyPNum] : s;
+                        displayChar = resolveStemEnergy(s, pNum, timeBranch);
                     }
 
                     if (isAnGan) {
@@ -1969,7 +2003,7 @@
                 if(i === 5) {
                     let s = earthPan[5], anGan = anGanPan[5];
                     el.innerHTML = `${getBranchHTML(5)}<div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div><div class="flex justify-center items-center h-full text-3xl text-black">${renderStem(s, 5)}</div><div class="absolute bottom-0 left-0 m-1">${renderStem(anGan, 5, true)}</div>`;
-                    panData.palaces["中五"] = useEnergy ? (STEM_ENERGY[s] ? STEM_ENERGY[s][2] : s) : s; 
+                    panData.palaces["中五"] = useEnergy ? resolveStemEnergy(s, 5, timeBranch) : s; 
                     
                     globalPalaceData[5] = { name: ACTIVE_PALACES[5].name, hStems: [s], eStems: [s], anGan: anGan, isCenter: true };
                     continue;
@@ -2034,12 +2068,12 @@
                 let doorTextForCopy = pDoorDisplay + (isMenPo(pDoor, i) ? "(迫)" : "");
                 
                 let hStemsForCopy = hStems.map((s, idx) => {
-                    let txt = (useEnergy ? (STEM_ENERGY[s] ? STEM_ENERGY[s][i] : s) : s) + getStemTagsText(s, i);
+                    let txt = (useEnergy ? resolveStemEnergy(s, i, timeBranch) : s) + getStemTagsText(s, i);
                     return txt + (idx === 0 ? "(天)" : "(寄天)");
                 }).join('+');
 
                 let eStemsForCopy = eStems.map((s, idx) => {
-                    let txt = (useEnergy ? (STEM_ENERGY[s] ? STEM_ENERGY[s][(i===5)?2:i] : s) : s) + getStemTagsText(s, i);
+                    let txt = (useEnergy ? resolveStemEnergy(s, i, timeBranch) : s) + getStemTagsText(s, i);
                     return txt + (idx === 0 ? "(地)" : "(寄地)");
                 }).join('+');
 
