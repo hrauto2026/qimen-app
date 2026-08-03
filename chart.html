@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>奇門遁甲 - 拆補法排盤 (v26.3)</title>
+    <title>奇門遁甲 - 拆補法排盤 (v26.4)</title>
     <link rel="icon" type="image/jpeg" href="icon.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
@@ -46,6 +46,33 @@
             transition: all 0.3s ease; cursor: pointer;
         }
         .palace-active { border: 4px solid #3b82f6 !important; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); z-index: 30; }
+
+        /* 三合/六合 地支字樣標籤快速閃亮動畫 */
+        @keyframes flashBranch {
+            0%, 100% { 
+                background-color: #fef08a !important; 
+                color: #b91c1c !important; 
+                box-shadow: 0 0 8px rgba(245, 158, 11, 0.9) !important; 
+                border: 1.5px solid #f59e0b !important;
+                border-radius: 6px;
+                padding: 1px 4px;
+            }
+            50% { 
+                background-color: #ef4444 !important; 
+                color: #ffffff !important; 
+                box-shadow: 0 0 15px rgba(239, 68, 68, 1), 0 0 22px rgba(250, 204, 21, 0.9) !important; 
+                border: 1.5px solid #b91c1c !important;
+                border-radius: 6px;
+                padding: 1px 4px;
+            }
+        }
+        .branch-flash {
+            animation: flashBranch 0.5s infinite ease-in-out !important;
+            z-index: 40 !important;
+        }
+        .branch-flash span {
+            color: inherit !important;
+        }
 
         /* 古典五行配色 */
         .bg-water { background-color: #f0f9ff; border-color: #bae6fd; } .text-water { color: #0369a1; }
@@ -213,7 +240,7 @@
                 </div>
             </div>
 
-            <div class="flex justify-center items-center mt-6 hidden gap-4 flex-wrap" id="action-footer">
+            <div class="flex justify-center items-center mt-6 hidden gap-3 flex-wrap" id="action-footer">
                 <button onclick="copyPan()" class="bg-slate-800 hover:bg-black text-white py-2 px-4 rounded-full shadow-lg transition active:scale-95 flex items-center justify-center text-sm">
                     <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                     複製盤面資料
@@ -226,38 +253,56 @@
                 <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-indigo-100">
                     <span class="text-xs font-bold text-gray-700" id="bagua-label">先天八卦數</span>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="toggle-bagua" class="sr-only peer" onchange="toggleBaGua()">
+                        <input type="checkbox" id="toggle-bagua" class="sr-only peer" onchange="handleToggleSwitch('toggle-bagua')">
                         <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 shadow-inner"></div>
                     </label>
                 </div>
                 <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-orange-100">
                     <span class="text-xs font-bold text-gray-700" id="energy-label">能量狀態</span>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="toggle-energy" class="sr-only peer" onchange="toggleEnergy()">
+                        <input type="checkbox" id="toggle-energy" class="sr-only peer" onchange="handleToggleSwitch('toggle-energy')">
                         <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500 shadow-inner"></div>
                     </label>
                 </div>
                 <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-green-100">
                     <span class="text-xs font-bold text-gray-700">內外盤</span>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="toggle-neiwai" class="sr-only peer" onchange="toggleNeiWai()">
+                        <input type="checkbox" id="toggle-neiwai" class="sr-only peer" onchange="handleToggleSwitch('toggle-neiwai')">
                         <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500 shadow-inner"></div>
                     </label>
                 </div>
                 <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-blue-100">
                     <span class="text-xs font-bold text-gray-700">按宮看格局</span>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="toggle-palacemodal" class="sr-only peer" onchange="togglePalaceModal()">
+                        <input type="checkbox" id="toggle-palacemodal" class="sr-only peer" onchange="handleToggleSwitch('toggle-palacemodal')">
                         <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500 shadow-inner"></div>
                     </label>
                 </div>
+                <!-- Toggle Switch 5: 地支三合 -->
+                <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-purple-100">
+                    <span class="text-xs font-bold text-gray-700">地支三合</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle-sanhe" class="sr-only peer" onchange="handleToggleSwitch('toggle-sanhe')">
+                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600 shadow-inner"></div>
+                    </label>
+                </div>
+                <!-- Toggle Switch 6: 地支六合 -->
+                <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-teal-100">
+                    <span class="text-xs font-bold text-gray-700">地支六合</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle-liuhe" class="sr-only peer" onchange="handleToggleSwitch('toggle-liuhe')">
+                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-teal-600 shadow-inner"></div>
+                    </label>
+                </div>
+
                 <div class="w-full text-center mt-2">
-                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.3)</span>
+                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.4)</span>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 篩選器面板 -->
     <div id="filter-panel" class="hidden lg:col-span-4 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-5 border border-amber-200 slide-panel overflow-y-auto max-h-[90vh]">
         <div class="flex justify-between items-center mb-4 pb-2 border-b-2 border-amber-100">
             <h3 class="text-xl font-black text-amber-900 flex items-center gap-1.5">
@@ -334,7 +379,6 @@
                             </div>
                         </div>
                     </details>
-                    <!-- 八神-1 -->
                     <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
                         <summary class="p-2 cursor-pointer text-sm font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none"><span>八神</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
                         <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-god-1">
@@ -380,7 +424,6 @@
                 </div>
 
                 <div id="condition-2-elements" class="hidden flex flex-col gap-1.5">
-                    <!-- 特殊狀態-2 -->
                     <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm" open>
                         <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 bg-blue-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-blue-100 flex justify-between items-center select-none">
                             <span>特殊狀態</span>
@@ -415,13 +458,6 @@
                                 <label class="chk-label"><input type="checkbox" id="chk-tianxian-2"><span class="text-xs text-gray-700">天顯時格</span></label>
                                 <label class="chk-label"><input type="checkbox" id="chk-wubuyu-2"><span class="text-xs text-gray-700">五不遇時</span></label>
                             </div>
-                        </div>
-                    </details>
-                    <!-- 八神-2 -->
-                    <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
-                        <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 bg-blue-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-blue-100 flex justify-between items-center select-none"><span>八神</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
-                        <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-god-2">
-                            <label class="chk-label"><input type="checkbox" value="值符"><span class="text-xs text-gray-700">值符</span></label><label class="chk-label"><input type="checkbox" value="螣蛇"><span class="text-xs text-gray-700">螣蛇</span></label><label class="chk-label"><input type="checkbox" value="太陰"><span class="text-xs text-gray-700">太陰</span></label><label class="chk-label"><input type="checkbox" value="六合"><span class="text-xs text-gray-700">六合</span></label><label class="chk-label"><input type="checkbox" value="白虎"><span class="text-xs text-gray-700">白虎</span></label><label class="chk-label"><input type="checkbox" value="玄武"><span class="text-xs text-gray-700">玄武</span></label><label class="chk-label"><input type="checkbox" value="九地"><span class="text-xs text-gray-700">九地</span></label><label class="chk-label"><input type="checkbox" value="九天"><span class="text-xs text-gray-700">九天</span></label>
                         </div>
                     </details>
                     <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
@@ -727,6 +763,22 @@
         '癸': {1:'臨官', 8:'冠帶/沐浴', 3:'長生', 4:'養/胎', 9:'絕', 2:'墓/死', 7:'病', 6:'衰/帝旺'}
     };
 
+    const SAN_HE_MAP = [
+        { name: "申子辰合成水局", branches: ['申', '子', '辰'] },
+        { name: "亥卯未合成木局", branches: ['亥', '卯', '未'] },
+        { name: "寅午戌合成火局", branches: ['寅', '午', '戌'] },
+        { name: "巳酉丑合成金局", branches: ['巳', '酉', '丑'] }
+    ];
+
+    const LIU_HE_MAP = [
+        { name: "子丑合土", branches: ['子', '丑'] },
+        { name: "寅亥合木", branches: ['寅', '亥'] },
+        { name: "卯戌合火", branches: ['卯', '戌'] },
+        { name: "辰酉合金", branches: ['辰', '酉'] },
+        { name: "巳申合水", branches: ['巳', '申'] },
+        { name: "午未合土", branches: ['午', '未'] }
+    ];
+
     const isRuMu = (stem, pNum) => {
         if (['乙', '丙', '戊'].includes(stem) && pNum === 6) return true; 
         if (['丁', '己', '庚'].includes(stem) && pNum === 8) return true; 
@@ -739,7 +791,6 @@
         if (!STEM_ENERGY[stem]) return stem;
         let energyPNum = (pNum === 5) ? 2 : pNum;
         
-        // 方案 A：天干若在該宮位觸發奇門「入墓」，能量狀態優先顯示「墓」
         if (isRuMu(stem, energyPNum)) {
             return '墓';
         }
@@ -748,8 +799,6 @@
         if (energyStr && energyStr.includes('/')) {
             const timeIsYang = ['子', '寅', '辰', '午', '申', '戌'].includes(timeBranch);
             const parts = energyStr.split('/');
-            // 8: 丑(Yin)/寅(Yang), 4: 辰(Yang)/巳(Yin)
-            // 2: 未(Yin)/申(Yang), 6: 戌(Yang)/亥(Yin)
             if (energyPNum === 8 || energyPNum === 2) {
                 return timeIsYang ? parts[1] : parts[0];
             } else if (energyPNum === 4 || energyPNum === 6) {
@@ -764,6 +813,93 @@
     let enablePalaceModal = false;
     let isBaziMode = false; 
     let isFilterPanelOpen = false;
+
+    // Toggle switch variables
+    let useXianTian = false;
+    let useEnergy = false;
+    let useSanHe = false;
+    let useLiuHe = false;
+
+    // 切換按鈕互斥處理邏輯 (開選任一切換時，自動關閉其他所有切換)
+    function handleToggleSwitch(activeId) {
+        const allToggles = [
+            'toggle-bagua', 
+            'toggle-energy', 
+            'toggle-neiwai', 
+            'toggle-palacemodal', 
+            'toggle-sanhe', 
+            'toggle-liuhe'
+        ];
+        
+        const activeEl = document.getElementById(activeId);
+        
+        // 若點擊開啟該 switch，自動將其他 switch 設為 off
+        if (activeEl && activeEl.checked) {
+            allToggles.forEach(id => {
+                if (id !== activeId) {
+                    const el = document.getElementById(id);
+                    if (el) el.checked = false;
+                }
+            });
+        }
+
+        // 更新狀態變數
+        useXianTian = document.getElementById('toggle-bagua').checked;
+        useEnergy = document.getElementById('toggle-energy').checked;
+        useNeiWai = document.getElementById('toggle-neiwai').checked;
+        enablePalaceModal = document.getElementById('toggle-palacemodal').checked;
+        useSanHe = document.getElementById('toggle-sanhe').checked;
+        useLiuHe = document.getElementById('toggle-liuhe').checked;
+
+        document.getElementById('bagua-label').innerText = useXianTian ? "後天八卦數" : "先天八卦數";
+
+        generatePan();
+    }
+
+    // 地支標籤外框生成
+    const getBranchHTML = (i) => {
+        let text = BRANCH_POSITIONS_TEMPLATE[i];
+        let html = "";
+        if (!text) return "";
+        
+        const branchConfig = {
+            '子': { class: 'pos-bottom', vertical: false },
+            '丑': { class: 'pos-bottom', vertical: false },
+            '寅': { class: 'pos-left', vertical: true },
+            '卯': { class: 'pos-left', vertical: true },
+            '辰': { class: 'pos-left', vertical: true },
+            '巳': { class: 'pos-top', vertical: false },
+            '午': { class: 'pos-top', vertical: false },
+            '未': { class: 'pos-top', vertical: false },
+            '申': { class: 'pos-right', vertical: true },
+            '酉': { class: 'pos-right', vertical: true },
+            '戌': { class: 'pos-right', vertical: true },
+            '亥': { class: 'pos-bottom', vertical: false }
+        };
+
+        const currentMonthBranch = panData.monthBranch || "";
+
+        for(let b of text) {
+            let wColor = WUXING_COLORS[b];
+            let conf = branchConfig[b];
+            let tjText = (panData.branchToTianJiang && panData.branchToTianJiang[b]) ? panData.branchToTianJiang[b] : "";
+            
+            let tjHtml = tjText ? `<span class="tian-jiang">${tjText}</span>` : "";
+            let baseClasses = `branch-label ${conf.class}`;
+            if (conf.vertical) baseClasses += ` vertical-label`;
+            
+            let hlClasses = "";
+            if (b === currentMonthBranch) {
+                hlClasses = " bg-yellow-200 px-1.5 py-0.5 rounded shadow-sm border border-yellow-400 z-30";
+            }
+            
+            html += `<div class="${baseClasses}${hlClasses}" data-branch="${b}" style="color: ${wColor};">
+                        <span>${b}</span>
+                        ${tjHtml}
+                     </div>`;
+        }
+        return html;
+    };
 
     // 同步特殊狀態之互斥選項與宮位規則
     function syncSpecialConditions(idx) {
@@ -813,7 +949,6 @@
         });
     }
 
-    // 宮位切換時動態鎖定/解鎖空亡與驛馬功能，並控制條件二的展開
     function handleFilterPalaceChange(idx) {
         const pNum = document.getElementById(`filter-target-palace-${idx}`).value;
         
@@ -834,7 +969,6 @@
         }
     }
 
-    // 項目 3 條件篩選面板切換控制
     function toggleFilterPanel() {
         const filterPanel = document.getElementById('filter-panel');
         const mainPanel = document.getElementById('main-panel');
@@ -999,7 +1133,6 @@
                 }
             }
 
-            // 新增：天顯時格與五不遇時判斷
             const isWuBuYu = (timeStemIdx === (STEMS.indexOf(dayStem) + 6) % 10);
             let isTianXian = false;
             const dStemTX = dayGZ.substring(0, 1);
@@ -1070,14 +1203,12 @@
         if (isMatch && c.noChong && elements.isChong) isMatch = false;
         if (isMatch && c.noMenPo && elements.isMenPo) isMatch = false;
         
-        // 天顯時格與五不遇時
         if (isMatch && c.tianXian && !elements.isTianXian) isMatch = false;
         if (isMatch && c.wuBuYu && !elements.isWuBuYu) isMatch = false;
         
         return isMatch;
     }
 
-    // 執行搜尋
     function executeRealSearch() {
         const resultsList = document.getElementById('filter-results-list');
         const resultsCount = document.getElementById('filter-results-count');
@@ -1098,7 +1229,6 @@
         
         const getChecked = (groupId) => Array.from(document.querySelectorAll(`#${groupId} input:checked`)).map(cb => cb.value);
         
-        // 擷取條件一
         const criteria1 = {
             gods: getChecked('chk-group-god-1'),
             stars: getChecked('chk-group-star-1'),
@@ -1121,7 +1251,6 @@
             wuBuYu: document.getElementById('chk-wubuyu-1')?.checked
         };
 
-        // 擷取條件二
         const criteria2 = pNum2 !== "0" ? {
             gods: getChecked('chk-group-god-2'),
             stars: getChecked('chk-group-star-2'),
@@ -1377,44 +1506,80 @@
     let currentDate = new Date();
     let panData = {}; 
     let currentYiMaPalace = "";
-    let useXianTian = false;
-    let useEnergy = false;
 
-    function toggleBaGua() {
-        useXianTian = document.getElementById('toggle-bagua').checked;
-        document.getElementById('bagua-label').innerText = useXianTian ? "後天八卦數" : "先天八卦數";
-        
-        if (useXianTian) {
-            document.getElementById('toggle-energy').checked = false;
-            document.getElementById('toggle-energy').disabled = true;
-            useEnergy = false;
-        } else {
-            document.getElementById('toggle-energy').disabled = false;
+    // 三合 / 六合 動態地支標籤閃亮與中宮說明渲染
+    function updateHarmonyEffects(activePNum) {
+        // 清除所有地支標籤的閃亮動畫
+        document.querySelectorAll('.branch-label').forEach(el => el.classList.remove('branch-flash'));
+
+        if ((!useSanHe && !useLiuHe) || !activePNum || activePNum === 5) {
+            renderPalace5Default();
+            return;
         }
-        generatePan();
-    }
 
-    function toggleEnergy() {
-        useEnergy = document.getElementById('toggle-energy').checked;
-        
-        if (useEnergy) {
-            document.getElementById('toggle-bagua').checked = false;
-            document.getElementById('toggle-bagua').disabled = true;
-            useXianTian = false;
-            document.getElementById('bagua-label').innerText = "先天八卦數";
-        } else {
-            document.getElementById('toggle-bagua').disabled = false;
+        const ACTIVE_PALACES = useXianTian ? PALACES_XIAN : PALACES_HOU;
+        const targetBranches = ACTIVE_PALACES[activePNum]?.branch || [];
+
+        if (targetBranches.length === 0) {
+            renderPalace5Default();
+            return;
         }
-        generatePan();
+
+        let matchedExplanations = [];
+        let flashingBranches = new Set();
+
+        const hashMap = useSanHe ? SAN_HE_MAP : (useLiuHe ? LIU_HE_MAP : []);
+
+        targetBranches.forEach(b => {
+            hashMap.forEach(item => {
+                if (item.branches.includes(b)) {
+                    if (!matchedExplanations.includes(item.name)) {
+                        matchedExplanations.push(item.name);
+                    }
+                    item.branches.forEach(br => flashingBranches.add(br));
+                }
+            });
+        });
+
+        // 觸發對應地支字樣標籤的閃亮動畫（非整個宮位）
+        flashingBranches.forEach(br => {
+            document.querySelectorAll(`.branch-label[data-branch="${br}"]`).forEach(el => {
+                el.classList.add('branch-flash');
+            });
+        });
+
+        // 中宮顯示合局說明
+        const palace5El = document.getElementById('palace-5');
+        if (matchedExplanations.length > 0 && palace5El) {
+            const textHtml = matchedExplanations.map(exp => `<div class="text-xs sm:text-sm font-black text-indigo-900 bg-amber-100/90 rounded-lg py-1 px-2 my-0.5 shadow border border-amber-300 text-center tracking-wider">${exp}</div>`).join('');
+            
+            palace5El.innerHTML = `
+                ${getBranchHTML(5)}
+                <div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div>
+                <div class="flex flex-col justify-center items-center h-full w-full p-1 z-20">
+                    ${textHtml}
+                </div>
+            `;
+        } else {
+            renderPalace5Default();
+        }
     }
 
-    function toggleNeiWai() {
-        useNeiWai = document.getElementById('toggle-neiwai').checked;
-        generatePan();
-    }
+    // 中宮預設內容渲染 (確保能量狀態開啟時，中宮天干維持原天干字樣)
+    function renderPalace5Default() {
+        const palace5El = document.getElementById('palace-5');
+        if (!palace5El || !globalPalaceData[5]) return;
+        const s = globalPalaceData[5].hStems[0];
+        const anGan = globalPalaceData[5].anGan;
+        
+        let stemColor = WUXING_COLORS[s] || "#1a202c";
+        const dayHighlightStem = panData.dayHighlightStem;
+        const targetHighlightStem = panData.targetHighlightStem;
+        let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
+        let mainStemHtml = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important;">${s}</span>` : `<span class="font-bold" style="color: ${stemColor};">${s}</span>`;
+        let anGanHtml = `<span class="text-gray-400 text-sm sm:text-base">${anGan}</span>`;
 
-    function togglePalaceModal() {
-        enablePalaceModal = document.getElementById('toggle-palacemodal').checked;
+        palace5El.innerHTML = `${getBranchHTML(5)}<div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div><div class="flex justify-center items-center h-full text-3xl text-black">${mainStemHtml}</div><div class="absolute bottom-0 left-0 m-1">${anGanHtml}</div>`;
     }
 
     function toggleInputMode() {
@@ -1534,12 +1699,19 @@
             el.classList.add('palace-active');
         }
 
-        if (enablePalaceModal) {
+        let activePNum = null;
+        if (!wasActive) {
             let idMatch = el.id.match(/palace-(\d)/);
-            if(idMatch && idMatch[1]) {
-                showPalaceDetails(parseInt(idMatch[1]));
+            if (idMatch && idMatch[1]) {
+                activePNum = parseInt(idMatch[1]);
             }
         }
+
+        if (enablePalaceModal && activePNum) {
+            showPalaceDetails(activePNum);
+        }
+
+        updateHarmonyEffects(activePNum);
     }
 
     function handleGenerateBtn() {
@@ -1916,49 +2088,44 @@
             };
 
             let copyBaziLine = `${baziRawStr} (${y}年${m}月${d}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}${ziMark ? ' ' + ziMark : ''})`;
-            panData = { bazi: copyBaziLine, ju: juStr, xun: xunShouGZ+xunShouStem, zf: zhiFuStar, zs: doorPan[currentD_val], kw: kw1+"、"+kw2, special: rawSpecialInfo, stemStatus: combinedRawStatus, palaces: {} };
-            const currentMonthBranch = monthGZ.substring(1, 2);
             
-            const getBranchHTML = (i) => {
-                let text = BRANCH_POSITIONS_TEMPLATE[i];
-                let html = "";
-                if (!text) return "";
-                
-                const branchConfig = {
-                    '子': { class: 'pos-bottom', vertical: false },
-                    '丑': { class: 'pos-bottom', vertical: false },
-                    '寅': { class: 'pos-left', vertical: true },
-                    '卯': { class: 'pos-left', vertical: true },
-                    '辰': { class: 'pos-left', vertical: true },
-                    '巳': { class: 'pos-top', vertical: false },
-                    '午': { class: 'pos-top', vertical: false },
-                    '未': { class: 'pos-top', vertical: false },
-                    '申': { class: 'pos-right', vertical: true },
-                    '酉': { class: 'pos-right', vertical: true },
-                    '戌': { class: 'pos-right', vertical: true },
-                    '亥': { class: 'pos-bottom', vertical: false }
-                };
+            panData = { 
+                bazi: copyBaziLine, 
+                ju: juStr, 
+                xun: xunShouGZ+xunShouStem, 
+                zf: zhiFuStar, 
+                zs: doorPan[currentD_val], 
+                kw: kw1+"、"+kw2, 
+                special: rawSpecialInfo, 
+                stemStatus: combinedRawStatus, 
+                monthBranch: monthBranch,
+                branchToTianJiang: branchToTianJiang,
+                dayHighlightStem: dayHighlightStem,
+                targetHighlightStem: targetHighlightStem,
+                palaces: {} 
+            };
 
-                for(let b of text) {
-                    let wColor = WUXING_COLORS[b];
-                    let conf = branchConfig[b];
-                    let tjText = branchToTianJiang[b] ? branchToTianJiang[b] : "";
-                    
-                    let tjHtml = tjText ? `<span class="tian-jiang">${tjText}</span>` : "";
-                    let baseClasses = `branch-label ${conf.class}`;
-                    if (conf.vertical) baseClasses += ` vertical-label`;
-                    
-                    let hlClasses = "";
-                    if (b === currentMonthBranch) {
-                        hlClasses = " bg-yellow-200 px-1.5 py-0.5 rounded shadow-sm border border-yellow-400 z-30";
-                    }
-                    
-                    html += `<div class="${baseClasses}${hlClasses}" style="color: ${wColor};">
-                                <span>${b}</span>
-                                ${tjHtml}
-                             </div>`;
+            const renderStem = (s, pNum, isAnGan = false) => {
+                let tags = []; if(isJiXing(s, pNum)) tags.push("刑"); if(isRuMu(s, pNum)) tags.push("墓");
+                let tagClass = isAnGan ? "text-gray-400" : "text-red-600";
+                let tagStr = tags.length ? `<span class="text-[10px] ${tagClass} ml-0.5 font-bold">(${tags.join("+")})</span>` : "";
+                
+                let displayChar = s;
+                // 注意：中宮 (pNum === 5) 在開啟能量狀態時，天干不轉為十二長生狀態，保持原天干
+                if (useEnergy && pNum !== 5) {
+                    displayChar = resolveStemEnergy(s, pNum, timeBranch);
                 }
-                return html;
+
+                if (isAnGan) {
+                    let textClassSize = useEnergy ? "text-[10px] sm:text-xs" : "text-sm sm:text-base";
+                    return `<span class="text-gray-400 ${textClassSize}">${displayChar}${tagStr}</span>`;
+                }
+
+                let stemColor = WUXING_COLORS[s] || "#1a202c";
+                let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
+                let extraStyle = useEnergy && displayChar.length > 1 ? "font-size: 0.75em; line-height: 1;" : "";
+                let content = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important; ${extraStyle}">${displayChar}</span>` : `<span class="font-bold" style="color: ${stemColor}; ${extraStyle}">${displayChar}</span>`;
+                return `<span>${content}${tagStr}</span>`;
             };
 
             for (let i = 1; i <= 9; i++) {
@@ -1978,32 +2145,10 @@
                     guaDisplay = isInner ? "內" : "外";
                 }
 
-                const renderStem = (s, pNum, isAnGan = false) => {
-                    let tags = []; if(isJiXing(s, pNum)) tags.push("刑"); if(isRuMu(s, pNum)) tags.push("墓");
-                    let tagClass = isAnGan ? "text-gray-400" : "text-red-600";
-                    let tagStr = tags.length ? `<span class="text-[10px] ${tagClass} ml-0.5 font-bold">(${tags.join("+")})</span>` : "";
-                    
-                    let displayChar = s;
-                    if (useEnergy) {
-                        displayChar = resolveStemEnergy(s, pNum, timeBranch);
-                    }
-
-                    if (isAnGan) {
-                        let textClassSize = useEnergy ? "text-[10px] sm:text-xs" : "text-sm sm:text-base";
-                        return `<span class="text-gray-400 ${textClassSize}">${displayChar}${tagStr}</span>`;
-                    }
-
-                    let stemColor = WUXING_COLORS[s] || "#1a202c";
-                    let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
-                    let extraStyle = useEnergy && displayChar.length > 1 ? "font-size: 0.75em; line-height: 1;" : "";
-                    let content = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important; ${extraStyle}">${displayChar}</span>` : `<span class="font-bold" style="color: ${stemColor}; ${extraStyle}">${displayChar}</span>`;
-                    return `<span>${content}${tagStr}</span>`;
-                };
-
                 if(i === 5) {
                     let s = earthPan[5], anGan = anGanPan[5];
                     el.innerHTML = `${getBranchHTML(5)}<div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div><div class="flex justify-center items-center h-full text-3xl text-black">${renderStem(s, 5)}</div><div class="absolute bottom-0 left-0 m-1">${renderStem(anGan, 5, true)}</div>`;
-                    panData.palaces["中五"] = useEnergy ? resolveStemEnergy(s, 5, timeBranch) : s; 
+                    panData.palaces["中五"] = s; // 中宮保持原天干字樣
                     
                     globalPalaceData[5] = { name: ACTIVE_PALACES[5].name, hStems: [s], eStems: [s], anGan: anGan, isCenter: true };
                     continue;
@@ -2073,7 +2218,7 @@
                 }).join('+');
 
                 let eStemsForCopy = eStems.map((s, idx) => {
-                    let txt = (useEnergy ? resolveStemEnergy(s, i, timeBranch) : s) + getStemTagsText(s, i);
+                    let txt = (useEnergy ? resolveStemEnergy(s, (i===5)?2:i, timeBranch) : s) + getStemTagsText(s, i);
                     return txt + (idx === 0 ? "(地)" : "(寄地)");
                 }).join('+');
 
@@ -2105,6 +2250,15 @@
             } else if (heavenPan[5] === dayHighlightStem || (Array.isArray(heavenPan[5]) && heavenPan[5].includes(dayHighlightStem))) { 
                 document.getElementById('palace-5').classList.add('palace-active');
             }
+
+            // 起盤完畢後，即時觸發三合 / 六合效果判定
+            let activePalaceEl = document.querySelector('.palace-active');
+            let activePNum = null;
+            if (activePalaceEl) {
+                let idMatch = activePalaceEl.id.match(/palace-(\d)/);
+                if (idMatch && idMatch[1]) activePNum = parseInt(idMatch[1]);
+            }
+            updateHarmonyEffects(activePNum);
 
         } catch (e) { alert("起盤錯誤: " + e.message); console.error(e); }
     }
