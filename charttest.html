@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>奇門遁甲 - 拆補法排盤 (v26.4.1)</title>
+    <title>奇門遁甲 - 拆補法排盤 (v26.5)</title>
     <link rel="icon" type="image/jpeg" href="icon.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
@@ -47,66 +47,32 @@
         }
         .palace-active { border: 4px solid #3b82f6 !important; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); z-index: 30; }
 
-        /* ================= 5種地支閃亮動畫樣式定義 ================= */
-        
-        /* 樣式 1: 霓虹紅黃頻閃 (預設) */
-        @keyframes flashStyle1 {
+        /* 三合/六合 地支字樣標籤快速閃亮動畫 */
+        @keyframes flashBranch {
             0%, 100% { 
                 background-color: #fef08a !important; 
                 color: #b91c1c !important; 
-                box-shadow: 0 0 10px rgba(245, 158, 11, 0.9) !important; 
-                border: 2px solid #f59e0b !important;
-                border-radius: 6px; padding: 1px 5px; transform: scale(1.05);
+                box-shadow: 0 0 8px rgba(245, 158, 11, 0.9) !important; 
+                border: 1.5px solid #f59e0b !important;
+                border-radius: 6px;
+                padding: 1px 4px;
             }
             50% { 
                 background-color: #ef4444 !important; 
                 color: #ffffff !important; 
-                box-shadow: 0 0 18px rgba(239, 68, 68, 1), 0 0 25px rgba(250, 204, 21, 0.9) !important; 
-                border: 2px solid #b91c1c !important;
-                border-radius: 6px; padding: 1px 5px; transform: scale(1.2);
+                box-shadow: 0 0 15px rgba(239, 68, 68, 1), 0 0 22px rgba(250, 204, 21, 0.9) !important; 
+                border: 1.5px solid #b91c1c !important;
+                border-radius: 6px;
+                padding: 1px 4px;
             }
         }
-        .flash-style-1 { animation: flashStyle1 0.4s infinite ease-in-out !important; z-index: 40 !important; }
-        .flash-style-1 span { color: inherit !important; }
-
-        /* 樣式 2: 耀眼金光脈衝 */
-        @keyframes flashStyle2 {
-            0%, 100% { 
-                background-color: #fef3c7 !important; color: #92400e !important;
-                box-shadow: 0 0 6px #f59e0b !important; border: 2px solid #f59e0b !important;
-                border-radius: 6px; padding: 1px 4px; transform: scale(1);
-            }
-            50% { 
-                background-color: #fbbf24 !important; color: #78350f !important;
-                box-shadow: 0 0 20px #f59e0b, 0 0 30px #d97706 !important; border: 2px solid #b45309 !important;
-                border-radius: 6px; padding: 1px 4px; transform: scale(1.25);
-            }
+        .branch-flash {
+            animation: flashBranch 0.5s infinite ease-in-out !important;
+            z-index: 40 !important;
         }
-        .flash-style-2 { animation: flashStyle2 0.6s infinite ease-in-out !important; z-index: 40 !important; }
-        .flash-style-2 span { color: inherit !important; }
-
-        /* 樣式 3: 文字律動與放大 */
-        @keyframes flashStyle3 {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(0,0,0,0.2)); }
-            50% { transform: scale(1.45); filter: drop-shadow(0 0 8px #9333ea); font-weight: 900; }
+        .branch-flash span {
+            color: inherit !important;
         }
-        .flash-style-3 { animation: flashStyle3 0.5s infinite ease-in-out !important; z-index: 40 !important; }
-
-        /* 樣式 4: 警示紅底白字 */
-        @keyframes flashStyle4 {
-            0%, 100% { background-color: #dc2626 !important; color: #ffffff !important; border-radius: 6px; padding: 1px 5px; }
-            50% { background-color: #ffffff !important; color: #dc2626 !important; border-radius: 6px; padding: 1px 5px; box-shadow: 0 0 10px #dc2626 !important; }
-        }
-        .flash-style-4 { animation: flashStyle4 0.35s infinite steps(2) !important; z-index: 40 !important; }
-        .flash-style-4 span { color: inherit !important; }
-
-        /* 樣式 5: 炫彩霓虹邊框 */
-        @keyframes flashStyle5 {
-            0% { border: 2px solid #ec4899; box-shadow: 0 0 12px #ec4899; border-radius: 6px; padding: 1px 4px; transform: scale(1); }
-            50% { border: 2px solid #06b6d4; box-shadow: 0 0 18px #06b6d4; border-radius: 6px; padding: 1px 4px; transform: scale(1.15); }
-            100% { border: 2px solid #ec4899; box-shadow: 0 0 12px #ec4899; border-radius: 6px; padding: 1px 4px; transform: scale(1); }
-        }
-        .flash-style-5 { animation: flashStyle5 0.5s infinite linear !important; z-index: 40 !important; background-color: #ffffff !important; }
 
         /* 古典五行配色 */
         .bg-water { background-color: #f0f9ff; border-color: #bae6fd; } .text-water { color: #0369a1; }
@@ -134,7 +100,6 @@
             pointer-events: none;
             white-space: nowrap;
             z-index: 20;
-            transition: all 0.2s ease;
         }
 
         .tian-jiang {
@@ -329,21 +294,17 @@
                         <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-teal-600 shadow-inner"></div>
                     </label>
                 </div>
-
-                <!-- 閃亮效果選單 -->
-                <div class="flex items-center gap-1.5 bg-yellow-50/90 px-3 py-1.5 rounded-full shadow border border-yellow-200">
-                    <span class="text-xs font-black text-amber-900">✨ 閃亮效果：</span>
-                    <select id="sel-flash-style" onchange="updateFlashStyleChoice()" class="bg-white border border-amber-300 rounded px-1.5 py-0.5 text-xs font-bold text-amber-900 outline-none cursor-pointer">
-                        <option value="flash-style-1" selected>1. 霓虹黃紅 (經典)</option>
-                        <option value="flash-style-2">2. 耀眼金光 (呼吸)</option>
-                        <option value="flash-style-3">3. 文字律動 (放大)</option>
-                        <option value="flash-style-4">4. 警示紅底 (頻閃)</option>
-                        <option value="flash-style-5">5. 炫彩霓虹 (邊框)</option>
-                    </select>
+                <!-- Toggle Switch 7: 流年飛星 -->
+                <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-rose-100">
+                    <span class="text-xs font-bold text-gray-700">流年飛星</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle-feixing" class="sr-only peer" onchange="handleToggleSwitch('toggle-feixing')">
+                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-rose-600 shadow-inner"></div>
+                    </label>
                 </div>
 
                 <div class="w-full text-center mt-2">
-                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.4.1)</span>
+                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.5)</span>
                 </div>
             </div>
         </div>
@@ -552,7 +513,6 @@
     </div>
 </div>
 
-<!-- Modals -->
 <div id="jieqi-modal" class="fixed inset-0 bg-gray-900/60 hidden flex justify-center items-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-5 max-w-md w-full max-h-[80vh] overflow-y-auto relative border-t-8 border-teal-600">
         <button onclick="closeJieQiModal()" class="absolute top-3 right-4 text-gray-400 hover:text-black text-2xl">✖</button>
@@ -866,18 +826,7 @@
     let useEnergy = false;
     let useSanHe = false;
     let useLiuHe = false;
-    let currentFlashClass = "flash-style-1";
-
-    function updateFlashStyleChoice() {
-        currentFlashClass = document.getElementById('sel-flash-style').value;
-        let activeEl = document.querySelector('.palace-active');
-        if (activeEl) {
-            let idMatch = activeEl.id.match(/palace-(\d)/);
-            if (idMatch && idMatch[1]) {
-                updateHarmonyEffects(parseInt(idMatch[1]));
-            }
-        }
-    }
+    let useFeiXing = false; // 流年飛星開關
 
     function handleToggleSwitch(activeId) {
         const allToggles = [
@@ -886,7 +835,8 @@
             'toggle-neiwai', 
             'toggle-palacemodal', 
             'toggle-sanhe', 
-            'toggle-liuhe'
+            'toggle-liuhe',
+            'toggle-feixing'
         ];
         
         const activeEl = document.getElementById(activeId);
@@ -906,13 +856,13 @@
         enablePalaceModal = document.getElementById('toggle-palacemodal').checked;
         useSanHe = document.getElementById('toggle-sanhe').checked;
         useLiuHe = document.getElementById('toggle-liuhe').checked;
+        useFeiXing = document.getElementById('toggle-feixing').checked;
 
         document.getElementById('bagua-label').innerText = useXianTian ? "後天八卦數" : "先天八卦數";
 
         generatePan();
     }
 
-    // 統一的地支標籤 HTML 生成函式（確保 data-branch 屬性始終正確附加）
     const getBranchHTML = (i) => {
         let text = BRANCH_POSITIONS_TEMPLATE[i];
         let html = "";
@@ -957,84 +907,6 @@
         return html;
     };
 
-    // 三合 / 六合 動態地支標籤閃亮與中宮說明渲染
-    function updateHarmonyEffects(activePNum) {
-        // 清除所有動態閃亮樣式類別
-        document.querySelectorAll('.branch-label').forEach(el => {
-            el.classList.remove('flash-style-1', 'flash-style-2', 'flash-style-3', 'flash-style-4', 'flash-style-5');
-        });
-
-        if ((!useSanHe && !useLiuHe) || !activePNum || activePNum === 5) {
-            renderPalace5Default();
-            return;
-        }
-
-        const ACTIVE_PALACES = useXianTian ? PALACES_XIAN : PALACES_HOU;
-        const targetBranches = ACTIVE_PALACES[activePNum]?.branch || [];
-
-        if (targetBranches.length === 0) {
-            renderPalace5Default();
-            return;
-        }
-
-        let matchedExplanations = [];
-        let flashingBranches = new Set();
-
-        const hashMap = useSanHe ? SAN_HE_MAP : (useLiuHe ? LIU_HE_MAP : []);
-
-        targetBranches.forEach(b => {
-            hashMap.forEach(item => {
-                if (item.branches.includes(b)) {
-                    if (!matchedExplanations.includes(item.name)) {
-                        matchedExplanations.push(item.name);
-                    }
-                    item.branches.forEach(br => flashingBranches.add(br));
-                }
-            });
-        });
-
-        // 觸發對應地支字樣標籤的閃亮動畫
-        flashingBranches.forEach(br => {
-            document.querySelectorAll(`.branch-label[data-branch="${br}"]`).forEach(el => {
-                el.classList.add(currentFlashClass);
-            });
-        });
-
-        // 中宮顯示合局說明
-        const palace5El = document.getElementById('palace-5');
-        if (matchedExplanations.length > 0 && palace5El) {
-            const textHtml = matchedExplanations.map(exp => `<div class="text-xs sm:text-sm font-black text-indigo-900 bg-amber-100/90 rounded-lg py-1 px-2 my-0.5 shadow border border-amber-300 text-center tracking-wider">${exp}</div>`).join('');
-            
-            palace5El.innerHTML = `
-                ${getBranchHTML(5)}
-                <div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div>
-                <div class="flex flex-col justify-center items-center h-full w-full p-1 z-20">
-                    ${textHtml}
-                </div>
-            `;
-        } else {
-            renderPalace5Default();
-        }
-    }
-
-    // 中宮預設內容渲染
-    function renderPalace5Default() {
-        const palace5El = document.getElementById('palace-5');
-        if (!palace5El || !globalPalaceData[5]) return;
-        const s = globalPalaceData[5].hStems[0];
-        const anGan = globalPalaceData[5].anGan;
-        
-        let stemColor = WUXING_COLORS[s] || "#1a202c";
-        const dayHighlightStem = panData.dayHighlightStem;
-        const targetHighlightStem = panData.targetHighlightStem;
-        let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
-        let mainStemHtml = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important;">${s}</span>` : `<span class="font-bold" style="color: ${stemColor};">${s}</span>`;
-        let anGanHtml = `<span class="text-gray-400 text-sm sm:text-base">${anGan}</span>`;
-
-        palace5El.innerHTML = `${getBranchHTML(5)}<div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div><div class="flex justify-center items-center h-full text-3xl text-black">${mainStemHtml}</div><div class="absolute bottom-0 left-0 m-1">${anGanHtml}</div>`;
-    }
-
-    // 同步特殊狀態之互斥選項與宮位規則
     function syncSpecialConditions(idx) {
         const pNum = document.getElementById(`filter-target-palace-${idx}`).value;
         if (pNum === "0") return;
@@ -1640,6 +1512,80 @@
     let panData = {}; 
     let currentYiMaPalace = "";
 
+    function updateHarmonyEffects(activePNum) {
+        document.querySelectorAll('.branch-label').forEach(el => el.classList.remove('branch-flash'));
+
+        if ((!useSanHe && !useLiuHe) || !activePNum || activePNum === 5) {
+            renderPalace5Default();
+            return;
+        }
+
+        const ACTIVE_PALACES = useXianTian ? PALACES_XIAN : PALACES_HOU;
+        const targetBranches = ACTIVE_PALACES[activePNum]?.branch || [];
+
+        if (targetBranches.length === 0) {
+            renderPalace5Default();
+            return;
+        }
+
+        let matchedExplanations = [];
+        let flashingBranches = new Set();
+
+        const hashMap = useSanHe ? SAN_HE_MAP : (useLiuHe ? LIU_HE_MAP : []);
+
+        targetBranches.forEach(b => {
+            hashMap.forEach(item => {
+                if (item.branches.includes(b)) {
+                    if (!matchedExplanations.includes(item.name)) {
+                        matchedExplanations.push(item.name);
+                    }
+                    item.branches.forEach(br => flashingBranches.add(br));
+                }
+            });
+        });
+
+        flashingBranches.forEach(br => {
+            document.querySelectorAll(`.branch-label[data-branch="${br}"]`).forEach(el => {
+                el.classList.add('branch-flash');
+            });
+        });
+
+        const palace5El = document.getElementById('palace-5');
+        if (matchedExplanations.length > 0 && palace5El) {
+            const textHtml = matchedExplanations.map(exp => `<div class="text-xs sm:text-sm font-black text-indigo-900 bg-amber-100/90 rounded-lg py-1 px-2 my-0.5 shadow border border-amber-300 text-center tracking-wider">${exp}</div>`).join('');
+            
+            palace5El.innerHTML = `
+                ${getBranchHTML(5)}
+                <div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div>
+                <div class="flex flex-col justify-center items-center h-full w-full p-1 z-20">
+                    ${textHtml}
+                </div>
+            `;
+        } else {
+            renderPalace5Default();
+        }
+    }
+
+    function renderPalace5Default() {
+        const palace5El = document.getElementById('palace-5');
+        if (!palace5El || !globalPalaceData[5]) return;
+        const s = globalPalaceData[5].hStems[0];
+        const anGan = globalPalaceData[5].anGan;
+        
+        let stemColor = WUXING_COLORS[s] || "#1a202c";
+        const dayHighlightStem = panData.dayHighlightStem;
+        const targetHighlightStem = panData.targetHighlightStem;
+        let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
+        let mainStemHtml = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important;">${s}</span>` : `<span class="font-bold" style="color: ${stemColor};">${s}</span>`;
+        let anGanHtml = `<span class="text-gray-400 text-sm sm:text-base">${anGan}</span>`;
+
+        const FEIXING_ZH_WX = ["", "一水", "二土", "三木", "四木", "五土", "六金", "七金", "八土", "九火"];
+        let feixingSuffix = (useFeiXing && panData.starC) ? `<span class="text-gray-400 font-normal ml-0.5">(流${FEIXING_ZH_WX[panData.starC]})</span>` : "";
+        let centerLabel = `中五${feixingSuffix}`;
+
+        palace5El.innerHTML = `${getBranchHTML(5)}<div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">${centerLabel}</div><div class="flex justify-center items-center h-full text-3xl text-black">${mainStemHtml}</div><div class="absolute bottom-0 left-0 m-1">${anGanHtml}</div>`;
+    }
+
     function toggleInputMode() {
         isBaziMode = !isBaziMode;
         const btn = document.getElementById('btn-mode-toggle');
@@ -2079,14 +2025,15 @@
 
             let fuyinHTML = "";
             let rawFuyin = "";
+            let rawFanyin = "";
             
             if (isMenFuyin) { fuyinHTML += "<span class='text-red-700 mr-2'>【門伏吟】</span>"; rawFuyin += "【門伏吟】"; }
             if (isStarFuyin) { fuyinHTML += "<span class='text-amber-700 mr-2'>【星伏吟】</span>"; rawFuyin += "【星伏吟】"; }
             if (isGanFuyin) { fuyinHTML += "<span class='text-purple-700 mr-2'>【干伏吟】</span>"; rawFuyin += "【干伏吟】"; }
 
-            if (isMenFanyin) { fuyinHTML += "<span class='text-red-700 mr-2'>【門反吟】</span>"; rawFuyin += "【門反吟】"; }
-            if (isStarFanyin) { fuyinHTML += "<span class='text-amber-700 mr-2'>【星反吟】</span>"; rawFuyin += "【星反吟】"; }
-            if (isGanFanyin) { fuyinHTML += "<span class='text-purple-700 mr-2'>【干反吟】</span>"; rawFuyin += "【干反吟】"; }
+            if (isMenFanyin) { fuyinHTML += "<span class='text-red-700 mr-2'>【門反吟】</span>"; rawFanyin += "【門反吟】"; }
+            if (isStarFanyin) { fuyinHTML += "<span class='text-amber-700 mr-2'>【星反吟】</span>"; rawFanyin += "【星反吟】"; }
+            if (isGanFanyin) { fuyinHTML += "<span class='text-purple-700 mr-2'>【干反吟】</span>"; rawFanyin += "【干反吟】"; }
 
             let dPalaces = [];
             for(let i=1; i<=9; i++) {
@@ -2109,7 +2056,7 @@
             if (isChong) { stemStatusStr = "<span class='text-red-700'>【月令沖日干】</span>"; rawStemStatus = "【月令沖日干】"; }
 
             let combinedStatusHTML = fuyinHTML + stemStatusStr;
-            let combinedRawStatus = rawFuyin + rawStemStatus;
+            let combinedRawStatus = rawFuyin + rawFanyin + rawStemStatus;
 
             if (!combinedStatusHTML) {
                 document.getElementById('info-special').classList.add('hidden');
@@ -2147,6 +2094,17 @@
 
             let copyBaziLine = `${baziRawStr} (${y}年${m}月${d}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}${ziMark ? ' ' + ziMark : ''})`;
             
+            // 流年飛星通算推算（跨越所有年代與三元九運大週期）
+            let flightYear = y;
+            const midYearGZ = Solar.fromYmd(y, 6, 1).getLunar().getYearInGanZhiExact();
+            if (yearGZ !== midYearGZ) {
+                flightYear = (m < 6) ? y - 1 : y + 1;
+            }
+            let starC = (11 - (flightYear % 9)) % 9;
+            if (starC <= 0) starC += 9;
+            const FLIGHT_OFFSET = { 5: 0, 6: 1, 7: 2, 8: 3, 9: 4, 1: 5, 2: 6, 3: 7, 4: 8 };
+            const FEIXING_ZH_WX = ["", "一水", "二土", "三木", "四木", "五土", "六金", "七金", "八土", "九火"];
+
             panData = { 
                 bazi: copyBaziLine, 
                 ju: juStr, 
@@ -2160,6 +2118,7 @@
                 branchToTianJiang: branchToTianJiang,
                 dayHighlightStem: dayHighlightStem,
                 targetHighlightStem: targetHighlightStem,
+                starC: starC,
                 palaces: {} 
             };
 
@@ -2191,6 +2150,10 @@
                 el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                 if (wasActive) el.classList.add('palace-active');
 
+                // 計算該宮位之流年飛星號碼與五行字樣
+                let feixingNum = (starC + FLIGHT_OFFSET[i] - 1) % 9 + 1;
+                let feixingSuffix = useFeiXing ? `<span class="text-gray-400 font-normal text-xs sm:text-sm ml-0.5">(流${FEIXING_ZH_WX[feixingNum]})</span>` : "";
+
                 let guaDisplay = ACTIVE_PALACES[i].gua;
                 if (useNeiWai) {
                     let isInner = false;
@@ -2204,7 +2167,8 @@
 
                 if(i === 5) {
                     let s = earthPan[5], anGan = anGanPan[5];
-                    el.innerHTML = `${getBranchHTML(5)}<div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div><div class="flex justify-center items-center h-full text-3xl text-black">${renderStem(s, 5)}</div><div class="absolute bottom-0 left-0 m-1">${renderStem(anGan, 5, true)}</div>`;
+                    let centerLabel = `中五${feixingSuffix}`;
+                    el.innerHTML = `${getBranchHTML(5)}<div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">${centerLabel}</div><div class="flex justify-center items-center h-full text-3xl text-black">${renderStem(s, 5)}</div><div class="absolute bottom-0 left-0 m-1">${renderStem(anGan, 5, true)}</div>`;
                     panData.palaces["中五"] = s;
                     
                     globalPalaceData[5] = { name: ACTIVE_PALACES[5].name, hStems: [s], eStems: [s], anGan: anGan, isCenter: true };
@@ -2219,7 +2183,7 @@
                 
                 let godColor = GOD_COLORS[godPan[i]] || "black", doorColor = DOOR_COLORS[pDoor] || "black", anGan = anGanPan[i];
                 let starText = (pStars[0] === "天芮" && pStars[1] === "天禽") ? "天芮/禽" : pStars[0];
-                let palaceLabel = `${ACTIVE_PALACES[i].name}`;
+                let palaceLabel = `${ACTIVE_PALACES[i].name}${feixingSuffix}`;
 
                 let pDoorDisplay = useEnergy ? DOOR_ENERGY[pDoor][i] : pDoor;
                 let starTextDisplay = useEnergy ? (STAR_ENERGY[pStars[0]] ? STAR_ENERGY[pStars[0]][i] : starText) : starText;
@@ -2366,6 +2330,7 @@
         handleFilterPalaceChange(2);
     };
 </script>
-<script data-goatcounter="https://qimenchart.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script data-goatcounter="https://qimenchart.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
