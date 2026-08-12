@@ -322,7 +322,7 @@
             <div>
                 <label class="block text-sm text-amber-800 font-bold mb-1">開始日期 (YYYY/MM/DD)</label>
                 <input type="text" id="filter-start-date" class="w-full p-2 border border-amber-300 rounded-lg text-base bg-white outline-none focus:ring-2 focus:ring-amber-500" value="">
-                <p class="text-xs text-gray-500 mt-1">※ 系統將自動搜尋此日期起算 <span class="font-bold text-amber-600">365 天</span> 內所有時辰符合條件之盤面。</p>
+                <p class="text-xs text-gray-500 mt-1">※ 系統將自動搜尋此日期起算 <span class="font-bold text-amber-600">366 天</span> 內所有時辰符合條件之盤面。</p>
             </div>
 
             <div id="logic-op-container" class="hidden flex items-center gap-2 p-2 bg-gray-100 rounded-lg border border-gray-300">
@@ -1391,7 +1391,7 @@
             resultsCount.innerText = `${matchedResults.length} 筆`;
             
             if (matchedResults.length === 0) {
-                resultsList.innerHTML = '<div class="p-4 text-center text-gray-500 text-sm bg-gray-50 rounded-lg border border-dashed border-gray-200">在此 365 天的範圍內，未找到符合全部所選條件的時辰。</div>';
+                resultsList.innerHTML = '<div class="p-4 text-center text-gray-500 text-sm bg-gray-50 rounded-lg border border-dashed border-gray-200">在此 366 天的範圍內，未找到符合全部所選條件的時辰。</div>';
             } else {
                 matchedResults.forEach(item => {
                     const btn = document.createElement('button');
