@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>奇門遁甲 - 拆補法排盤 (v26.5)</title>
+    <title>奇門遁甲 - 拆補法排盤 (v26.6)</title>
     <link rel="icon" type="image/jpeg" href="icon.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
@@ -23,7 +23,7 @@
         .grid-wrapper { 
             padding: 40px 50px; 
             overflow-x: auto; 
-            -webkit-overflow-scrolling: touch; 
+            -webkit-overflow-scrolling: touch; f
         }
         @media (max-width: 640px) {
             .grid-wrapper { padding: 30px 25px; }
@@ -47,7 +47,6 @@
         }
         .palace-active { border: 4px solid #3b82f6 !important; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); z-index: 30; }
 
-        /* 三合/六合 地支字樣標籤快速閃亮動畫 */
         @keyframes flashBranch {
             0%, 100% { 
                 background-color: #fef08a !important; 
@@ -301,10 +300,11 @@
                         <input type="checkbox" id="toggle-feixing" class="sr-only peer" onchange="handleToggleSwitch('toggle-feixing')">
                         <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-rose-600 shadow-inner"></div>
                     </label>
+                    <select id="sel-feixing-year" class="hidden text-xs p-1 border border-rose-200 rounded bg-rose-50 font-bold text-rose-900 outline-none focus:ring-1 focus:ring-rose-400" onchange="generatePan()"></select>
                 </div>
 
                 <div class="w-full text-center mt-2">
-                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.5)</span>
+                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.6)</span>
                 </div>
             </div>
         </div>
@@ -322,7 +322,7 @@
             <div>
                 <label class="block text-sm text-amber-800 font-bold mb-1">開始日期 (YYYY/MM/DD)</label>
                 <input type="text" id="filter-start-date" class="w-full p-2 border border-amber-300 rounded-lg text-base bg-white outline-none focus:ring-2 focus:ring-amber-500" value="">
-                <p class="text-xs text-gray-500 mt-1">※ 系統將自動搜尋此日期起算 <span class="font-bold text-amber-600">30 天</span> 內所有時辰符合條件之盤面。</p>
+                <p class="text-xs text-gray-500 mt-1">※ 系統將自動搜尋此日期起算 <span class="font-bold text-amber-600">365 天</span> 內所有時辰符合條件之盤面。</p>
             </div>
 
             <div id="logic-op-container" class="hidden flex items-center gap-2 p-2 bg-gray-100 rounded-lg border border-gray-300">
@@ -390,6 +390,21 @@
                         <summary class="p-2 cursor-pointer text-sm font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none"><span>八神</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
                         <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-god-1">
                             <label class="chk-label"><input type="checkbox" value="值符"><span class="text-xs text-gray-700">值符</span></label><label class="chk-label"><input type="checkbox" value="螣蛇"><span class="text-xs text-gray-700">螣蛇</span></label><label class="chk-label"><input type="checkbox" value="太陰"><span class="text-xs text-gray-700">太陰</span></label><label class="chk-label"><input type="checkbox" value="六合"><span class="text-xs text-gray-700">六合</span></label><label class="chk-label"><input type="checkbox" value="白虎"><span class="text-xs text-gray-700">白虎</span></label><label class="chk-label"><input type="checkbox" value="玄武"><span class="text-xs text-gray-700">玄武</span></label><label class="chk-label"><input type="checkbox" value="九地"><span class="text-xs text-gray-700">九地</span></label><label class="chk-label"><input type="checkbox" value="九天"><span class="text-xs text-gray-700">九天</span></label>
+                        </div>
+                    </details>
+                    <!-- 九星 (Condition 1) -->
+                    <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
+                        <summary class="p-2 cursor-pointer text-sm font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none"><span>九星</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
+                        <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-star-1">
+                            <label class="chk-label"><input type="checkbox" value="天蓬"><span class="text-xs text-gray-700">天蓬</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天芮"><span class="text-xs text-gray-700">天芮</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天衝"><span class="text-xs text-gray-700">天衝</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天輔"><span class="text-xs text-gray-700">天輔</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天禽"><span class="text-xs text-gray-700">天禽</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天心"><span class="text-xs text-gray-700">天心</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天柱"><span class="text-xs text-gray-700">天柱</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天任"><span class="text-xs text-gray-700">天任</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天英"><span class="text-xs text-gray-700">天英</span></label>
                         </div>
                     </details>
                     <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
@@ -465,6 +480,27 @@
                                 <label class="chk-label"><input type="checkbox" id="chk-tianxian-2"><span class="text-xs text-gray-700">天顯時格</span></label>
                                 <label class="chk-label"><input type="checkbox" id="chk-wubuyu-2"><span class="text-xs text-gray-700">五不遇時</span></label>
                             </div>
+                        </div>
+                    </details>
+                    <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
+                        <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 bg-blue-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-blue-100 flex justify-between items-center select-none"><span>八神</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
+                        <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-god-2">
+                            <label class="chk-label"><input type="checkbox" value="值符"><span class="text-xs text-gray-700">值符</span></label><label class="chk-label"><input type="checkbox" value="螣蛇"><span class="text-xs text-gray-700">螣蛇</span></label><label class="chk-label"><input type="checkbox" value="太陰"><span class="text-xs text-gray-700">太陰</span></label><label class="chk-label"><input type="checkbox" value="六合"><span class="text-xs text-gray-700">六合</span></label><label class="chk-label"><input type="checkbox" value="白虎"><span class="text-xs text-gray-700">白虎</span></label><label class="chk-label"><input type="checkbox" value="玄武"><span class="text-xs text-gray-700">玄武</span></label><label class="chk-label"><input type="checkbox" value="九地"><span class="text-xs text-gray-700">九地</span></label><label class="chk-label"><input type="checkbox" value="九天"><span class="text-xs text-gray-700">九天</span></label>
+                        </div>
+                    </details>
+                    <!-- 九星 (Condition 2) -->
+                    <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
+                        <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 bg-blue-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-blue-100 flex justify-between items-center select-none"><span>九星</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
+                        <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-star-2">
+                            <label class="chk-label"><input type="checkbox" value="天蓬"><span class="text-xs text-gray-700">天蓬</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天芮"><span class="text-xs text-gray-700">天芮</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天衝"><span class="text-xs text-gray-700">天衝</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天輔"><span class="text-xs text-gray-700">天輔</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天禽"><span class="text-xs text-gray-700">天禽</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天心"><span class="text-xs text-gray-700">天心</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天柱"><span class="text-xs text-gray-700">天柱</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天任"><span class="text-xs text-gray-700">天任</span></label>
+                            <label class="chk-label"><input type="checkbox" value="天英"><span class="text-xs text-gray-700">天英</span></label>
                         </div>
                     </details>
                     <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
@@ -857,6 +893,18 @@
         useSanHe = document.getElementById('toggle-sanhe').checked;
         useLiuHe = document.getElementById('toggle-liuhe').checked;
         useFeiXing = document.getElementById('toggle-feixing').checked;
+
+        const fxSel = document.getElementById('sel-feixing-year');
+        if (fxSel) {
+            if (useFeiXing) {
+                fxSel.classList.remove('hidden');
+                if (!fxSel.value) {
+                    fxSel.value = document.getElementById('sel-year').value;
+                }
+            } else {
+                fxSel.classList.add('hidden');
+            }
+        }
 
         document.getElementById('bagua-label').innerText = useXianTian ? "後天八卦數" : "先天八卦數";
 
@@ -1278,7 +1326,7 @@
             wuBuYu: document.getElementById('chk-wubuyu-2')?.checked
         } : null;
 
-        resultsList.innerHTML = '<div class="p-6 text-center text-amber-600 font-bold flex flex-col items-center justify-center gap-2"><svg class="animate-spin h-6 w-6 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>運算 30 日內全時辰資料中...</span></div>';
+        resultsList.innerHTML = '<div class="p-6 text-center text-amber-600 font-bold flex flex-col items-center justify-center gap-2"><svg class="animate-spin h-6 w-6 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>運算 366 日內全時辰資料中...</span></div>';
         resultsCount.innerText = `計算中`;
 
         const hourSlots = [
@@ -1301,7 +1349,7 @@
             let matchedResults = [];
             let currentD = new Date(sYear, sMonth - 1, sDay);
             
-            for(let i = 0; i < 30; i++) {
+            for(let i = 0; i < 366; i++) {
                 let y = currentD.getFullYear();
                 let m = currentD.getMonth() + 1;
                 let d = currentD.getDate();
@@ -1343,7 +1391,7 @@
             resultsCount.innerText = `${matchedResults.length} 筆`;
             
             if (matchedResults.length === 0) {
-                resultsList.innerHTML = '<div class="p-4 text-center text-gray-500 text-sm bg-gray-50 rounded-lg border border-dashed border-gray-200">在此 30 天的範圍內，未找到符合全部所選條件的時辰。</div>';
+                resultsList.innerHTML = '<div class="p-4 text-center text-gray-500 text-sm bg-gray-50 rounded-lg border border-dashed border-gray-200">在此 365 天的範圍內，未找到符合全部所選條件的時辰。</div>';
             } else {
                 matchedResults.forEach(item => {
                     const btn = document.createElement('button');
@@ -1629,8 +1677,12 @@
         const dSel = document.getElementById('sel-day');
         const hSel = document.getElementById('sel-hour24');
         const minSel = document.getElementById('sel-minute');
+        const fxSel = document.getElementById('sel-feixing-year');
         
-        for (let i = 1930; i <= 2050; i++) ySel.add(new Option(i, i));
+        for (let i = 1930; i <= 2050; i++) {
+            ySel.add(new Option(i, i));
+            if (fxSel) fxSel.add(new Option(i + "年", i));
+        }
         for (let i = 1; i <= 12; i++) mSel.add(new Option(i, i));
         for (let i = 1; i <= 31; i++) dSel.add(new Option(i, i));
         for (let i = 0; i <= 23; i++) hSel.add(new Option(i.toString().padStart(2, '0'), i));
@@ -1689,6 +1741,12 @@
         document.getElementById('sel-day').value = d.getDate();
         document.getElementById('sel-hour24').value = d.getHours();
         document.getElementById('sel-minute').value = d.getMinutes();
+        
+        const fxSel = document.getElementById('sel-feixing-year');
+        if (fxSel && !useFeiXing) {
+            fxSel.value = d.getFullYear();
+        }
+
         updateJieQiYearBtn();
     }
 
@@ -2094,11 +2152,14 @@
 
             let copyBaziLine = `${baziRawStr} (${y}年${m}月${d}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}${ziMark ? ' ' + ziMark : ''})`;
             
-            // 流年飛星通算推算（跨越所有年代與三元九運大週期）
-            let flightYear = y;
-            const midYearGZ = Solar.fromYmd(y, 6, 1).getLunar().getYearInGanZhiExact();
-            if (yearGZ !== midYearGZ) {
-                flightYear = (m < 6) ? y - 1 : y + 1;
+            // 流年飛星通算推算（可由下拉選單指定流年年份）
+            const fxSelVal = document.getElementById('sel-feixing-year')?.value;
+            let flightYear = (useFeiXing && fxSelVal) ? parseInt(fxSelVal) : y;
+            if (flightYear === y) {
+                const midYearGZ = Solar.fromYmd(y, 6, 1).getLunar().getYearInGanZhiExact();
+                if (yearGZ !== midYearGZ) {
+                    flightYear = (m < 6) ? y - 1 : y + 1;
+                }
             }
             let starC = (11 - (flightYear % 9)) % 9;
             if (starC <= 0) starC += 9;
