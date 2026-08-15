@@ -1203,9 +1203,9 @@
         let baziContent = "";
         if (bazi5) {
             baziContent = `
-<div class="flex flex-col items-center justify-start text-[10px] sm:text-[11px] md:text-xs leading-none font-bold w-full pt-1 select-none z-10">
-    <!-- 八字四柱容器：gap-x 控制柱與柱之間的水平間距 -->
-    <div class="flex justify-center gap-x-2.5 font-black text-sm sm:text-base md:text-lg">
+<div class="flex flex-col items-center justify-start text-[10px] sm:text-[11px] md:text-xs leading-none font-bold w-full select-none z-10">
+    <!-- 在四柱容器加入 mt-2 sm:mt-3 或 pt-2 作為空行 -->
+    <div class="flex justify-center gap-x-0.5 font-black text-sm sm:text-base md:text-lg mt-2 sm:mt-7">
         <!-- 年柱 -->
         <div class="flex flex-col items-center gap-y-[1px] leading-none">
             <span style="color:${WUXING_COLORS[bazi5.yS] || '#1a202c'}">${bazi5.yS}</span>
@@ -1231,11 +1231,13 @@
     <!-- 年月日時標籤 -->
     <div class="text-[9px] sm:text-[10px] text-gray-400 tracking-widest mt-1">年月日時</div>
 </div>
+
+
 <div class="flex flex-col items-start w-full text-[9px] sm:text-[10px] md:text-xs text-gray-600 leading-tight space-y-0.5 px-1.5 mt-1">
     <div class="whitespace-nowrap">旬首：<span class="text-gray-900 font-bold">${bazi5.xun}</span></div>
     <div class="whitespace-nowrap">值符：<span class="text-gray-900 font-bold">${bazi5.zf}</span></div>
     <div class="whitespace-nowrap">值使：<span class="text-gray-900 font-bold">${bazi5.zs}</span></div>
-    <div class="whitespace-nowrap">空亡：<span class="text-gray-900 font-bold">${bazi5.kw}</span></div>
+        <!-- <div class="whitespace-nowrap">空亡：<span class="text-gray-900 font-bold">${bazi5.kw}</span></div> -->
 </div>
             `;
         }
