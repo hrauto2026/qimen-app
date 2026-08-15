@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>奇門遁甲 - 拆補法排盤 (v26.6)</title>
+    <title>奇門遁甲 - 拆補法排盤 (v26.6.2)</title>
     <link rel="icon" type="image/jpeg" href="icon.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
@@ -208,21 +208,24 @@
 
             <div id="pan-header" class="hidden mb-4 p-4 border-l-4 border-indigo-500 bg-indigo-50/80 rounded-r-lg text-gray-800 shadow-sm">
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-2 gap-2">
-                    <h2 class="text-base sm:text-lg md:text-xl text-indigo-900 font-bold" id="info-bazi"></h2>
+                    <h2 class="text-base sm:text-lg md:text-xl text-indigo-900 font-bold tracking-wide" id="info-bazi"></h2>
                     <div class="flex space-x-2">
                         <button onclick="shiftHour(-1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">◀ 前一時辰</button>
                         <button onclick="shiftHour(1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">後一時辰 ▶</button>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2 text-sm sm:text-base md:text-lg leading-tight">
-                    <div><span class="text-gray-500">節氣：</span><span id="info-jieqi" class="text-indigo-800 font-bold"></span></div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-sm sm:text-base md:text-lg leading-tight mb-2">
+                    <div class="col-span-2 sm:col-span-2"><span class="text-gray-500">現時節氣：</span><span id="info-jieqi" class="text-indigo-800 font-bold tracking-wide"></span></div>
+                    <div class="col-span-2 sm:col-span-2"><span class="text-gray-500">下一節氣：</span><span id="info-next-jieqi" class="text-teal-800 font-bold tracking-wide"></span></div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-1 sm:gap-2 text-sm sm:text-base md:text-lg leading-tight border-t border-indigo-200/50 pt-2">
                     <div><span class="text-gray-500">局數：</span><span id="info-ju" class="text-red-600 font-bold"></span></div>
                     <div><span class="text-gray-500">旬首：</span><span id="info-xunshou"></span></div>
                     <div><span class="text-gray-500">值符：</span><span id="info-zhifu"></span></div>
                     <div><span class="text-gray-500">值使：</span><span id="info-zhishi"></span></div>
                     <div><span class="text-gray-500">空亡：</span><span id="info-kongwang"></span></div>
                 </div>
-                <div id="info-special" class="hidden text-sm sm:text-base md:text-lg mt-1 border-t border-indigo-200 pt-1 font-bold"></div>
+                <div id="info-special" class="hidden text-sm sm:text-base md:text-lg mt-2 border-t border-indigo-200 pt-2 font-bold"></div>
             </div>
 
             <div class="grid-wrapper">
@@ -304,7 +307,7 @@
                 </div>
 
                 <div class="w-full text-center mt-2">
-                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.6)</span>
+                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.6.2)</span>
                 </div>
             </div>
         </div>
@@ -322,7 +325,7 @@
             <div>
                 <label class="block text-sm text-amber-800 font-bold mb-1">開始日期 (YYYY/MM/DD)</label>
                 <input type="text" id="filter-start-date" class="w-full p-2 border border-amber-300 rounded-lg text-base bg-white outline-none focus:ring-2 focus:ring-amber-500" value="">
-                <p class="text-xs text-gray-500 mt-1">※ 系統將自動搜尋此日期起算 <span class="font-bold text-amber-600">30 天</span> 內所有時辰符合條件之盤面。</p>
+                <p class="text-xs text-gray-500 mt-1">※ 系統將自動搜尋此日期起算 <span class="font-bold text-amber-600">180 天</span> 內所有時辰符合條件之盤面。</p>
             </div>
 
             <div id="logic-op-container" class="hidden flex items-center gap-2 p-2 bg-gray-100 rounded-lg border border-gray-300">
@@ -333,6 +336,7 @@
                 </select>
             </div>
 
+            <!-- 條件一 -->
             <div class="p-3 bg-amber-50/50 rounded-xl border border-amber-200 space-y-3">
                 <div class="flex items-center gap-2 mb-2 border-b border-amber-200 pb-2">
                     <h4 class="text-base font-black text-amber-800 tracking-wider">【條件一】</h4>
@@ -392,7 +396,6 @@
                             <label class="chk-label"><input type="checkbox" value="值符"><span class="text-xs text-gray-700">值符</span></label><label class="chk-label"><input type="checkbox" value="螣蛇"><span class="text-xs text-gray-700">螣蛇</span></label><label class="chk-label"><input type="checkbox" value="太陰"><span class="text-xs text-gray-700">太陰</span></label><label class="chk-label"><input type="checkbox" value="六合"><span class="text-xs text-gray-700">六合</span></label><label class="chk-label"><input type="checkbox" value="白虎"><span class="text-xs text-gray-700">白虎</span></label><label class="chk-label"><input type="checkbox" value="玄武"><span class="text-xs text-gray-700">玄武</span></label><label class="chk-label"><input type="checkbox" value="九地"><span class="text-xs text-gray-700">九地</span></label><label class="chk-label"><input type="checkbox" value="九天"><span class="text-xs text-gray-700">九天</span></label>
                         </div>
                     </details>
-                    <!-- 九星 (Condition 1) -->
                     <details class="group bg-white border border-amber-200/60 rounded-lg shadow-sm">
                         <summary class="p-2 cursor-pointer text-sm font-bold text-amber-900 bg-amber-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-amber-100 flex justify-between items-center select-none"><span>九星</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
                         <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-star-1">
@@ -428,6 +431,7 @@
                 </div>
             </div>
 
+            <!-- 條件二 -->
             <div class="p-3 bg-blue-50/50 rounded-xl border border-blue-200 space-y-3">
                 <div class="flex items-center gap-2 mb-2 border-b border-blue-200 pb-2">
                     <h4 class="text-base font-black text-blue-800 tracking-wider">【條件二】</h4>
@@ -488,7 +492,6 @@
                             <label class="chk-label"><input type="checkbox" value="值符"><span class="text-xs text-gray-700">值符</span></label><label class="chk-label"><input type="checkbox" value="螣蛇"><span class="text-xs text-gray-700">螣蛇</span></label><label class="chk-label"><input type="checkbox" value="太陰"><span class="text-xs text-gray-700">太陰</span></label><label class="chk-label"><input type="checkbox" value="六合"><span class="text-xs text-gray-700">六合</span></label><label class="chk-label"><input type="checkbox" value="白虎"><span class="text-xs text-gray-700">白虎</span></label><label class="chk-label"><input type="checkbox" value="玄武"><span class="text-xs text-gray-700">玄武</span></label><label class="chk-label"><input type="checkbox" value="九地"><span class="text-xs text-gray-700">九地</span></label><label class="chk-label"><input type="checkbox" value="九天"><span class="text-xs text-gray-700">九天</span></label>
                         </div>
                     </details>
-                    <!-- 九星 (Condition 2) -->
                     <details class="group bg-white border border-blue-200/60 rounded-lg shadow-sm">
                         <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 bg-blue-100/40 rounded-lg group-open:rounded-b-none group-open:border-b border-blue-100 flex justify-between items-center select-none"><span>九星</span><span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span></summary>
                         <div class="p-3 flex flex-wrap gap-1.5" id="chk-group-star-2">
@@ -822,11 +825,31 @@
         { name: "午未合土", branches: ['午', '未'] }
     ];
 
+    function showToast(msg) {
+        let existing = document.getElementById('toast-msg');
+        if (existing) existing.remove();
+        let t = document.createElement('div');
+        t.id = 'toast-msg';
+        t.className = 'fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900/90 backdrop-blur-sm text-white px-5 py-3 rounded-xl shadow-2xl z-[100] transition-opacity duration-300 font-bold border border-gray-700 whitespace-nowrap';
+        t.innerText = msg;
+        document.body.appendChild(t);
+        setTimeout(() => { t.style.opacity = '0'; setTimeout(()=>t.remove(),300); }, 2500);
+    }
+
     const isRuMu = (stem, pNum) => {
         if (['乙', '丙', '戊'].includes(stem) && pNum === 6) return true; 
         if (['丁', '己', '庚'].includes(stem) && pNum === 8) return true; 
         if (['辛', '壬'].includes(stem) && pNum === 4) return true; 
         if (stem === '癸' && pNum === 2) return true; 
+        return false;
+    };
+
+    const isJiXing = (stem, pNum) => {
+        if (stem === '戊' && pNum === 3) return true; 
+        if (stem === '己' && pNum === 2) return true; 
+        if (stem === '庚' && pNum === 8) return true; 
+        if (stem === '辛' && pNum === 9) return true; 
+        if (['壬', '癸'].includes(stem) && pNum === 4) return true; 
         return false;
     };
 
@@ -1051,390 +1074,6 @@
         }
     }
 
-    function getQimenElements(y, m, d, h, min, pNumStr) {
-        const pNum = parseInt(pNumStr);
-        try {
-            const exactLunar = Solar.fromYmdHms(y, m, d, h, min, 0).getLunar();
-            const noonLunar = Solar.fromYmdHms(y, m, d, 12, 0, 0).getLunar();
-            
-            const yearGZ = exactLunar.getYearInGanZhiExact();
-            const monthGZ = exactLunar.getMonthInGanZhiExact();
-            const dayGZ = noonLunar.getDayInGanZhiExact(); 
-            const dayStem = dayGZ.substring(0, 1);
-
-            const hIdx = Math.floor((h + 1) % 24 / 2);
-            const timeBranch = BRANCHES[hIdx];
-            
-            let wushuDate = new Date(y, m - 1, d, h, min);
-            if (h >= 23) wushuDate.setDate(wushuDate.getDate() + 1);
-            const wushuLunar = Solar.fromYmdHms(wushuDate.getFullYear(), wushuDate.getMonth() + 1, wushuDate.getDate(), 12, 0, 0).getLunar();
-            const wushuDayStem = wushuLunar.getDayInGanZhi().substring(0, 1);
-            const wushuDayStemIdx = STEMS.indexOf(wushuDayStem);
-            
-            const timeStemIdx = ((wushuDayStemIdx % 5) * 2 + hIdx) % 10;
-            const timeGZ_string = STEMS[timeStemIdx] + timeBranch;
-            const timeStem = timeGZ_string.substring(0, 1);
-            const timeBranchIdx = BRANCHES.indexOf(timeBranch);
-
-            let ziMark = "";
-            if (h >= 23) ziMark = "晚子";
-            else if (h === 0) ziMark = "早子";
-
-            const jqData = getAccurateJieQi(new Date(y, m - 1, d, h, min));
-            const jieQi = jqData.name;
-            const JIA_ZI = []; for(let i=0; i<60; i++) JIA_ZI.push(STEMS[i%10] + BRANCHES[i%12]);
-            const dIdx = JIA_ZI.indexOf(dayGZ), fuTouIdx = dIdx - (dIdx % 5), fuTouBranch = BRANCHES[fuTouIdx % 12];
-            let yuan = ["子", "午", "卯", "酉"].includes(fuTouBranch) ? "上元" : (["寅", "申", "巳", "亥"].includes(fuTouBranch) ? "中元" : "下元");
-            
-            const JU_TABLE = { "冬至": { 陽: true, 上元: 1, 中元: 7, 下元: 4 }, "小寒": { 陽: true, 上元: 2, 中元: 8, 下元: 5 }, "大寒": { 陽: true, 上元: 3, 中元: 9, 下元: 6 }, "立春": { 陽: true, 上元: 8, 中元: 5, 下元: 2 }, "雨水": { 陽: true, 上元: 9, 中元: 6, 下元: 3 }, "驚蟄": { 陽: true, 上元: 1, 中元: 7, 下元: 4 }, "春分": { 陽: true, 上元: 3, 中元: 9, 下元: 6 }, "清明": { 陽: true, 上元: 4, 中元: 1, 下元: 7 }, "穀雨": { 陽: true, 上元: 5, 中元: 2, 下元: 8 }, "立夏": { 陽: true, 上元: 4, 中元: 1, 下元: 7 }, "小滿": { 陽: true, 上元: 5, 中元: 2, 下元: 8 }, "芒種": { 陽: true, 上元: 6, 中元: 3, 下元: 9 }, "夏至": { 陽: false, 上元: 9, 中元: 3, 下元: 6 }, "小暑": { 陽: false, 上元: 8, 中元: 2, 下元: 5 }, "大暑": { 陽: false, 上元: 7, 中元: 1, 下元: 4 }, "立秋": { 陽: false, 上元: 2, 中元: 5, 下元: 8 }, "處暑": { 陽: false, 上元: 1, 中元: 4, 下元: 7 }, "白露": { 陽: false, 上元: 9, 中元: 3, 下元: 6 }, "秋分": { 陽: false, 上元: 7, 中元: 1, 下元: 4 }, "寒露": { 陽: false, 上元: 6, 中元: 9, 下元: 3 }, "霜降": { 陽: false, 上元: 5, 中元: 8, 下元: 2 }, "立冬": { 陽: false, 上元: 6, 中元: 9, 下元: 3 }, "小雪": { 陽: false, 上元: 5, 中元: 8, 下元: 2 }, "大雪": { 陽: false, 上元: 4, 中元: 7, 下元: 1 } };
-            const juConfig = JU_TABLE[jieQi] || {陽: true, 上元: 1, 中元: 1, 下元: 1};
-            const isYang = juConfig["陽"];
-            const juNum = juConfig[yuan];
-            
-            let earthPan = {}; let currentPalaceNum = juNum;
-            for (let i = 0; i < 9; i++) { earthPan[currentPalaceNum] = YI_LIU[i]; currentPalaceNum = isYang ? currentPalaceNum + 1 : currentPalaceNum - 1; if (currentPalaceNum > 9) currentPalaceNum = 1; else if (currentPalaceNum < 1) currentPalaceNum = 9; }
-            
-            const xunShouIdx = (timeBranchIdx - timeStemIdx + 12) % 12;
-            const xunShouGZ = "甲" + BRANCHES[xunShouIdx];
-            const XUN_MAP = { "甲子": "戊", "甲戌": "己", "甲申": "庚", "甲午": "辛", "甲辰": "壬", "甲寅": "癸" };
-            const xunShouStem = XUN_MAP[xunShouGZ];
-            
-            let xunShouPalace = parseInt(Object.keys(earthPan).find(k => earthPan[k] === xunShouStem));
-            let effectiveXunShouPalace = xunShouPalace === 5 ? 2 : xunShouPalace;
-            let heavenPan = {}, starPan = {};
-            let targetPalace = parseInt(Object.keys(earthPan).find(k => earthPan[k] === (timeStem === '甲' ? xunShouStem : timeStem)));
-            if(targetPalace === 5) targetPalace = 2;
-            
-            const rIdxTarget = RING_ORDER.indexOf(targetPalace), rIdxOrigin = RING_ORDER.indexOf(effectiveXunShouPalace), offset = (rIdxTarget - rIdxOrigin + 8) % 8;
-            for (let i = 0; i < 8; i++) {
-                const originP = RING_ORDER[i], targetP = RING_ORDER[(i + offset) % 8];
-                starPan[targetP] = (originP === 2) ? [BASE_STARS[2], BASE_STARS[5]] : BASE_STARS[originP];
-                heavenPan[targetP] = (originP === 2) ? [earthPan[2], earthPan[5]] : earthPan[originP];
-            }
-            
-            let godPan = {}; for (let i = 0; i < 8; i++) godPan[RING_ORDER[(rIdxTarget + (isYang ? i : 8 - i)) % 8]] = GODS_YANG[i];
-            
-            let currentD_val = xunShouPalace;
-            for(let i=0; i<timeStemIdx; i++) { currentD_val = isYang ? currentD_val + 1 : currentD_val - 1; if(currentD_val > 9) currentD_val = 1; else if(currentD_val < 1) currentD_val = 9; }
-            if(currentD_val === 5) currentD_val = 2;
-            const doorOriginIdx = RING_ORDER.indexOf(effectiveXunShouPalace), doorTargetIdx = RING_ORDER.indexOf(currentD_val), doorOffset = (doorTargetIdx - doorOriginIdx + 8) % 8;
-            let doorPan = {};
-            for (let i = 0; i < 8; i++) doorPan[RING_ORDER[(i + doorOffset) % 8]] = DOORS_ORDER[i];
-            
-            const kwIdx = (xunShouIdx + 10) % 12, kw1 = BRANCHES[kwIdx], kw2 = BRANCHES[kwIdx+1];
-            const maMap = { "申": "寅", "子": "寅", "辰": "寅", "亥": "巳", "卯": "巳", "未": "巳", "寅": "申", "午": "申", "戌": "申", "巳": "亥", "酉": "亥", "丑": "亥" }, ma = maMap[timeBranch];
-            
-            let isKong = false, isMa = false, isChong = false;
-            let monthBranch = monthGZ.substring(1, 2);
-            let clashBranch = CLASH_MAP[monthBranch];
-            if (pNum !== 5) {
-                isKong = PALACES_HOU[pNum].branch.includes(kw1) || PALACES_HOU[pNum].branch.includes(kw2);
-                isMa = PALACES_HOU[pNum].branch.includes(ma);
-                isChong = PALACES_HOU[pNum].branch.includes(clashBranch);
-            }
-
-            let resGod = godPan[pNum] || "";
-            let resStar = Array.isArray(starPan[pNum]) ? starPan[pNum] : [starPan[pNum]];
-            let resDoor = doorPan[pNum] || "";
-            let resHStems = Array.isArray(heavenPan[pNum]) ? heavenPan[pNum] : [heavenPan[pNum]];
-            let resEStems = Array.isArray(earthPan[pNum]) ? (pNum===2 ? [earthPan[2], earthPan[5]] : [earthPan[pNum]]) : [earthPan[pNum]];
-
-            if (pNum === 5) {
-                resGod = "";
-                resStar = [];
-                resDoor = "";
-                resHStems = [earthPan[5]];
-                resEStems = [earthPan[5]];
-            }
-
-            const isMenPoFn = (door, num) => {
-                const fire = num===9, water = num===1, earth = num===2||num===8, metal = num===6||num===7, wood = num===3||num===4;
-                if (door==="休門" && fire) return true; if ((door==="生門"||door==="死門") && water) return true; if ((door==="傷門"||door==="杜門") && earth) return true; if (door==="景門" && metal) return true; if ((door==="驚門"||door==="開門") && wood) return true; return false;
-            };
-
-            const isJiXingFn = (stem, num) => {
-                if (stem === '戊' && num === 3) return true; 
-                if (stem === '己' && num === 2) return true; 
-                if (stem === '庚' && num === 8) return true; 
-                if (stem === '辛' && num === 9) return true; 
-                if (['壬', '癸'].includes(stem) && num === 4) return true; 
-                return false;
-            };
-
-            const isRuMuFn = (stem, num) => {
-                if (['乙', '丙', '戊'].includes(stem) && num === 6) return true; 
-                if (['丁', '己', '庚'].includes(stem) && num === 8) return true; 
-                if (['辛', '壬'].includes(stem) && num === 4) return true; 
-                if (stem === '癸' && num === 2) return true; 
-                return false;
-            };
-
-            let evalPNum = pNum === 5 ? 2 : pNum;
-            let isMenPo = false;
-            let hasJiXing = false;
-            let hasRuMu = false;
-
-            if (pNum !== 5) {
-                isMenPo = isMenPoFn(resDoor, evalPNum);
-                for (let s of resHStems) {
-                    if (isJiXingFn(s, evalPNum)) hasJiXing = true;
-                    if (isRuMuFn(s, evalPNum)) hasRuMu = true;
-                }
-                for (let s of resEStems) {
-                    if (isJiXingFn(s, evalPNum)) hasJiXing = true;
-                    if (isRuMuFn(s, evalPNum)) hasRuMu = true;
-                }
-            }
-
-            const isWuBuYu = (timeStemIdx === (STEMS.indexOf(dayStem) + 6) % 10);
-            let isTianXian = false;
-            const dStemTX = dayGZ.substring(0, 1);
-            if (((dStemTX === '甲' || dStemTX === '己') && (timeGZ_string === '己巳')) ||
-                ((dStemTX === '乙' || dStemTX === '庚') && timeGZ_string === '甲申') ||
-                ((dStemTX === '丙' || dStemTX === '辛') && timeGZ_string === '甲午') ||
-                ((dStemTX === '丁' || dStemTX === '壬') && timeGZ_string === '甲辰') ||
-                ((dStemTX === '戊' || dStemTX === '癸') && timeGZ_string === '甲寅')) {
-                isTianXian = true;
-            }
-
-            return {
-                god: resGod,
-                star: resStar,
-                door: resDoor,
-                hStems: resHStems,
-                eStems: resEStems,
-                bazi: `${yearGZ}年 ${monthGZ}月 ${dayGZ}日 ${timeGZ_string}時`,
-                yStem: yearGZ.substring(0, 1),
-                mStem: monthGZ.substring(0, 1),
-                dStem: dayStem,
-                hStem: timeStem,
-                isKong: isKong,
-                isMa: isMa,
-                isMenPo: isMenPo,
-                hasJiXing: hasJiXing,
-                hasRuMu: hasRuMu,
-                isChong: isChong,
-                ziMark: ziMark,
-                isTianXian: isTianXian,
-                isWuBuYu: isWuBuYu
-            };
-        } catch(e) {
-            console.error(e);
-            return null;
-        }
-    }
-
-    function evalCriteria(elements, c) {
-        if (!elements) return false;
-        let isMatch = true;
-
-        let dynamicHStems = c.hStems.map(val => {
-            if (val === '=年干') return elements.yStem;
-            if (val === '=月干') return elements.mStem;
-            if (val === '=日干') return elements.dStem;
-            if (val === '=時干') return elements.hStem;
-            return val;
-        });
-
-        if (c.gods.length > 0 && !c.gods.includes(elements.god)) isMatch = false;
-        if (isMatch && c.stars.length > 0 && !elements.star.some(s => c.stars.includes(s))) isMatch = false;
-        if (isMatch && c.doors.length > 0 && !c.doors.includes(elements.door)) isMatch = false;
-        if (isMatch && c.hStems.length > 0 && !elements.hStems.some(s => dynamicHStems.includes(s))) isMatch = false;
-        if (isMatch && c.eStems.length > 0 && !elements.eStems.some(s => c.eStems.includes(s))) isMatch = false;
-        
-        if (isMatch && c.kong && !elements.isKong) isMatch = false;
-        if (isMatch && c.ma && !elements.isMa) isMatch = false;
-        if (isMatch && c.jiXing && !elements.hasJiXing) isMatch = false;
-        if (isMatch && c.ruMu && !elements.hasRuMu) isMatch = false;
-        if (isMatch && c.chong && !elements.isChong) isMatch = false;
-        if (isMatch && c.menPo && !elements.isMenPo) isMatch = false;
-        
-        if (isMatch && c.noKong && elements.isKong) isMatch = false;
-        if (isMatch && c.noMa && elements.isMa) isMatch = false;
-        if (isMatch && c.noJiXing && elements.hasJiXing) isMatch = false;
-        if (isMatch && c.noRuMu && elements.hasRuMu) isMatch = false;
-        if (isMatch && c.noChong && elements.isChong) isMatch = false;
-        if (isMatch && c.noMenPo && elements.isMenPo) isMatch = false;
-        
-        if (isMatch && c.tianXian && !elements.isTianXian) isMatch = false;
-        if (isMatch && c.wuBuYu && !elements.isWuBuYu) isMatch = false;
-        
-        return isMatch;
-    }
-
-    function executeRealSearch() {
-        const resultsList = document.getElementById('filter-results-list');
-        const resultsCount = document.getElementById('filter-results-count');
-        
-        const startDateStr = document.getElementById('filter-start-date').value;
-        const pNum1 = document.getElementById('filter-target-palace-1').value;
-        const pNum2 = document.getElementById('filter-target-palace-2').value;
-        const logicOp = document.getElementById('filter-logic-operator').value;
-        
-        const parts = startDateStr.split('/');
-        if (parts.length !== 3) {
-            alert('請輸入正確的開始日期格式，例如 2026/07/03');
-            return;
-        }
-        const sYear = parseInt(parts[0]);
-        const sMonth = parseInt(parts[1]);
-        const sDay = parseInt(parts[2]);
-        
-        const getChecked = (groupId) => Array.from(document.querySelectorAll(`#${groupId} input:checked`)).map(cb => cb.value);
-        
-        const criteria1 = {
-            gods: getChecked('chk-group-god-1'),
-            stars: getChecked('chk-group-star-1'),
-            doors: getChecked('chk-group-door-1'),
-            hStems: getChecked('chk-group-hstem-1'),
-            eStems: getChecked('chk-group-estem-1'),
-            kong: document.getElementById('chk-kong-1')?.checked,
-            noKong: document.getElementById('chk-nokong-1')?.checked,
-            ma: document.getElementById('chk-ma-1')?.checked,
-            noMa: document.getElementById('chk-noma-1')?.checked,
-            jiXing: document.getElementById('chk-jixing-1')?.checked,
-            noJiXing: document.getElementById('chk-nojixing-1')?.checked,
-            ruMu: document.getElementById('chk-rumu-1')?.checked,
-            noRuMu: document.getElementById('chk-norumu-1')?.checked,
-            chong: document.getElementById('chk-chong-1')?.checked,
-            noChong: document.getElementById('chk-nochong-1')?.checked,
-            menPo: document.getElementById('chk-menpo-1')?.checked,
-            noMenPo: document.getElementById('chk-nomenpo-1')?.checked,
-            tianXian: document.getElementById('chk-tianxian-1')?.checked,
-            wuBuYu: document.getElementById('chk-wubuyu-1')?.checked
-        };
-
-        const criteria2 = pNum2 !== "0" ? {
-            gods: getChecked('chk-group-god-2'),
-            stars: getChecked('chk-group-star-2'),
-            doors: getChecked('chk-group-door-2'),
-            hStems: getChecked('chk-group-hstem-2'),
-            eStems: getChecked('chk-group-estem-2'),
-            kong: document.getElementById('chk-kong-2')?.checked,
-            noKong: document.getElementById('chk-nokong-2')?.checked,
-            ma: document.getElementById('chk-ma-2')?.checked,
-            noMa: document.getElementById('chk-noma-2')?.checked,
-            jiXing: document.getElementById('chk-jixing-2')?.checked,
-            noJiXing: document.getElementById('chk-nojixing-2')?.checked,
-            ruMu: document.getElementById('chk-rumu-2')?.checked,
-            noRuMu: document.getElementById('chk-norumu-2')?.checked,
-            chong: document.getElementById('chk-chong-2')?.checked,
-            noChong: document.getElementById('chk-nochong-2')?.checked,
-            menPo: document.getElementById('chk-menpo-2')?.checked,
-            noMenPo: document.getElementById('chk-nomenpo-2')?.checked,
-            tianXian: document.getElementById('chk-tianxian-2')?.checked,
-            wuBuYu: document.getElementById('chk-wubuyu-2')?.checked
-        } : null;
-
-        resultsList.innerHTML = '<div class="p-6 text-center text-amber-600 font-bold flex flex-col items-center justify-center gap-2"><svg class="animate-spin h-6 w-6 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>運算 30 日內全時辰資料中...</span></div>';
-        resultsCount.innerText = `計算中`;
-
-        const hourSlots = [
-            { h: 0, min: 30, branch: '子', name: '早子' },
-            { h: 2, min: 30, branch: '丑', name: '丑' },
-            { h: 4, min: 30, branch: '寅', name: '寅' },
-            { h: 6, min: 30, branch: '卯', name: '卯' },
-            { h: 8, min: 30, branch: '辰', name: '辰' },
-            { h: 10, min: 30, branch: '巳', name: '巳' },
-            { h: 12, min: 30, branch: '午', name: '午' },
-            { h: 14, min: 30, branch: '未', name: '未' },
-            { h: 16, min: 30, branch: '申', name: '申' },
-            { h: 18, min: 30, branch: '酉', name: '酉' },
-            { h: 20, min: 30, branch: '戌', name: '戌' },
-            { h: 22, min: 30, branch: '亥', name: '亥' },
-            { h: 23, min: 30, branch: '子', name: '晚子' }
-        ];
-
-        setTimeout(() => {
-            let matchedResults = [];
-            let currentD = new Date(sYear, sMonth - 1, sDay);
-            
-            for(let i = 0; i < 30; i++) {
-                let y = currentD.getFullYear();
-                let m = currentD.getMonth() + 1;
-                let d = currentD.getDate();
-                
-                for(let slot of hourSlots) {
-                    let h = slot.h;
-                    let min = slot.min; 
-                    
-                    let elements1 = getQimenElements(y, m, d, h, min, pNum1);
-                    if(!elements1) continue;
-                    
-                    let match1 = evalCriteria(elements1, criteria1);
-                    let matchOverall = match1;
-
-                    if (pNum2 !== "0") {
-                        let elements2 = getQimenElements(y, m, d, h, min, pNum2);
-                        let match2 = elements2 ? evalCriteria(elements2, criteria2) : false;
-                        
-                        if (logicOp === 'AND') {
-                            matchOverall = match1 && match2;
-                        } else {
-                            matchOverall = match1 || match2;
-                        }
-                    }
-
-                    if (matchOverall) {
-                        matchedResults.push({
-                            y, m, d, h, min,
-                            dStr: `${y}年 ${m.toString().padStart(2,'0')}月 ${d.toString().padStart(2,'0')}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} (${slot.name}時)`,
-                            bazi: elements1.bazi,
-                            ziMark: elements1.ziMark
-                        });
-                    }
-                }
-                currentD.setDate(currentD.getDate() + 1);
-            }
-            
-            resultsList.innerHTML = '';
-            resultsCount.innerText = `${matchedResults.length} 筆`;
-            
-            if (matchedResults.length === 0) {
-                resultsList.innerHTML = '<div class="p-4 text-center text-gray-500 text-sm bg-gray-50 rounded-lg border border-dashed border-gray-200">在此 30 天的範圍內，未找到符合全部所選條件的時辰。</div>';
-            } else {
-                matchedResults.forEach(item => {
-                    const btn = document.createElement('button');
-                    btn.className = "w-full text-left p-3 border border-amber-200/60 rounded-xl hover:bg-amber-50 focus:bg-amber-100 active:scale-[0.99] transition duration-150 shadow-sm text-sm bg-white block mb-2";
-                    btn.innerHTML = `
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-bold text-amber-900">${item.dStr}</span>
-                            <span class="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded border border-green-200 font-bold">符合</span>
-                        </div>
-                        <div class="text-gray-500 font-bold text-xs">四柱：${item.bazi} ${item.ziMark ? '<span class="text-orange-600 font-black">['+item.ziMark+']</span>' : ''}</div>
-                    `;
-                    btn.onclick = () => {
-                        applyBaziResult(item.y, item.m, item.d, item.h, item.min);
-                        if (window.innerWidth < 1024) {
-                            toggleFilterPanel();
-                            setTimeout(() => {
-                                document.getElementById('app-workspace').scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            }, 150);
-                        }
-                    };
-                    resultsList.appendChild(btn);
-                });
-            }
-        }, 80); 
-    }
-
-    function resetFilter() {
-        const today = new Date();
-        document.getElementById('filter-start-date').value = `${today.getFullYear()}/${(today.getMonth()+1).toString().padStart(2,'0')}/${today.getDate().toString().padStart(2,'0')}`;
-        
-        document.getElementById('filter-target-palace-1').value = "1";
-        document.getElementById('filter-target-palace-2').value = "0";
-        document.getElementById('filter-logic-operator').value = "AND";
-        
-        document.querySelectorAll('.chk-label input[type="checkbox"]').forEach(cb => cb.checked = false);
-        
-        document.getElementById('filter-results-list').innerHTML = '<div class="p-3 text-center text-gray-400 text-sm bg-gray-50 rounded-lg border border-dashed border-gray-200">已重置。<br>設定好上方的條件然後按下按鈕即可獲得符合之奇門遁甲列表！</div>';
-        document.getElementById('filter-results-count').innerText = "0 筆";
-        
-        handleFilterPalaceChange(1);
-        handleFilterPalaceChange(2);
-    }
-
     function closePalaceModal() {
         document.getElementById('palace-modal').classList.add('hidden');
     }
@@ -1449,8 +1088,8 @@
         document.getElementById('pm-star').innerHTML = data.star ? `<span class="text-${STAR_COLORS[data.star.split('/')[0]] || 'black'}">${data.star}</span>` : "-";
         document.getElementById('pm-door').innerHTML = data.door ? `<span class="text-${DOOR_COLORS[data.door] || 'black'}">${data.door}</span>` : "-";
         document.getElementById('pm-angan').innerHTML = colorizeGanZhi(data.anGan || "-");
-        document.getElementById('pm-hstem').innerHTML = data.hStems ? [...data.hStems].map(s => colorizeGanZhi(s)).join(' / ') : "-"; 
-        document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].map(s => colorizeGanZhi(s)).join(' / ') : "-"; 
+        document.getElementById('pm-hstem').innerHTML = data.hStems ? [...data.hStems].map(s => colorizeGanZhi(s)).join('|') : "-"; 
+        document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].map(s => colorizeGanZhi(s)).join('|') : "-"; 
 
         let harmsHTML = "";
         const tagStyle = "px-2 py-0.5 rounded text-xs font-bold text-white shadow-sm";
@@ -1560,6 +1199,69 @@
     let panData = {}; 
     let currentYiMaPalace = "";
 
+    function renderPalace5Html(s, anGan, centerLabel, bazi5) {
+        let baziContent = "";
+        if (bazi5) {
+            baziContent = `
+<div class="flex flex-col items-center justify-start text-[10px] sm:text-[11px] md:text-xs leading-none font-bold w-full pt-1 select-none z-10">
+    <!-- 八字四柱容器：gap-x 控制柱與柱之間的水平間距 -->
+    <div class="flex justify-center gap-x-2.5 font-black text-sm sm:text-base md:text-lg">
+        <!-- 年柱 -->
+        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+            <span style="color:${WUXING_COLORS[bazi5.yS] || '#1a202c'}">${bazi5.yS}</span>
+            <span style="color:${WUXING_COLORS[bazi5.yB] || '#1a202c'}">${bazi5.yB}</span>
+        </div>
+        <!-- 月柱 -->
+        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+            <span style="color:${WUXING_COLORS[bazi5.mS] || '#1a202c'}">${bazi5.mS}</span>
+            <span style="color:${WUXING_COLORS[bazi5.mB] || '#1a202c'}">${bazi5.mB}</span>
+        </div>
+        <!-- 日柱 -->
+        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+            <span style="color:${WUXING_COLORS[bazi5.dS] || '#1a202c'}">${bazi5.dS}</span>
+            <span style="color:${WUXING_COLORS[bazi5.dB] || '#1a202c'}">${bazi5.dB}</span>
+        </div>
+        <!-- 時柱 -->
+        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+            <span style="color:${WUXING_COLORS[bazi5.hS] || '#1a202c'}">${bazi5.hS}</span>
+            <span style="color:${WUXING_COLORS[bazi5.hB] || '#1a202c'}">${bazi5.hB}</span>
+        </div>
+    </div>
+
+    <!-- 年月日時標籤 -->
+    <div class="text-[9px] sm:text-[10px] text-gray-400 tracking-widest mt-1">年月日時</div>
+</div>
+<div class="flex flex-col items-start w-full text-[9px] sm:text-[10px] md:text-xs text-gray-600 leading-tight space-y-0.5 px-1.5 mt-1">
+    <div class="whitespace-nowrap">旬首：<span class="text-gray-900 font-bold">${bazi5.xun}</span></div>
+    <div class="whitespace-nowrap">值符：<span class="text-gray-900 font-bold">${bazi5.zf}</span></div>
+    <div class="whitespace-nowrap">值使：<span class="text-gray-900 font-bold">${bazi5.zs}</span></div>
+    <div class="whitespace-nowrap">空亡：<span class="text-gray-900 font-bold">${bazi5.kw}</span></div>
+</div>
+            `;
+        }
+        
+        let stemColor = WUXING_COLORS[s] || "#1a202c";
+        const dayHighlightStem = panData.dayHighlightStem;
+        const targetHighlightStem = panData.targetHighlightStem;
+        let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
+        
+	let tagStr = ""; // 中五宮不需要顯示刑墓
+        let mainStemHtml = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important;">${s}</span>` : `<span class="font-bold" style="color: ${stemColor};">${s}</span>`;
+        let anGanHtml = `<span class="text-gray-400 text-sm sm:text-base">${anGan}</span>`;
+
+        return `
+            ${getBranchHTML(5)}
+            <div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1 z-20">${centerLabel}</div>
+            ${baziContent}
+            <div class="flex justify-between items-end w-full mt-auto z-10 px-1 pb-1">
+                <div class="mb-1">${anGanHtml}</div>
+                <div class="flex flex-col items-stretch text-right leading-tight text-main font-bold">
+                    <div class="text-xl sm:text-2xl">${mainStemHtml}${tagStr}</div>
+                </div>
+            </div>
+        `;
+    }
+
     function updateHarmonyEffects(activePNum) {
         document.querySelectorAll('.branch-label').forEach(el => el.classList.remove('branch-flash'));
 
@@ -1620,18 +1322,11 @@
         const s = globalPalaceData[5].hStems[0];
         const anGan = globalPalaceData[5].anGan;
         
-        let stemColor = WUXING_COLORS[s] || "#1a202c";
-        const dayHighlightStem = panData.dayHighlightStem;
-        const targetHighlightStem = panData.targetHighlightStem;
-        let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
-        let mainStemHtml = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important;">${s}</span>` : `<span class="font-bold" style="color: ${stemColor};">${s}</span>`;
-        let anGanHtml = `<span class="text-gray-400 text-sm sm:text-base">${anGan}</span>`;
-
         const FEIXING_ZH_WX = ["", "一水", "二土", "三木", "四木", "五土", "六金", "七金", "八土", "九火"];
         let feixingSuffix = (useFeiXing && panData.starC) ? `<span class="text-gray-400 font-normal ml-0.5">(流${FEIXING_ZH_WX[panData.starC]})</span>` : "";
         let centerLabel = `中五${feixingSuffix}`;
 
-        palace5El.innerHTML = `${getBranchHTML(5)}<div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">${centerLabel}</div><div class="flex justify-center items-center h-full text-3xl text-black">${mainStemHtml}</div><div class="absolute bottom-0 left-0 m-1">${anGanHtml}</div>`;
+        palace5El.innerHTML = renderPalace5Html(s, anGan, centerLabel, panData.bazi5Info);
     }
 
     function toggleInputMode() {
@@ -1855,7 +1550,7 @@
 
                     if (expectedHStem === tgtH.charAt(0)) {
                         let hourInt = hIdx * 2;
-                        let minInt = 30;
+                        let minInt = 180;
                         if (hourInt === 24) hourInt = 0;
                         results.push(new Date(y, m - 1, d, hourInt, minInt));
                     }
@@ -1903,43 +1598,449 @@
     }
     function closeJieQiModal() { document.getElementById('jieqi-modal').classList.add('hidden'); }
 
+    function getHourSlotRange(dt) {
+        let start = new Date(dt);
+        let h = dt.getHours();
+        if (h === 23) {
+            start.setHours(23, 0, 0, 0);
+        } else if (h % 2 === 1) {
+            start.setHours(h, 0, 0, 0);
+        } else {
+            if (h === 0) {
+                start.setDate(start.getDate() - 1);
+                start.setHours(23, 0, 0, 0);
+            } else {
+                start.setHours(h - 1, 0, 0, 0);
+            }
+        }
+        let end = new Date(start);
+        end.setHours(start.getHours() + 2, 0, 0, -1);
+        return { start, end };
+    }
+
     function getAccurateJieQi(currentDate) {
         let jieQiName = "未知", timeStr = "";
+        let nextJieQiName = "未知", nextTimeStr = "";
+        let isCurrentTransition = false, isNextTransition = false;
         try {
             const solar = Solar.fromDate(currentDate);
             const lunar = solar.getLunar();
             
-            let prevJ = lunar.getPrevJie(true);
-            let prevQ = lunar.getPrevQi(true);
+            // 使用 false 進行精確時間(非按天)計算，以避免跨日產生的誤差，並確保氣與節都會被比對
+            let prevJ = lunar.getPrevJie(false);
+            let prevQ = lunar.getPrevQi(false);
+            let nextJ = lunar.getNextJie(false);
+            let nextQ = lunar.getNextQi(false);
 
-            let dJ = new Date(prevJ.getSolar().getYear(), prevJ.getSolar().getMonth() - 1, prevJ.getSolar().getDay(), prevJ.getSolar().getHour(), prevJ.getSolar().getMinute(), prevJ.getSolar().getSecond());
-            let dQ = new Date(prevQ.getSolar().getYear(), prevQ.getSolar().getMonth() - 1, prevQ.getSolar().getDay(), prevQ.getSolar().getHour(), prevQ.getSolar().getMinute(), prevQ.getSolar().getSecond());
+            const toDate = (jq) => {
+                const s = jq.getSolar();
+                return new Date(s.getYear(), s.getMonth() - 1, s.getDay(), s.getHour(), s.getMinute(), s.getSecond());
+            };
 
-            if (dJ > currentDate) {
-                prevJ = lunar.getPrevJie(false);
-                dJ = new Date(prevJ.getSolar().getYear(), prevJ.getSolar().getMonth() - 1, prevJ.getSolar().getDay(), prevJ.getSolar().getHour(), prevJ.getSolar().getMinute(), prevJ.getSolar().getSecond());
-            }
+            let dPrevJ = toDate(prevJ);
+            let dPrevQ = toDate(prevQ);
+            let dNextJ = toDate(nextJ);
+            let dNextQ = toDate(nextQ);
+
+            // 當前節氣是取距離現在最近的(即 dPrevJ 與 dPrevQ 較晚的一個)
+            let targetJQ = (dPrevJ > dPrevQ) ? prevJ : prevQ;
+            let dTarget = (dPrevJ > dPrevQ) ? dPrevJ : dPrevQ;
             
-            if (dQ > currentDate) {
-                prevQ = lunar.getPrevQi(false);
-                dQ = new Date(prevQ.getSolar().getYear(), prevQ.getSolar().getMonth() - 1, prevQ.getSolar().getDay(), prevQ.getSolar().getHour(), prevQ.getSolar().getMinute(), prevQ.getSolar().getSecond());
-            }
-
-            let targetJQ;
-            if (dJ > dQ) {
-                targetJQ = prevJ;
-            } else {
-                targetJQ = prevQ;
-            }
+            // 下一個節氣是取距離未來最近的(即 dNextJ 與 dNextQ 較早的一個)
+            let nextJQ = (dNextJ < dNextQ) ? nextJ : nextQ;
+            let dNext = (dNextJ < dNextQ) ? dNextJ : dNextQ;
 
             jieQiName = TRAD_JIEQI[targetJQ.getName()] || targetJQ.getName();
             timeStr = targetJQ.getSolar().toYmdHms();
+
+            nextJieQiName = TRAD_JIEQI[nextJQ.getName()] || nextJQ.getName();
+            nextTimeStr = nextJQ.getSolar().toYmdHms();
+
+            let slot = getHourSlotRange(currentDate);
+            if (dTarget >= slot.start && dTarget <= slot.end) isCurrentTransition = true;
+            if (dNext >= slot.start && dNext <= slot.end) isNextTransition = true;
+
         } catch (e) { console.error(e); }
-        return { name: jieQiName, time: timeStr };
+        return { 
+            name: jieQiName, 
+            time: timeStr, 
+            nextName: nextJieQiName, 
+            nextTime: nextTimeStr, 
+            isCurrentTransition, 
+            isNextTransition, 
+            isTransitionInHour: isCurrentTransition || isNextTransition 
+        };
     }
 
     function colorizeGanZhi(str) {
         return str.split('').map(char => WUXING_COLORS[char] ? `<span style="color: ${WUXING_COLORS[char]}; text-shadow: 0 0 1px rgba(0,0,0,0.1);">${char}</span>` : char).join('');
+    }
+
+    function getQimenElements(y, m, d, h, min, pNumStr) {
+        const pNum = parseInt(pNumStr);
+        try {
+            const exactLunar = Solar.fromYmdHms(y, m, d, h, min, 0).getLunar();
+            const noonLunar = Solar.fromYmdHms(y, m, d, 12, 0, 0).getLunar();
+            
+            const yearGZ = exactLunar.getYearInGanZhiExact();
+            const monthGZ = exactLunar.getMonthInGanZhiExact();
+            const dayGZ = noonLunar.getDayInGanZhiExact(); 
+            const dayStem = dayGZ.substring(0, 1);
+
+            const hIdx = Math.floor((h + 1) % 24 / 2);
+            const timeBranch = BRANCHES[hIdx];
+            
+            let wushuDate = new Date(y, m - 1, d, h, min);
+            if (h >= 23) wushuDate.setDate(wushuDate.getDate() + 1);
+            const wushuLunar = Solar.fromYmdHms(wushuDate.getFullYear(), wushuDate.getMonth() + 1, wushuDate.getDate(), 12, 0, 0).getLunar();
+            const wushuDayStem = wushuLunar.getDayInGanZhi().substring(0, 1);
+            const wushuDayStemIdx = STEMS.indexOf(wushuDayStem);
+            
+            const timeStemIdx = ((wushuDayStemIdx % 5) * 2 + hIdx) % 10;
+            const timeGZ_string = STEMS[timeStemIdx] + timeBranch;
+            const timeStem = timeGZ_string.substring(0, 1);
+            const timeBranchIdx = BRANCHES.indexOf(timeBranch);
+
+            let ziMark = "";
+            if (h >= 23) ziMark = "晚子";
+            else if (h === 0) ziMark = "早子";
+
+            const jqData = getAccurateJieQi(new Date(y, m - 1, d, h, min));
+            const jieQi = jqData.name;
+            const JIA_ZI = []; for(let i=0; i<60; i++) JIA_ZI.push(STEMS[i%10] + BRANCHES[i%12]);
+            const dIdx = JIA_ZI.indexOf(dayGZ), fuTouIdx = dIdx - (dIdx % 5), fuTouBranch = BRANCHES[fuTouIdx % 12];
+            let yuan = ["子", "午", "卯", "酉"].includes(fuTouBranch) ? "上元" : (["寅", "申", "巳", "亥"].includes(fuTouBranch) ? "中元" : "下元");
+            
+            const JU_TABLE = { "冬至": { 陽: true, 上元: 1, 中元: 7, 下元: 4 }, "小寒": { 陽: true, 上元: 2, 中元: 8, 下元: 5 }, "大寒": { 陽: true, 上元: 3, 中元: 9, 下元: 6 }, "立春": { 陽: true, 上元: 8, 中元: 5, 下元: 2 }, "雨水": { 陽: true, 上元: 9, 中元: 6, 下元: 3 }, "驚蟄": { 陽: true, 上元: 1, 中元: 7, 下元: 4 }, "春分": { 陽: true, 上元: 3, 中元: 9, 下元: 6 }, "清明": { 陽: true, 上元: 4, 中元: 1, 下元: 7 }, "穀雨": { 陽: true, 上元: 5, 中元: 2, 下元: 8 }, "立夏": { 陽: true, 上元: 4, 中元: 1, 下元: 7 }, "小滿": { 陽: true, 上元: 5, 中元: 2, 下元: 8 }, "芒種": { 陽: true, 上元: 6, 中元: 3, 下元: 9 }, "夏至": { 陽: false, 上元: 9, 中元: 3, 下元: 6 }, "小暑": { 陽: false, 上元: 8, 中元: 2, 下元: 5 }, "大暑": { 陽: false, 上元: 7, 中元: 1, 下元: 4 }, "立秋": { 陽: false, 上元: 2, 中元: 5, 下元: 8 }, "處暑": { 陽: false, 上元: 1, 中元: 4, 下元: 7 }, "白露": { 陽: false, 上元: 9, 中元: 3, 下元: 6 }, "秋分": { 陽: false, 上元: 7, 中元: 1, 下元: 4 }, "寒露": { 陽: false, 上元: 6, 中元: 9, 下元: 3 }, "霜降": { 陽: false, 上元: 5, 中元: 8, 下元: 2 }, "立冬": { 陽: false, 上元: 6, 中元: 9, 下元: 3 }, "小雪": { 陽: false, 上元: 5, 中元: 8, 下元: 2 }, "大雪": { 陽: false, 上元: 4, 中元: 7, 下元: 1 } };
+            const juConfig = JU_TABLE[jieQi] || {陽: true, 上元: 1, 中元: 1, 下元: 1};
+            const isYang = juConfig["陽"];
+            const juNum = juConfig[yuan];
+            
+            let earthPan = {}; let currentPalaceNum = juNum;
+            for (let i = 0; i < 9; i++) { earthPan[currentPalaceNum] = YI_LIU[i]; currentPalaceNum = isYang ? currentPalaceNum + 1 : currentPalaceNum - 1; if (currentPalaceNum > 9) currentPalaceNum = 1; else if (currentPalaceNum < 1) currentPalaceNum = 9; }
+            
+            const xunShouIdx = (timeBranchIdx - timeStemIdx + 12) % 12;
+            const xunShouGZ = "甲" + BRANCHES[xunShouIdx];
+            const XUN_MAP = { "甲子": "戊", "甲戌": "己", "甲申": "庚", "甲午": "辛", "甲辰": "壬", "甲寅": "癸" };
+            const xunShouStem = XUN_MAP[xunShouGZ];
+            
+            let xunShouPalace = parseInt(Object.keys(earthPan).find(k => earthPan[k] === xunShouStem));
+            let effectiveXunShouPalace = xunShouPalace === 5 ? 2 : xunShouPalace;
+            let heavenPan = {}, starPan = {};
+            let targetPalace = parseInt(Object.keys(earthPan).find(k => earthPan[k] === (timeStem === '甲' ? xunShouStem : timeStem)));
+            if(targetPalace === 5) targetPalace = 2;
+            
+            const rIdxTarget = RING_ORDER.indexOf(targetPalace), rIdxOrigin = RING_ORDER.indexOf(effectiveXunShouPalace), offset = (rIdxTarget - rIdxOrigin + 8) % 8;
+            for (let i = 0; i < 8; i++) {
+                const originP = RING_ORDER[i], targetP = RING_ORDER[(i + offset) % 8];
+                starPan[targetP] = (originP === 2) ? [BASE_STARS[2], BASE_STARS[5]] : BASE_STARS[originP];
+                heavenPan[targetP] = (originP === 2) ? [earthPan[2], earthPan[5]] : earthPan[originP];
+            }
+            
+            let godPan = {}; for (let i = 0; i < 8; i++) godPan[RING_ORDER[(rIdxTarget + (isYang ? i : 8 - i)) % 8]] = GODS_YANG[i];
+            
+            let currentD_val = xunShouPalace;
+            for(let i=0; i<timeStemIdx; i++) { currentD_val = isYang ? currentD_val + 1 : currentD_val - 1; if(currentD_val > 9) currentD_val = 1; else if(currentD_val < 1) currentD_val = 9; }
+            if(currentD_val === 5) currentD_val = 2;
+            const doorOriginIdx = RING_ORDER.indexOf(effectiveXunShouPalace), doorTargetIdx = RING_ORDER.indexOf(currentD_val), doorOffset = (doorTargetIdx - doorOriginIdx + 8) % 8;
+            let doorPan = {};
+            for (let i = 0; i < 8; i++) doorPan[RING_ORDER[(i + doorOffset) % 8]] = DOORS_ORDER[i];
+            
+            const kwIdx = (xunShouIdx + 10) % 12, kw1 = BRANCHES[kwIdx], kw2 = BRANCHES[kwIdx+1];
+            const maMap = { "申": "寅", "子": "寅", "辰": "寅", "亥": "巳", "卯": "巳", "未": "巳", "寅": "申", "午": "申", "戌": "申", "巳": "亥", "酉": "亥", "丑": "亥" }, ma = maMap[timeBranch];
+            
+            let isKong = false, isMa = false, isChong = false;
+            let monthBranch = monthGZ.substring(1, 2);
+            let clashBranch = CLASH_MAP[monthBranch];
+            if (pNum !== 5) {
+                isKong = PALACES_HOU[pNum].branch.includes(kw1) || PALACES_HOU[pNum].branch.includes(kw2);
+                isMa = PALACES_HOU[pNum].branch.includes(ma);
+                isChong = PALACES_HOU[pNum].branch.includes(clashBranch);
+            }
+
+            let resGod = godPan[pNum] || "";
+            let resStar = Array.isArray(starPan[pNum]) ? starPan[pNum] : [starPan[pNum]];
+            let resDoor = doorPan[pNum] || "";
+            let resHStems = Array.isArray(heavenPan[pNum]) ? heavenPan[pNum] : [heavenPan[pNum]];
+            let resEStems = Array.isArray(earthPan[pNum]) ? (pNum===2 ? [earthPan[2], earthPan[5]] : [earthPan[pNum]]) : [earthPan[pNum]];
+
+            if (pNum === 5) {
+                resGod = "";
+                resStar = [];
+                resDoor = "";
+                resHStems = [earthPan[5]];
+                resEStems = [earthPan[5]];
+            }
+
+            const isMenPoFn = (door, num) => {
+                const fire = num===9, water = num===1, earth = num===2||num===8, metal = num===6||num===7, wood = num===3||num===4;
+                if (door==="休門" && fire) return true; if ((door==="生門"||door==="死門") && water) return true; if ((door==="傷門"||door==="杜門") && earth) return true; if (door==="景門" && metal) return true; if ((door==="驚門"||door==="開門") && wood) return true; return false;
+            };
+
+            let evalPNum = pNum === 5 ? 2 : pNum;
+            let isMenPo = false;
+            let hasJiXing = false;
+            let hasRuMu = false;
+
+            if (pNum !== 5) {
+                isMenPo = isMenPoFn(resDoor, evalPNum);
+                for (let s of resHStems) {
+                    if (isJiXing(s, evalPNum)) hasJiXing = true;
+                    if (isRuMu(s, evalPNum)) hasRuMu = true;
+                }
+                for (let s of resEStems) {
+                    if (isJiXing(s, evalPNum)) hasJiXing = true;
+                    if (isRuMu(s, evalPNum)) hasRuMu = true;
+                }
+            }
+
+            const isWuBuYu = (timeStemIdx === (STEMS.indexOf(dayStem) + 6) % 10);
+            let isTianXian = false;
+            const dStemTX = dayGZ.substring(0, 1);
+            if (((dStemTX === '甲' || dStemTX === '己') && (timeGZ_string === '己巳')) ||
+                ((dStemTX === '乙' || dStemTX === '庚') && timeGZ_string === '甲申') ||
+                ((dStemTX === '丙' || dStemTX === '辛') && timeGZ_string === '甲午') ||
+                ((dStemTX === '丁' || dStemTX === '壬') && timeGZ_string === '甲辰') ||
+                ((dStemTX === '戊' || dStemTX === '癸') && timeGZ_string === '甲寅')) {
+                isTianXian = true;
+            }
+
+            return {
+                god: resGod,
+                star: resStar,
+                door: resDoor,
+                hStems: resHStems,
+                eStems: resEStems,
+                bazi: `${yearGZ}年 ${monthGZ}月 ${dayGZ}日 ${timeGZ_string}時`,
+                yStem: yearGZ.substring(0, 1),
+                mStem: monthGZ.substring(0, 1),
+                dStem: dayStem,
+                hStem: timeStem,
+                isKong: isKong,
+                isMa: isMa,
+                isMenPo: isMenPo,
+                hasJiXing: hasJiXing,
+                hasRuMu: hasRuMu,
+                isChong: isChong,
+                ziMark: ziMark,
+                isTianXian: isTianXian,
+                isWuBuYu: isWuBuYu
+            };
+        } catch(e) {
+            console.error(e);
+            return null;
+        }
+    }
+
+    function evalCriteria(elements, c) {
+        if (!elements) return false;
+        let isMatch = true;
+
+        let dynamicHStems = c.hStems.map(val => {
+            if (val === '=年干') return elements.yStem;
+            if (val === '=月干') return elements.mStem;
+            if (val === '=日干') return elements.dStem;
+            if (val === '=時干') return elements.hStem;
+            return val;
+        });
+
+        if (c.gods.length > 0 && !c.gods.includes(elements.god)) isMatch = false;
+        if (isMatch && c.stars.length > 0 && !elements.star.some(s => c.stars.includes(s))) isMatch = false;
+        if (isMatch && c.doors.length > 0 && !c.doors.includes(elements.door)) isMatch = false;
+        if (isMatch && c.hStems.length > 0 && !elements.hStems.some(s => dynamicHStems.includes(s))) isMatch = false;
+        if (isMatch && c.eStems.length > 0 && !elements.eStems.some(s => c.eStems.includes(s))) isMatch = false;
+        
+        if (isMatch && c.kong && !elements.isKong) isMatch = false;
+        if (isMatch && c.ma && !elements.isMa) isMatch = false;
+        if (isMatch && c.jiXing && !elements.hasJiXing) isMatch = false;
+        if (isMatch && c.ruMu && !elements.hasRuMu) isMatch = false;
+        if (isMatch && c.chong && !elements.isChong) isMatch = false;
+        if (isMatch && c.menPo && !elements.isMenPo) isMatch = false;
+        
+        if (isMatch && c.noKong && elements.isKong) isMatch = false;
+        if (isMatch && c.noMa && elements.isMa) isMatch = false;
+        if (isMatch && c.noJiXing && elements.hasJiXing) isMatch = false;
+        if (isMatch && c.noRuMu && elements.hasRuMu) isMatch = false;
+        if (isMatch && c.noChong && elements.isChong) isMatch = false;
+        if (isMatch && c.noMenPo && elements.isMenPo) isMatch = false;
+        
+        if (isMatch && c.tianXian && !elements.isTianXian) isMatch = false;
+        if (isMatch && c.wuBuYu && !elements.isWuBuYu) isMatch = false;
+        
+        return isMatch;
+    }
+
+    function executeRealSearch() {
+        const resultsList = document.getElementById('filter-results-list');
+        const resultsCount = document.getElementById('filter-results-count');
+        
+        const startDateStr = document.getElementById('filter-start-date').value;
+        const pNum1 = document.getElementById('filter-target-palace-1').value;
+        const pNum2 = document.getElementById('filter-target-palace-2').value;
+        const logicOp = document.getElementById('filter-logic-operator').value;
+        
+        const parts = startDateStr.split('/');
+        if (parts.length !== 3) {
+            alert('請輸入正確的開始日期格式，例如 2026/07/03');
+            return;
+        }
+        const sYear = parseInt(parts[0]);
+        const sMonth = parseInt(parts[1]);
+        const sDay = parseInt(parts[2]);
+        
+        const getChecked = (groupId) => Array.from(document.querySelectorAll(`#${groupId} input:checked`)).map(cb => cb.value);
+        
+        const criteria1 = {
+            gods: getChecked('chk-group-god-1'),
+            stars: getChecked('chk-group-star-1'),
+            doors: getChecked('chk-group-door-1'),
+            hStems: getChecked('chk-group-hstem-1'),
+            eStems: getChecked('chk-group-estem-1'),
+            kong: document.getElementById('chk-kong-1')?.checked,
+            noKong: document.getElementById('chk-nokong-1')?.checked,
+            ma: document.getElementById('chk-ma-1')?.checked,
+            noMa: document.getElementById('chk-noma-1')?.checked,
+            jiXing: document.getElementById('chk-jixing-1')?.checked,
+            noJiXing: document.getElementById('chk-nojixing-1')?.checked,
+            ruMu: document.getElementById('chk-rumu-1')?.checked,
+            noRuMu: document.getElementById('chk-norumu-1')?.checked,
+            chong: document.getElementById('chk-chong-1')?.checked,
+            noChong: document.getElementById('chk-nochong-1')?.checked,
+            menPo: document.getElementById('chk-menpo-1')?.checked,
+            noMenPo: document.getElementById('chk-nomenpo-1')?.checked,
+            tianXian: document.getElementById('chk-tianxian-1')?.checked,
+            wuBuYu: document.getElementById('chk-wubuyu-1')?.checked
+        };
+
+        const criteria2 = pNum2 !== "0" ? {
+            gods: getChecked('chk-group-god-2'),
+            stars: getChecked('chk-group-star-2'),
+            doors: getChecked('chk-group-door-2'),
+            hStems: getChecked('chk-group-hstem-2'),
+            eStems: getChecked('chk-group-estem-2'),
+            kong: document.getElementById('chk-kong-2')?.checked,
+            noKong: document.getElementById('chk-nokong-2')?.checked,
+            ma: document.getElementById('chk-ma-2')?.checked,
+            noMa: document.getElementById('chk-noma-2')?.checked,
+            jiXing: document.getElementById('chk-jixing-2')?.checked,
+            noJiXing: document.getElementById('chk-nojixing-2')?.checked,
+            ruMu: document.getElementById('chk-rumu-2')?.checked,
+            noRuMu: document.getElementById('chk-norumu-2')?.checked,
+            chong: document.getElementById('chk-chong-2')?.checked,
+            noChong: document.getElementById('chk-nochong-2')?.checked,
+            menPo: document.getElementById('chk-menpo-2')?.checked,
+            noMenPo: document.getElementById('chk-nomenpo-2')?.checked,
+            tianXian: document.getElementById('chk-tianxian-2')?.checked,
+            wuBuYu: document.getElementById('chk-wubuyu-2')?.checked
+        } : null;
+
+        resultsList.innerHTML = '<div class="p-6 text-center text-amber-600 font-bold flex flex-col items-center justify-center gap-2"><svg class="animate-spin h-6 w-6 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>運算 180 日內全時辰資料中...</span></div>';
+        resultsCount.innerText = `計算中`;
+
+        const hourSlots = [
+            { h: 0, min: 30, branch: '子', name: '早子' },
+            { h: 2, min: 30, branch: '丑', name: '丑' },
+            { h: 4, min: 30, branch: '寅', name: '寅' },
+            { h: 6, min: 30, branch: '卯', name: '卯' },
+            { h: 8, min: 30, branch: '辰', name: '辰' },
+            { h: 10, min: 30, branch: '巳', name: '巳' },
+            { h: 12, min: 30, branch: '午', name: '午' },
+            { h: 14, min: 30, branch: '未', name: '未' },
+            { h: 16, min: 30, branch: '申', name: '申' },
+            { h: 18, min: 30, branch: '酉', name: '酉' },
+            { h: 20, min: 30, branch: '戌', name: '戌' },
+            { h: 22, min: 30, branch: '亥', name: '亥' },
+            { h: 23, min: 30, branch: '子', name: '晚子' }
+        ];
+
+        setTimeout(() => {
+            let matchedResults = [];
+            let currentD = new Date(sYear, sMonth - 1, sDay);
+            
+            for(let i = 0; i < 180; i++) {
+                let y = currentD.getFullYear();
+                let m = currentD.getMonth() + 1;
+                let d = currentD.getDate();
+                
+                for(let slot of hourSlots) {
+                    let h = slot.h;
+                    let min = slot.min; 
+                    
+                    let elements1 = getQimenElements(y, m, d, h, min, pNum1);
+                    if(!elements1) continue;
+                    
+                    let match1 = evalCriteria(elements1, criteria1);
+                    let matchOverall = match1;
+
+                    if (pNum2 !== "0") {
+                        let elements2 = getQimenElements(y, m, d, h, min, pNum2);
+                        let match2 = elements2 ? evalCriteria(elements2, criteria2) : false;
+                        
+                        if (logicOp === 'AND') {
+                            matchOverall = match1 && match2;
+                        } else {
+                            matchOverall = match1 || match2;
+                        }
+                    }
+
+                    if (matchOverall) {
+                        matchedResults.push({
+                            y, m, d, h, min,
+                            dStr: `${y}年 ${m.toString().padStart(2,'0')}月 ${d.toString().padStart(2,'0')}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} (${slot.name}時)`,
+                            bazi: elements1.bazi,
+                            ziMark: elements1.ziMark
+                        });
+                    }
+                }
+                currentD.setDate(currentD.getDate() + 1);
+            }
+            
+            resultsList.innerHTML = '';
+            resultsCount.innerText = `${matchedResults.length} 筆`;
+            
+            if (matchedResults.length === 0) {
+                resultsList.innerHTML = '<div class="p-4 text-center text-gray-500 text-sm bg-gray-50 rounded-lg border border-dashed border-gray-200">在此 180 天的範圍內，未找到符合全部所選條件的時辰。</div>';
+            } else {
+                matchedResults.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left p-3 border border-amber-200/60 rounded-xl hover:bg-amber-50 focus:bg-amber-100 active:scale-[0.99] transition duration-150 shadow-sm text-sm bg-white block mb-2";
+                    btn.innerHTML = `
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-amber-900">${item.dStr}</span>
+                            <span class="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded border border-green-200 font-bold">符合</span>
+                        </div>
+                        <div class="text-gray-500 font-bold text-xs">四柱：${item.bazi} ${item.ziMark ? '<span class="text-orange-600 font-black">['+item.ziMark+']</span>' : ''}</div>
+                    `;
+                    btn.onclick = () => {
+                        applyBaziResult(item.y, item.m, item.d, item.h, item.min);
+                        if (window.innerWidth < 1024) {
+                            toggleFilterPanel();
+                            setTimeout(() => {
+                                document.getElementById('app-workspace').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }, 150);
+                        }
+                    };
+                    resultsList.appendChild(btn);
+                });
+            }
+        }, 80); 
+    }
+
+    function resetFilter() {
+        const today = new Date();
+        document.getElementById('filter-start-date').value = `${today.getFullYear()}/${(today.getMonth()+1).toString().padStart(2,'0')}/${today.getDate().toString().padStart(2,'0')}`;
+        
+        document.getElementById('filter-target-palace-1').value = "1";
+        document.getElementById('filter-target-palace-2').value = "0";
+        document.getElementById('filter-logic-operator').value = "AND";
+        
+        document.querySelectorAll('.chk-label input[type="checkbox"]').forEach(cb => cb.checked = false);
+        
+        document.getElementById('filter-results-list').innerHTML = '<div class="p-3 text-center text-gray-400 text-sm bg-gray-50 rounded-lg border border-dashed border-gray-200">已重置。<br>設定好上方的條件然後按下按鈕即可獲得符合之奇門遁甲列表！</div>';
+        document.getElementById('filter-results-count').innerText = "0 筆";
+        
+        handleFilterPalaceChange(1);
+        handleFilterPalaceChange(2);
     }
 
     function generatePan() {
@@ -2015,7 +2116,8 @@
             const baziRawStr = `${yearGZ}年 ${monthGZ}月 ${dayGZ}日 ${timeGZ_string}時`;
             const coloredBaziStr = `${colorizeGanZhi(yearGZ)}年 ${colorizeGanZhi(monthGZ)}月 ${colorizeGanZhi(dayGZ)}日 ${colorizeGanZhi(timeGZ_string)}時`;
             
-            const jqData = getAccurateJieQi(currentDate), jieQi = jqData.name;
+            const jqData = getAccurateJieQi(currentDate);
+            const jieQi = jqData.name;
             const JIA_ZI = []; for(let i=0; i<60; i++) JIA_ZI.push(STEMS[i%10] + BRANCHES[i%12]);
             const dIdx = JIA_ZI.indexOf(dayGZ), fuTouIdx = dIdx - (dIdx % 5), fuTouBranch = BRANCHES[fuTouIdx % 12];
             let yuan = ["子", "午", "卯", "酉"].includes(fuTouBranch) ? "上元" : (["寅", "申", "巳", "亥"].includes(fuTouBranch) ? "中元" : "下元");
@@ -2066,7 +2168,12 @@
             
             let displayZiMark = ziMark ? `<span class="text-orange-600 font-bold ml-1">【${ziMark}】</span>` : "";
             document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} ｜ ${coloredBaziStr}${displayZiMark}${specialStr}`;
-            document.getElementById('info-jieqi').innerHTML = `${jieQi} <span class="text-[10px] text-gray-500 font-normal">(交節：${jqData.time})</span>`;
+            
+            let targetWarn = jqData.isCurrentTransition ? "⚠️" : "";
+            let nextWarn = jqData.isNextTransition ? "⚠️" : "";
+            document.getElementById('info-jieqi').innerHTML = `${jieQi} <span class="text-[10px] text-gray-500 font-normal">(交節：${jqData.time}${targetWarn})</span>`;
+            document.getElementById('info-next-jieqi').innerHTML = `${jqData.nextName} <span class="text-[10px] text-gray-500 font-normal">(交節：${jqData.nextTime}${nextWarn})</span>`;
+            
             document.getElementById('info-ju').innerText = juStr;
             document.getElementById('info-xunshou').innerText = xunShouGZ + xunShouStem;
             document.getElementById('info-zhifu').innerText = zhiFuStar;
@@ -2134,25 +2241,15 @@
                 if (door==="休門" && fire) return true; if ((door==="生門"||door==="死門") && water) return true; if ((door==="傷門"||door==="杜門") && earth) return true; if (door==="景門" && metal) return true; if ((door==="驚門"||door==="開門") && wood) return true; return false;
             };
 
-            const isJiXing = (stem, pNum) => {
-                if (stem === '戊' && pNum === 3) return true; 
-                if (stem === '己' && pNum === 2) return true; 
-                if (stem === '庚' && pNum === 8) return true; 
-                if (stem === '辛' && pNum === 9) return true; 
-                if (['壬', '癸'].includes(stem) && pNum === 4) return true; 
-                return false;
-            };
-
             const getStemTagsText = (stem, pNum) => {
                 let tags = [];
                 if(isJiXing(stem, pNum)) tags.push("刑");
                 if(isRuMu(stem, pNum)) tags.push("墓");
-                return tags.length ? `(${tags.join("+")})` : "";
+                return tags.length ? tags.join("+") : ""; // 移除了兩側的括號
             };
 
             let copyBaziLine = `${baziRawStr} (${y}年${m}月${d}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}${ziMark ? ' ' + ziMark : ''})`;
             
-            // 流年飛星通算推算（可由下拉選單指定流年年份）
             const fxSelVal = document.getElementById('sel-feixing-year')?.value;
             let flightYear = (useFeiXing && fxSelVal) ? parseInt(fxSelVal) : y;
             if (flightYear === y) {
@@ -2183,10 +2280,28 @@
                 palaces: {} 
             };
 
+            panData.bazi5Info = {
+                yS: yearGZ.substring(0, 1), yB: yearGZ.substring(1, 2),
+                mS: monthGZ.substring(0, 1), mB: monthGZ.substring(1, 2),
+                dS: dayGZ.substring(0, 1), dB: dayGZ.substring(1, 2),
+                hS: timeGZ_string.substring(0, 1), hB: timeGZ_string.substring(1, 2),
+                xun: xunShouGZ + xunShouStem,
+                zf: zhiFuStar,
+                zs: doorPan[currentD_val],
+                kw: kw1 + "、" + kw2
+            };
+
             const renderStem = (s, pNum, isAnGan = false) => {
-                let tags = []; if(isJiXing(s, pNum)) tags.push("刑"); if(isRuMu(s, pNum)) tags.push("墓");
-                let tagClass = isAnGan ? "text-gray-400" : "text-red-600";
-                let tagStr = tags.length ? `<span class="text-[10px] ${tagClass} ml-0.5 font-bold">(${tags.join("+")})</span>` : "";
+                let tagStr = "";
+                // 暗干不顯示刑墓
+                if (!isAnGan) {
+                    let tags = []; 
+                    if(isJiXing(s, pNum)) tags.push("刑"); 
+                    if(isRuMu(s, pNum)) tags.push("墓");
+                    if (tags.length) {
+                        tagStr = `<span class="text-[10px] text-red-600 ml-0.5 font-bold">${tags.join("+")}</span>`;
+                    }
+                }
                 
                 let displayChar = s;
                 if (useEnergy && pNum !== 5) {
@@ -2195,7 +2310,7 @@
 
                 if (isAnGan) {
                     let textClassSize = useEnergy ? "text-[10px] sm:text-xs" : "text-sm sm:text-base";
-                    return `<span class="text-gray-400 ${textClassSize}">${displayChar}${tagStr}</span>`;
+                    return `<span class="text-gray-400 ${textClassSize}">${displayChar}</span>`;
                 }
 
                 let stemColor = WUXING_COLORS[s] || "#1a202c";
@@ -2211,7 +2326,6 @@
                 el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                 if (wasActive) el.classList.add('palace-active');
 
-                // 計算該宮位之流年飛星號碼與五行字樣
                 let feixingNum = (starC + FLIGHT_OFFSET[i] - 1) % 9 + 1;
                 let feixingSuffix = useFeiXing ? `<span class="text-gray-400 font-normal text-xs sm:text-sm ml-0.5">(流${FEIXING_ZH_WX[feixingNum]})</span>` : "";
 
@@ -2229,7 +2343,7 @@
                 if(i === 5) {
                     let s = earthPan[5], anGan = anGanPan[5];
                     let centerLabel = `中五${feixingSuffix}`;
-                    el.innerHTML = `${getBranchHTML(5)}<div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">${centerLabel}</div><div class="flex justify-center items-center h-full text-3xl text-black">${renderStem(s, 5)}</div><div class="absolute bottom-0 left-0 m-1">${renderStem(anGan, 5, true)}</div>`;
+                    el.innerHTML = renderPalace5Html(s, anGan, centerLabel, panData.bazi5Info);
                     panData.palaces["中五"] = s;
                     
                     globalPalaceData[5] = { name: ACTIVE_PALACES[5].name, hStems: [s], eStems: [s], anGan: anGan, isCenter: true };
@@ -2282,12 +2396,12 @@
                             <span class="text-main text-${godColor}">${godPan[i]}</span>
                         </div>
                         <div class="text-main leading-none mb-1 tracking-wider"><span class="text-${STAR_COLORS[pStars[0]] || 'black'}">${starTextDisplay}</span></div>
-                        <div class="flex items-start leading-none mb-1"><span class="text-main text-${doorColor} tracking-wider">${pDoorDisplay}</span>${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 mt-1 ml-0.5 font-bold">(迫)</span>`:""}</div>
+                        <div class="flex items-start leading-none mb-1"><span class="text-main text-${doorColor} tracking-wider">${pDoorDisplay}</span>${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 mt-1 ml-0.5 font-bold">迫</span>`:""}</div>
                         <div class="flex justify-between items-end mt-auto w-full">
                             <div class="mb-1 flex-shrink-0 mr-2">${renderStem(anGan, i, true)}</div>
                             <div class="flex flex-col items-stretch text-right leading-tight text-main font-bold flex-grow max-w-[80%]">
-                                <div class="mb-1 w-full">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
-                                <div class="border-t-[1.5px] border-gray-300 min-w-[2.5rem] w-full pt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">/</span>')}</div>
+                                <div class="mb-1 w-full">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">|</span>')}</div>
+                                <div class="border-t-[1.5px] border-gray-300 min-w-[2.5rem] w-full pt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">|</span>')}</div>
                             </div>
                         </div>
                     </div>`;
@@ -2295,12 +2409,14 @@
                 let doorTextForCopy = pDoorDisplay + (isMenPo(pDoor, i) ? "(迫)" : "");
                 
                 let hStemsForCopy = hStems.map((s, idx) => {
-                    let txt = (useEnergy ? resolveStemEnergy(s, i, timeBranch) : s) + getStemTagsText(s, i);
+                    let tagsText = getStemTagsText(s, i);
+                    let txt = (useEnergy ? resolveStemEnergy(s, i, timeBranch) : s) + (tagsText ? `(${tagsText})` : "");
                     return txt + (idx === 0 ? "(天)" : "(寄天)");
                 }).join('+');
 
                 let eStemsForCopy = eStems.map((s, idx) => {
-                    let txt = (useEnergy ? resolveStemEnergy(s, (i===5)?2:i, timeBranch) : s) + getStemTagsText(s, i);
+                    let tagsText = getStemTagsText(s, (i===5)?2:i);
+                    let txt = (useEnergy ? resolveStemEnergy(s, (i===5)?2:i, timeBranch) : s) + (tagsText ? `(${tagsText})` : "");
                     return txt + (idx === 0 ? "(地)" : "(寄地)");
                 }).join('+');
 
