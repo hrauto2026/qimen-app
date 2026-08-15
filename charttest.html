@@ -1230,10 +1230,7 @@
         const targetHighlightStem = panData.targetHighlightStem;
         let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
         
-        let tags = [];
-        if (isJiXing(s, 2)) tags.push("刑");
-        if (isRuMu(s, 2)) tags.push("墓");
-        let tagStr = tags.length ? `<span class="text-[10px] text-red-600 ml-0.5 font-bold">${tags.join("+")}</span>` : "";
+	let tagStr = ""; // 中五宮不需要顯示刑墓
         let mainStemHtml = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important;">${s}</span>` : `<span class="font-bold" style="color: ${stemColor};">${s}</span>`;
         let anGanHtml = `<span class="text-gray-400 text-sm sm:text-base">${anGan}</span>`;
 
@@ -2384,7 +2381,7 @@
                             <span class="text-main text-${godColor}">${godPan[i]}</span>
                         </div>
                         <div class="text-main leading-none mb-1 tracking-wider"><span class="text-${STAR_COLORS[pStars[0]] || 'black'}">${starTextDisplay}</span></div>
-                        <div class="flex items-start leading-none mb-1"><span class="text-main text-${doorColor} tracking-wider">${pDoorDisplay}</span>${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 mt-1 ml-0.5 font-bold">(迫)</span>`:""}</div>
+                        <div class="flex items-start leading-none mb-1"><span class="text-main text-${doorColor} tracking-wider">${pDoorDisplay}</span>${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 mt-1 ml-0.5 font-bold">迫</span>`:""}</div>
                         <div class="flex justify-between items-end mt-auto w-full">
                             <div class="mb-1 flex-shrink-0 mr-2">${renderStem(anGan, i, true)}</div>
                             <div class="flex flex-col items-stretch text-right leading-tight text-main font-bold flex-grow max-w-[80%]">
