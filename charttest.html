@@ -1203,25 +1203,34 @@
         let baziContent = "";
         if (bazi5) {
             baziContent = `
-		<div class="flex flex-col items-center justify-start text-[10px] sm:text-[11px] md:text-xs leading-[1.2] font-bold w-full pt-1 select-none z-10">
-    			<!-- 天干 -->
-    			<div class="flex justify-center gap-0.5 font-black text-sm sm:text-base md:text-lg leading-none tracking-widest">
-        		<span style="color:${WUXING_COLORS[bazi5.yS] || '#1a202c'}">${bazi5.yS}</span>
-        		<span style="color:${WUXING_COLORS[bazi5.mS] || '#1a202c'}">${bazi5.mS}</span>
-        		<span style="color:${WUXING_COLORS[bazi5.dS] || '#1a202c'}">${bazi5.dS}</span>
-        		<span style="color:${WUXING_COLORS[bazi5.hS] || '#1a202c'}">${bazi5.hS}</span>
-    		</div>
+<div class="flex flex-col items-center justify-start text-[10px] sm:text-[11px] md:text-xs leading-none font-bold w-full pt-1 select-none z-10">
+    <!-- 八字四柱容器：gap-x 控制柱與柱之間的水平間距 -->
+    <div class="flex justify-center gap-x-2.5 font-black text-sm sm:text-base md:text-lg">
+        <!-- 年柱 -->
+        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+            <span style="color:${WUXING_COLORS[bazi5.yS] || '#1a202c'}">${bazi5.yS}</span>
+            <span style="color:${WUXING_COLORS[bazi5.yB] || '#1a202c'}">${bazi5.yB}</span>
+        </div>
+        <!-- 月柱 -->
+        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+            <span style="color:${WUXING_COLORS[bazi5.mS] || '#1a202c'}">${bazi5.mS}</span>
+            <span style="color:${WUXING_COLORS[bazi5.mB] || '#1a202c'}">${bazi5.mB}</span>
+        </div>
+        <!-- 日柱 -->
+        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+            <span style="color:${WUXING_COLORS[bazi5.dS] || '#1a202c'}">${bazi5.dS}</span>
+            <span style="color:${WUXING_COLORS[bazi5.dB] || '#1a202c'}">${bazi5.dB}</span>
+        </div>
+        <!-- 時柱 -->
+        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+            <span style="color:${WUXING_COLORS[bazi5.hS] || '#1a202c'}">${bazi5.hS}</span>
+            <span style="color:${WUXING_COLORS[bazi5.hB] || '#1a202c'}">${bazi5.hB}</span>
+        </div>
+    </div>
 
-    		<!-- 地支：加大負邊距為 -mt-1.5 或 -mt-[6px] -->
-    		<div class="flex justify-center gap-0.5 font-black text-sm sm:text-base md:text-lg leading-none tracking-widest -mt-1.5 sm:-mt-2">
-        		<span style="color:${WUXING_COLORS[bazi5.yB] || '#1a202c'}">${bazi5.yB}</span>
-        		<span style="color:${WUXING_COLORS[bazi5.mB] || '#1a202c'}">${bazi5.mB}</span>
-        		<span style="color:${WUXING_COLORS[bazi5.dB] || '#1a202c'}">${bazi5.dB}</span>
-        		<span style="color:${WUXING_COLORS[bazi5.hB] || '#1a202c'}">${bazi5.hB}</span>
-    		</div>
-
-    			<div class="text-[9px] sm:text-[10px] text-gray-400 tracking-widest mt-1">年月日時</div>
-		</div>
+    <!-- 年月日時標籤 -->
+    <div class="text-[9px] sm:text-[10px] text-gray-400 tracking-widest mt-1">年月日時</div>
+</div>
 		</div>
                     <div class="text-gray-700 whitespace-nowrap text-xs">旬首：${bazi5.xun}</div>
                     <div class="text-gray-700 whitespace-nowrap text-xs">值符：${bazi5.zf}</div>
