@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>奇門遁甲 - 拆補法排盤 (v26.6.2)</title>
+    <title>奇門遁甲 - 拆補法排盤 (v27.1)</title>
     <link rel="icon" type="image/jpeg" href="icon.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
@@ -46,32 +46,6 @@
             transition: all 0.3s ease; cursor: pointer;
         }
         .palace-active { border: 4px solid #3b82f6 !important; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); z-index: 30; }
-
-        @keyframes flashBranch {
-            0%, 100% { 
-                background-color: #fef08a !important; 
-                color: #b91c1c !important; 
-                box-shadow: 0 0 8px rgba(245, 158, 11, 0.9) !important; 
-                border: 1.5px solid #f59e0b !important;
-                border-radius: 6px;
-                padding: 1px 4px;
-            }
-            50% { 
-                background-color: #ef4444 !important; 
-                color: #ffffff !important; 
-                box-shadow: 0 0 15px rgba(239, 68, 68, 1), 0 0 22px rgba(250, 204, 21, 0.9) !important; 
-                border: 1.5px solid #b91c1c !important;
-                border-radius: 6px;
-                padding: 1px 4px;
-            }
-        }
-        .branch-flash {
-            animation: flashBranch 0.5s infinite ease-in-out !important;
-            z-index: 40 !important;
-        }
-        .branch-flash span {
-            color: inherit !important;
-        }
 
         /* 古典五行配色 */
         .bg-water { background-color: #f0f9ff; border-color: #bae6fd; } .text-water { color: #0369a1; }
@@ -280,22 +254,6 @@
                         <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500 shadow-inner"></div>
                     </label>
                 </div>
-                <!-- Toggle Switch 5: 地支三合 -->
-                <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-purple-100">
-                    <span class="text-xs font-bold text-gray-700">地支三合</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="toggle-sanhe" class="sr-only peer" onchange="handleToggleSwitch('toggle-sanhe')">
-                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600 shadow-inner"></div>
-                    </label>
-                </div>
-                <!-- Toggle Switch 6: 地支六合 -->
-                <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-teal-100">
-                    <span class="text-xs font-bold text-gray-700">地支六合</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="toggle-liuhe" class="sr-only peer" onchange="handleToggleSwitch('toggle-liuhe')">
-                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-teal-600 shadow-inner"></div>
-                    </label>
-                </div>
                 <!-- Toggle Switch 7: 流年飛星 -->
                 <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-rose-100">
                     <span class="text-xs font-bold text-gray-700">流年飛星</span>
@@ -307,7 +265,7 @@
                 </div>
 
                 <div class="w-full text-center mt-2">
-                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v26.6.2)</span>
+                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v27.1)</span>
                 </div>
             </div>
         </div>
@@ -566,16 +524,55 @@
         <h3 class="text-xl md:text-2xl mb-3 text-center text-indigo-900 font-bold tracking-widest" id="pm-title">宮位資訊</h3>
         
         <div class="space-y-4">
-            <div class="bg-indigo-50/80 p-3 rounded-xl border border-indigo-100 grid grid-cols-2 gap-y-2 gap-x-4 text-sm sm:text-base">
-                <div><span class="text-gray-500">神將：</span><span id="pm-god" class="font-bold text-gray-800"></span></div>
-                <div><span class="text-gray-500">天星：</span><span id="pm-star" class="font-bold text-gray-800"></span></div>
-                <div><span class="text-gray-500">人門：</span><span id="pm-door" class="font-bold text-gray-800"></span></div>
-                <div><span class="text-gray-500">暗干：</span><span id="pm-angan" class="font-bold text-gray-800"></span></div>
-                <div class="col-span-2 border-t border-indigo-200 pt-2 mt-1">
-                    <span class="text-gray-500">天盤干：</span><span id="pm-hstem" class="font-bold text-lg tracking-widest"></span><br>
-                    <span class="text-gray-500">地盤干：</span><span id="pm-estem" class="font-bold text-lg tracking-widest"></span>
+<div class="bg-indigo-50/80 p-3 rounded-xl border border-indigo-100 grid grid-cols-2 gap-y-2 gap-x-4 text-sm sm:text-base">
+    <div><span class="text-gray-500">神將：</span><span id="pm-god" class="font-bold text-gray-800"></span></div>
+    <div><span class="text-gray-500">天星：</span><span id="pm-star" class="font-bold text-gray-800"></span></div>
+    <div><span class="text-gray-500">人門：</span><span id="pm-door" class="font-bold text-gray-800"></span></div>
+    <div><span class="text-gray-500">暗干：</span><span id="pm-angan" class="font-bold text-gray-800"></span></div>
+    <div class="col-span-2 border-t border-indigo-200 pt-2 mt-1 leading-relaxed">
+        <span class="text-gray-500">宮 支：</span><span id="pm-branch" class="font-bold text-lg tracking-widest"></span><br>
+        <span class="text-gray-500">天盤干：</span><span id="pm-hstem" class="font-bold text-lg tracking-widest"></span>
+        <span id="pm-hstem-hidden" class="text-indigo-600 font-bold ml-1 text-sm tracking-wide"></span><br>
+        <span class="text-gray-500">地盤干：</span><span id="pm-estem" class="font-bold text-lg tracking-widest"></span>
+        <span id="pm-estem-hidden" class="text-indigo-600 font-bold ml-1 text-sm tracking-wide"></span>
+    </div>
+</div>
+
+            <!-- Cheat Sheet Container -->
+            <details class="group bg-blue-50/40 border border-blue-200 rounded-lg shadow-sm">
+                <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 flex justify-between items-center select-none">
+                    <span>📚 合/沖/方局資料</span>
+                    <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span>
+                </summary>
+                <div class="p-3 text-xs text-gray-700 space-y-2 border-t border-blue-200 bg-white rounded-b-lg">
+                    <div class="grid grid-cols-2 gap-x-2 gap-y-3">
+                        <div>
+                            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">天干五合</div>
+                            甲己合化土<br>乙庚合化金<br>丙辛合化水<br>丁壬合化木<br>戊癸合化火
+                        </div>
+                        <div>
+                            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">天干相沖</div>
+                            甲庚相沖<br>乙辛相沖<br>丙壬相沖<br>丁癸相沖
+                        </div>
+                        <div>
+                            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">地支三合</div>
+                            申子辰合成水局<br>亥卯未合成木局<br>寅午戌合成火局<br>巳酉丑合成金局
+                        </div>
+                        <div>
+                            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">地支六合</div>
+                            子丑合化土<br>寅亥合化木<br>卯戌合化火<br>辰酉合化金<br>巳申合化水<br>午未合化土
+                        </div>
+                        <div>
+                            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">地支方局</div>
+                            寅卯辰(木)<br>巳午未(火)<br>申酉戌(金)<br>亥子丑(水)
+                        </div>
+                        <div>
+                            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">地支六沖</div>
+                            子午沖<br>丑未沖<br>寅申沖<br>卯酉沖<br>辰戌沖<br>巳亥沖
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </details>
 
             <div>
                 <h4 class="font-bold text-red-700 border-b-2 border-red-100 mb-2 pb-1 flex items-center">⚠️ 四害與狀態</h4>
@@ -809,22 +806,6 @@
         '癸': {1:'臨官', 8:'冠帶/沐浴', 3:'長生', 4:'養/胎', 9:'絕', 2:'墓/死', 7:'病', 6:'衰/帝旺'}
     };
 
-    const SAN_HE_MAP = [
-        { name: "申子辰合成水局", branches: ['申', '子', '辰'] },
-        { name: "亥卯未合成木局", branches: ['亥', '卯', '未'] },
-        { name: "寅午戌合成火局", branches: ['寅', '午', '戌'] },
-        { name: "巳酉丑合成金局", branches: ['巳', '酉', '丑'] }
-    ];
-
-    const LIU_HE_MAP = [
-        { name: "子丑合土", branches: ['子', '丑'] },
-        { name: "寅亥合木", branches: ['寅', '亥'] },
-        { name: "卯戌合火", branches: ['卯', '戌'] },
-        { name: "辰酉合金", branches: ['辰', '酉'] },
-        { name: "巳申合水", branches: ['巳', '申'] },
-        { name: "午未合土", branches: ['午', '未'] }
-    ];
-
     function showToast(msg) {
         let existing = document.getElementById('toast-msg');
         if (existing) existing.remove();
@@ -883,8 +864,6 @@
     // Toggle switch variables
     let useXianTian = false;
     let useEnergy = false;
-    let useSanHe = false;
-    let useLiuHe = false;
     let useFeiXing = false; // 流年飛星開關
 
     function handleToggleSwitch(activeId) {
@@ -893,8 +872,6 @@
             'toggle-energy', 
             'toggle-neiwai', 
             'toggle-palacemodal', 
-            'toggle-sanhe', 
-            'toggle-liuhe',
             'toggle-feixing'
         ];
         
@@ -913,8 +890,6 @@
         useEnergy = document.getElementById('toggle-energy').checked;
         useNeiWai = document.getElementById('toggle-neiwai').checked;
         enablePalaceModal = document.getElementById('toggle-palacemodal').checked;
-        useSanHe = document.getElementById('toggle-sanhe').checked;
-        useLiuHe = document.getElementById('toggle-liuhe').checked;
         useFeiXing = document.getElementById('toggle-feixing').checked;
 
         const fxSel = document.getElementById('sel-feixing-year');
@@ -1080,16 +1055,31 @@
 
     function showPalaceDetails(pNum) {
         const data = globalPalaceData[pNum];
-        if (!data) return;
+        if (!data || data.isCenter) return;
 
-        document.getElementById('pm-title').innerText = data.name + (data.isCenter ? " (寄宮)" : " 詳細資訊");
+        document.getElementById('pm-title').innerText = data.name + " 詳細資訊";
         
+        document.getElementById('pm-branch').innerHTML = data.branch ? colorizeGanZhi(data.branch) : "-";
+
+        let doorText = data.door || "";
+        if (doorText === '傷門') doorText += '(卯)';
+        if (doorText === '景門') doorText += '(午)';
+        if (doorText === '驚門') doorText += '(酉)';
+        if (doorText === '休門') doorText += '(子)';
+
         document.getElementById('pm-god').innerHTML = data.god ? `<span class="text-${GOD_COLORS[data.god] || 'black'}">${data.god}</span>` : "-";
         document.getElementById('pm-star').innerHTML = data.star ? `<span class="text-${STAR_COLORS[data.star.split('/')[0]] || 'black'}">${data.star}</span>` : "-";
-        document.getElementById('pm-door').innerHTML = data.door ? `<span class="text-${DOOR_COLORS[data.door] || 'black'}">${data.door}</span>` : "-";
+        document.getElementById('pm-door').innerHTML = doorText ? `<span class="text-${DOOR_COLORS[data.door] || 'black'}">${doorText}</span>` : "-";
         document.getElementById('pm-angan').innerHTML = colorizeGanZhi(data.anGan || "-");
-        document.getElementById('pm-hstem').innerHTML = data.hStems ? [...data.hStems].map(s => colorizeGanZhi(s)).join('|') : "-"; 
-        document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].map(s => colorizeGanZhi(s)).join('|') : "-"; 
+        document.getElementById('pm-hstem').innerHTML = data.hStems ? [...data.hStems].map(s => colorizeGanZhi(s)).join(' | ') : "-"; 
+        document.getElementById('pm-estem').innerHTML = data.eStems ? [...data.eStems].map(s => colorizeGanZhi(s)).join(' | ') : "-"; 
+
+        const DUN_GAN_MAP = { '戊': '子', '己': '戌', '庚': '申', '辛': '午', '壬': '辰', '癸': '寅' };
+        let hHidden = data.hStems ? data.hStems.map(s => DUN_GAN_MAP[s] ? `${s}遁${DUN_GAN_MAP[s]}` : '').filter(Boolean).join(' | ') : '';
+        let eHidden = data.eStems ? data.eStems.map(s => DUN_GAN_MAP[s] ? `${s}遁${DUN_GAN_MAP[s]}` : '').filter(Boolean).join(' | ') : '';
+        
+        document.getElementById('pm-hstem-hidden').innerText = hHidden ? `(${hHidden})` : '';
+        document.getElementById('pm-estem-hidden').innerText = eHidden ? `(${eHidden})` : '';
 
         let harmsHTML = "";
         const tagStyle = "px-2 py-0.5 rounded text-xs font-bold text-white shadow-sm";
@@ -1105,29 +1095,26 @@
         document.getElementById('pm-harms').innerHTML = harmsHTML || '<span class="text-gray-400">無特殊狀態</span>';
 
         let gejuHTML = "";
-        if (data.isCenter) {
-            gejuHTML = '<span class="text-gray-400">中五宮無獨立星門，寄於坤二宮。</span>';
+        let gejus = calculateGeju(data);
+        if (gejus.length === 0) {
+            gejuHTML = '<span class="text-gray-400">此宮目前無特殊格局。</span>';
         } else {
-            let gejus = calculateGeju(data);
-            if (gejus.length === 0) {
-                gejuHTML = '<span class="text-gray-400">此宮目前無特殊格局。</span>';
-            } else {
-                gejus.forEach(g => {
-                    let badgeColor = 'bg-gray-100 text-gray-800 border-gray-200'; 
-                    if (g.type.includes('吉')) badgeColor = 'bg-green-100 text-green-800 border-green-200';
-                    else if (g.type.includes('凶')) badgeColor = 'bg-red-100 text-red-800 border-red-200';
-                    
-                    gejuHTML += `
-                        <div class="p-3 bg-gray-50 border border-gray-100 rounded-lg flex flex-col">
-                            <div class="flex items-center gap-2 mb-1.5">
-                                <span class="font-bold text-gray-800 text-base">${g.name}</span>
-                                <span class="text-[10px] px-1.5 py-0.5 rounded border ${badgeColor} font-bold">${g.type}</span>
-                            </div>
-                            <span class="text-gray-600 text-sm leading-relaxed">${g.desc}</span>
-                        </div>`;
-                });
-            }
+            gejus.forEach(g => {
+                let badgeColor = 'bg-gray-100 text-gray-800 border-gray-200'; 
+                if (g.type.includes('吉')) badgeColor = 'bg-green-100 text-green-800 border-green-200';
+                else if (g.type.includes('凶')) badgeColor = 'bg-red-100 text-red-800 border-red-200';
+                
+                gejuHTML += `
+                    <div class="p-3 bg-gray-50 border border-gray-100 rounded-lg flex flex-col">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <span class="font-bold text-gray-800 text-base">${g.name}</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded border ${badgeColor} font-bold">${g.type}</span>
+                        </div>
+                        <span class="text-gray-600 text-sm leading-relaxed">${g.desc}</span>
+                    </div>`;
+            });
         }
+        
         document.getElementById('pm-geju').innerHTML = gejuHTML;
         document.getElementById('palace-modal').classList.remove('hidden');
     }
@@ -1204,8 +1191,7 @@
         if (bazi5) {
             baziContent = `
 <div class="flex flex-col items-center justify-start text-[10px] sm:text-[11px] md:text-xs leading-none font-bold w-full select-none z-10">
-    <!-- 在四柱容器加入 mt-2 sm:mt-3 或 pt-2 作為空行 -->
-    <div class="flex justify-center gap-x-0.5 font-black text-xl sm:text-base md:text-xl mt-2 sm:mt-7">
+    <div class="flex justify-center gap-x-0.5 font-black text-xl sm:text-xl md:text-lg mt-2 sm:mt-7">
         <!-- 年柱 -->
         <div class="flex flex-col items-center gap-y-[1px] leading-none">
             <span style="color:${WUXING_COLORS[bazi5.yS] || '#1a202c'}">${bazi5.yS}</span>
@@ -1227,17 +1213,14 @@
             <span style="color:${WUXING_COLORS[bazi5.hB] || '#1a202c'}">${bazi5.hB}</span>
         </div>
     </div>
-
     <!-- 年月日時標籤 -->
     <div class="text-[9px] sm:text-[10px] text-gray-400 tracking-widest mt-1">年月日時</div>
 </div>
-
 
 <div class="flex flex-col items-start w-full text-[9px] sm:text-[10px] md:text-xs text-gray-600 leading-tight space-y-0.5 px-1.5 mt-1">
     <div class="whitespace-nowrap">旬首：<span class="text-gray-900 font-bold">${bazi5.xun}</span></div>
     <div class="whitespace-nowrap">值符：<span class="text-gray-900 font-bold">${bazi5.zf}</span></div>
     <div class="whitespace-nowrap">值使：<span class="text-gray-900 font-bold">${bazi5.zs}</span></div>
-        <!-- <div class="whitespace-nowrap">空亡：<span class="text-gray-900 font-bold">${bazi5.kw}</span></div> -->
 </div>
             `;
         }
@@ -1247,7 +1230,6 @@
         const targetHighlightStem = panData.targetHighlightStem;
         let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
         
-	let tagStr = ""; // 中五宮不需要顯示刑墓
         let mainStemHtml = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important;">${s}</span>` : `<span class="font-bold" style="color: ${stemColor};">${s}</span>`;
         let anGanHtml = `<span class="text-gray-400 text-sm sm:text-base">${anGan}</span>`;
 
@@ -1258,77 +1240,10 @@
             <div class="flex justify-between items-end w-full mt-auto z-10 px-1 pb-1">
                 <div class="mb-1">${anGanHtml}</div>
                 <div class="flex flex-col items-stretch text-right leading-tight text-main font-bold">
-                    <div class="text-xl sm:text-2xl">${mainStemHtml}${tagStr}</div>
+                    <div class="text-xl sm:text-2xl">${mainStemHtml}</div>
                 </div>
             </div>
         `;
-    }
-
-    function updateHarmonyEffects(activePNum) {
-        document.querySelectorAll('.branch-label').forEach(el => el.classList.remove('branch-flash'));
-
-        if ((!useSanHe && !useLiuHe) || !activePNum || activePNum === 5) {
-            renderPalace5Default();
-            return;
-        }
-
-        const ACTIVE_PALACES = useXianTian ? PALACES_XIAN : PALACES_HOU;
-        const targetBranches = ACTIVE_PALACES[activePNum]?.branch || [];
-
-        if (targetBranches.length === 0) {
-            renderPalace5Default();
-            return;
-        }
-
-        let matchedExplanations = [];
-        let flashingBranches = new Set();
-
-        const hashMap = useSanHe ? SAN_HE_MAP : (useLiuHe ? LIU_HE_MAP : []);
-
-        targetBranches.forEach(b => {
-            hashMap.forEach(item => {
-                if (item.branches.includes(b)) {
-                    if (!matchedExplanations.includes(item.name)) {
-                        matchedExplanations.push(item.name);
-                    }
-                    item.branches.forEach(br => flashingBranches.add(br));
-                }
-            });
-        });
-
-        flashingBranches.forEach(br => {
-            document.querySelectorAll(`.branch-label[data-branch="${br}"]`).forEach(el => {
-                el.classList.add('branch-flash');
-            });
-        });
-
-        const palace5El = document.getElementById('palace-5');
-        if (matchedExplanations.length > 0 && palace5El) {
-            const textHtml = matchedExplanations.map(exp => `<div class="text-xs sm:text-sm font-black text-indigo-900 bg-amber-100/90 rounded-lg py-1 px-2 my-0.5 shadow border border-amber-300 text-center tracking-wider">${exp}</div>`).join('');
-            
-            palace5El.innerHTML = `
-                ${getBranchHTML(5)}
-                <div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1">中五</div>
-                <div class="flex flex-col justify-center items-center h-full w-full p-1 z-20">
-                    ${textHtml}
-                </div>
-            `;
-        } else {
-            renderPalace5Default();
-        }
-    }
-
-    function renderPalace5Default() {
-        const palace5El = document.getElementById('palace-5');
-        if (!palace5El || !globalPalaceData[5]) return;
-        const s = globalPalaceData[5].hStems[0];
-        const anGan = globalPalaceData[5].anGan;
-        
-        const FEIXING_ZH_WX = ["", "一水", "二土", "三木", "四木", "五土", "六金", "七金", "八土", "九火"];
-        let feixingSuffix = (useFeiXing && panData.starC) ? `<span class="text-gray-400 font-normal ml-0.5">(流${FEIXING_ZH_WX[panData.starC]})</span>` : "";
-        let centerLabel = `中五${feixingSuffix}`;
-
-        palace5El.innerHTML = renderPalace5Html(s, anGan, centerLabel, panData.bazi5Info);
     }
 
     function toggleInputMode() {
@@ -1466,11 +1381,10 @@
             }
         }
 
-        if (enablePalaceModal && activePNum) {
+        // 不開啟中宮的彈窗
+        if (enablePalaceModal && activePNum && activePNum !== 5) {
             showPalaceDetails(activePNum);
         }
-
-        updateHarmonyEffects(activePNum);
     }
 
     function handleGenerateBtn() {
@@ -1628,7 +1542,6 @@
             const solar = Solar.fromDate(currentDate);
             const lunar = solar.getLunar();
             
-            // 使用 false 進行精確時間(非按天)計算，以避免跨日產生的誤差，並確保氣與節都會被比對
             let prevJ = lunar.getPrevJie(false);
             let prevQ = lunar.getPrevQi(false);
             let nextJ = lunar.getNextJie(false);
@@ -1644,11 +1557,9 @@
             let dNextJ = toDate(nextJ);
             let dNextQ = toDate(nextQ);
 
-            // 當前節氣是取距離現在最近的(即 dPrevJ 與 dPrevQ 較晚的一個)
             let targetJQ = (dPrevJ > dPrevQ) ? prevJ : prevQ;
             let dTarget = (dPrevJ > dPrevQ) ? dPrevJ : dPrevQ;
             
-            // 下一個節氣是取距離未來最近的(即 dNextJ 與 dNextQ 較早的一個)
             let nextJQ = (dNextJ < dNextQ) ? nextJ : nextQ;
             let dNext = (dNextJ < dNextQ) ? dNextJ : dNextQ;
 
@@ -2247,7 +2158,7 @@
                 let tags = [];
                 if(isJiXing(stem, pNum)) tags.push("刑");
                 if(isRuMu(stem, pNum)) tags.push("墓");
-                return tags.length ? tags.join("+") : ""; // 移除了兩側的括號
+                return tags.length ? tags.join("+") : "";
             };
 
             let copyBaziLine = `${baziRawStr} (${y}年${m}月${d}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}${ziMark ? ' ' + ziMark : ''})`;
@@ -2348,7 +2259,7 @@
                     el.innerHTML = renderPalace5Html(s, anGan, centerLabel, panData.bazi5Info);
                     panData.palaces["中五"] = s;
                     
-                    globalPalaceData[5] = { name: ACTIVE_PALACES[5].name, hStems: [s], eStems: [s], anGan: anGan, isCenter: true };
+                    globalPalaceData[5] = { name: ACTIVE_PALACES[5].name, branch: '', hStems: [s], eStems: [s], anGan: anGan, isCenter: true };
                     continue;
                 }
                 
@@ -2367,6 +2278,7 @@
 
                 globalPalaceData[i] = {
                     name: ACTIVE_PALACES[i].name,
+                    branch: ACTIVE_PALACES[i].branch.join('/'),
                     star: pStars[0],
                     door: pDoor,
                     god: godPan[i],
@@ -2450,14 +2362,6 @@
             } else if (heavenPan[5] === dayHighlightStem || (Array.isArray(heavenPan[5]) && heavenPan[5].includes(dayHighlightStem))) { 
                 document.getElementById('palace-5').classList.add('palace-active');
             }
-
-            let activePalaceEl = document.querySelector('.palace-active');
-            let activePNum = null;
-            if (activePalaceEl) {
-                let idMatch = activePalaceEl.id.match(/palace-(\d)/);
-                if (idMatch && idMatch[1]) activePNum = parseInt(idMatch[1]);
-            }
-            updateHarmonyEffects(activePNum);
 
         } catch (e) { alert("起盤錯誤: " + e.message); console.error(e); }
     }
