@@ -1186,7 +1186,7 @@
         const detailsEl = document.getElementById('pm-cheatsheet-details');
         if (badgeEl && detailsEl) {
             if (totalMatches > 0) {
-                badgeEl.innerHTML = `<span class="bg-amber-100 text-amber-800 border border-amber-300 font-bold px-1.5 py-0.2 rounded-full text-[11px]">${totalMatches} 組相合/相沖</span>`;
+                badgeEl.innerHTML = `<span class="bg-amber-100 text-amber-800 border border-amber-300 font-bold px-1.5 py-0.2 rounded-full text-[11px]">${totalMatches} 組相合/相沖(**兩個**或以上天干/地支)</span>`;
                 detailsEl.open = true;
             } else {
                 badgeEl.innerHTML = '';
