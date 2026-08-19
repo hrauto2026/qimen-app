@@ -1159,16 +1159,15 @@
         document.getElementById('pm-hstem-hidden').innerText = hHidden ? `(${hHidden})` : '';
         document.getElementById('pm-estem-hidden').innerText = eHidden ? `(${eHidden})` : '';
 
-        // 🌟 收集此宮所有干支並執行合沖高亮
+// 🌟 收集此宮所有干支並執行合沖高亮（只算宮支、天盤干/遁支、地盤干/遁支）
         let activeStems = new Set();
         let activeBranches = new Set();
 
-        // 1. 收集天干（天盤干、地盤干、暗干）
+        // 1. 收集天干（僅天盤干、地盤干）
         if (data.hStems) data.hStems.forEach(s => activeStems.add(s));
         if (data.eStems) data.eStems.forEach(s => activeStems.add(s));
-        if (data.anGan && data.anGan !== '-') activeStems.add(data.anGan);
 
-        // 2. 收集地支（宮支、天盤遁支、地盤遁支、暗干遁支）
+        // 2. 收集地支（僅宮支、天盤干遁支、地盤干遁支）
         if (data.branch) {
             data.branch.split('/').forEach(b => { if (b) activeBranches.add(b); });
         }
@@ -1177,9 +1176,6 @@
         }
         if (data.eStems) {
             data.eStems.forEach(s => { if (DUN_GAN_MAP[s]) activeBranches.add(DUN_GAN_MAP[s]); });
-        }
-        if (data.anGan && DUN_GAN_MAP[data.anGan]) {
-            activeBranches.add(DUN_GAN_MAP[data.anGan]);
         }
 
         // 3. 渲染合沖列表並更新徽章
