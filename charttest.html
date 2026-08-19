@@ -538,41 +538,20 @@
     </div>
 </div>
 
-            <!-- Cheat Sheet Container -->
-            <details class="group bg-blue-50/40 border border-blue-200 rounded-lg shadow-sm">
-                <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 flex justify-between items-center select-none">
-                    <span>📚 合/沖/方局資料</span>
-                    <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span>
-                </summary>
-                <div class="p-3 text-xs text-gray-700 space-y-2 border-t border-blue-200 bg-white rounded-b-lg">
-                    <div class="grid grid-cols-2 gap-x-2 gap-y-3">
-                        <div>
-                            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">天干五合</div>
-                            甲己合化土<br>乙庚合化金<br>丙辛合化水<br>丁壬合化木<br>戊癸合化火
-                        </div>
-                        <div>
-                            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">天干相沖</div>
-                            甲庚相沖<br>乙辛相沖<br>丙壬相沖<br>丁癸相沖
-                        </div>
-                        <div>
-                            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">地支三合</div>
-                            申子辰合成水局<br>亥卯未合成木局<br>寅午戌合成火局<br>巳酉丑合成金局
-                        </div>
-                        <div>
-                            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">地支六合</div>
-                            子丑合化土<br>寅亥合化木<br>卯戌合化火<br>辰酉合化金<br>巳申合化水<br>午未合化土
-                        </div>
-                        <div>
-                            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">地支方局</div>
-                            寅卯辰(木)<br>巳午未(火)<br>申酉戌(金)<br>亥子丑(水)
-                        </div>
-                        <div>
-                            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">地支六沖</div>
-                            子午沖<br>丑未沖<br>寅申沖<br>卯酉沖<br>辰戌沖<br>巳亥沖
-                        </div>
-                    </div>
-                </div>
-            </details>
+
+<!-- Cheat Sheet Container -->
+<details id="pm-cheatsheet-details" class="group bg-blue-50/40 border border-blue-200 rounded-lg shadow-sm">
+    <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 flex justify-between items-center select-none">
+        <div class="flex items-center gap-1.5">
+            <span>📚 合/沖/方局資料</span>
+            <span id="pm-cheatsheet-badge" class="text-xs"></span>
+        </div>
+        <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span>
+    </summary>
+    <div id="pm-cheatsheet-content" class="p-3 text-xs text-gray-700 border-t border-blue-200 bg-white rounded-b-lg">
+        <!-- 內容由 JS 動態生成與高亮 -->
+    </div>
+</details>
 
             <div>
                 <h4 class="font-bold text-red-700 border-b-2 border-red-100 mb-2 pb-1 flex items-center">⚠️ 四害與狀態</h4>
@@ -1049,16 +1028,115 @@
         }
     }
 
-    function closePalaceModal() {
+ function closePalaceModal() {
         document.getElementById('palace-modal').classList.add('hidden');
     }
 
+    // ==================== 合/沖/方局 判定規則表 ====================
+    const RELATION_RULES = {
+        tianganWuhe: {
+            title: "天干五合", type: "stem", min: 2,
+            items: [
+                { chars: ['甲', '己'], label: "甲己合化土" },
+                { chars: ['乙', '庚'], label: "乙庚合化金" },
+                { chars: ['丙', '辛'], label: "丙辛合化水" },
+                { chars: ['丁', '壬'], label: "丁壬合化木" },
+                { chars: ['戊', '癸'], label: "戊癸合化火" }
+            ]
+        },
+        tianganChong: {
+            title: "天干相沖", type: "stem", min: 2,
+            items: [
+                { chars: ['甲', '庚'], label: "甲庚相沖" },
+                { chars: ['乙', '辛'], label: "乙辛相沖" },
+                { chars: ['丙', '壬'], label: "丙壬相沖" },
+                { chars: ['丁', '癸'], label: "丁癸相沖" }
+            ]
+        },
+        dizhiSanhe: {
+            title: "地支三合", type: "branch", min: 2, // 2個以上即視為半合/三合
+            items: [
+                { chars: ['申', '子', '辰'], label: "申子辰合成水局" },
+                { chars: ['亥', '卯', '未'], label: "亥卯未合成木局" },
+                { chars: ['寅', '午', '戌'], label: "寅午戌合成火局" },
+                { chars: ['巳', '酉', '丑'], label: "巳酉丑合成金局" }
+            ]
+        },
+        dizhiLiuhe: {
+            title: "地支六合", type: "branch", min: 2,
+            items: [
+                { chars: ['子', '丑'], label: "子丑合化土" },
+                { chars: ['寅', '亥'], label: "寅亥合化木" },
+                { chars: ['卯', '戌'], label: "卯戌合化火" },
+                { chars: ['辰', '酉'], label: "辰酉合化金" },
+                { chars: ['巳', '申'], label: "巳申合化水" },
+                { chars: ['午', '未'], label: "午未合化土" }
+            ]
+        },
+        dizhiFangju: {
+            title: "地支方局", type: "branch", min: 2, // 2個以上
+            items: [
+                { chars: ['寅', '卯', '辰'], label: "寅卯辰(木)" },
+                { chars: ['巳', '午', '未'], label: "巳午未(火)" },
+                { chars: ['申', '酉', '戌'], label: "申酉戌(金)" },
+                { chars: ['亥', '子', '丑'], label: "亥子丑(水)" }
+            ]
+        },
+        dizhiLiuchong: {
+            title: "地支六沖", type: "branch", min: 2,
+            items: [
+                { chars: ['子', '午'], label: "子午沖" },
+                { chars: ['丑', '未'], label: "丑未沖" },
+                { chars: ['寅', '申'], label: "寅申沖" },
+                { chars: ['卯', '酉'], label: "卯酉沖" },
+                { chars: ['辰', '戌'], label: "辰戌沖" },
+                { chars: ['巳', '亥'], label: "巳亥沖" }
+            ]
+        }
+    };
+
+    // 渲染合沖方局列表並高亮
+    function renderRelationBox(activeStems, activeBranches) {
+        let totalMatches = 0;
+        let html = '<div class="grid grid-cols-2 gap-x-2 gap-y-3">';
+
+        for (let key in RELATION_RULES) {
+            const grp = RELATION_RULES[key];
+            const checkSet = (grp.type === 'stem') ? activeStems : activeBranches;
+            
+            html += `<div>
+                <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">${grp.title}</div>
+                <div class="space-y-1">`;
+
+            grp.items.forEach(item => {
+                const matchedChars = item.chars.filter(c => checkSet.has(c));
+                const isMatched = matchedChars.length >= grp.min;
+
+                if (isMatched) {
+                    totalMatches++;
+                    html += `<div class="bg-amber-100 text-amber-950 font-bold px-1.5 py-0.5 rounded border border-amber-300 shadow-sm flex items-center justify-between text-[11px] leading-tight">
+                        <span>✨ ${item.label}</span>
+                        <span class="text-[10px] text-amber-800 bg-amber-200/80 px-1 rounded font-black">${matchedChars.join('·')}</span>
+                    </div>`;
+                } else {
+                    html += `<div class="text-gray-600 px-1 py-0.5">${item.label}</div>`;
+                }
+            });
+
+            html += `</div></div>`;
+        }
+        html += '</div>';
+        return { html, totalMatches };
+    }
+
+    // ==================== 彈窗詳細資訊 ====================
     function showPalaceDetails(pNum) {
         const data = globalPalaceData[pNum];
         if (!data || data.isCenter) return;
 
         document.getElementById('pm-title').innerText = data.name + " 詳細資訊";
         
+        // 宮支（套用五行顏色）
         document.getElementById('pm-branch').innerHTML = data.branch ? colorizeGanZhi(data.branch) : "-";
 
         let doorText = data.door || "";
@@ -1081,6 +1159,46 @@
         document.getElementById('pm-hstem-hidden').innerText = hHidden ? `(${hHidden})` : '';
         document.getElementById('pm-estem-hidden').innerText = eHidden ? `(${eHidden})` : '';
 
+        // 🌟 收集此宮所有干支並執行合沖高亮
+        let activeStems = new Set();
+        let activeBranches = new Set();
+
+        // 1. 收集天干（天盤干、地盤干、暗干）
+        if (data.hStems) data.hStems.forEach(s => activeStems.add(s));
+        if (data.eStems) data.eStems.forEach(s => activeStems.add(s));
+        if (data.anGan && data.anGan !== '-') activeStems.add(data.anGan);
+
+        // 2. 收集地支（宮支、天盤遁支、地盤遁支、暗干遁支）
+        if (data.branch) {
+            data.branch.split('/').forEach(b => { if (b) activeBranches.add(b); });
+        }
+        if (data.hStems) {
+            data.hStems.forEach(s => { if (DUN_GAN_MAP[s]) activeBranches.add(DUN_GAN_MAP[s]); });
+        }
+        if (data.eStems) {
+            data.eStems.forEach(s => { if (DUN_GAN_MAP[s]) activeBranches.add(DUN_GAN_MAP[s]); });
+        }
+        if (data.anGan && DUN_GAN_MAP[data.anGan]) {
+            activeBranches.add(DUN_GAN_MAP[data.anGan]);
+        }
+
+        // 3. 渲染合沖列表並更新徽章
+        const { html: relationHtml, totalMatches } = renderRelationBox(activeStems, activeBranches);
+        document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
+
+        const badgeEl = document.getElementById('pm-cheatsheet-badge');
+        const detailsEl = document.getElementById('pm-cheatsheet-details');
+        if (badgeEl && detailsEl) {
+            if (totalMatches > 0) {
+                badgeEl.innerHTML = `<span class="bg-amber-100 text-amber-800 border border-amber-300 font-bold px-1.5 py-0.2 rounded-full text-[11px]">${totalMatches} 組相合/相沖</span>`;
+                detailsEl.open = true;
+            } else {
+                badgeEl.innerHTML = '';
+                detailsEl.open = false;
+            }
+        }
+
+        // 4. 四害狀態渲染
         let harmsHTML = "";
         const tagStyle = "px-2 py-0.5 rounded text-xs font-bold text-white shadow-sm";
         if (data.isKong) harmsHTML += `<span class="bg-gray-500 ${tagStyle}">空亡</span>`;
@@ -1094,6 +1212,7 @@
 
         document.getElementById('pm-harms').innerHTML = harmsHTML || '<span class="text-gray-400">無特殊狀態</span>';
 
+        // 5. 格局名堂渲染
         let gejuHTML = "";
         let gejus = calculateGeju(data);
         if (gejus.length === 0) {
