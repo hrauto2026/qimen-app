@@ -45,7 +45,7 @@
             border: 1.5px solid; background-color: rgba(255, 255, 255, 0.95); 
             transition: all 0.3s ease; cursor: pointer;
         }
-        .palace-active { border: 4px solid #3b82f6 !important; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); z-index: 30; }
+
 
         /* 古典五行配色 */
         .bg-water { background-color: #f0f9ff; border-color: #bae6fd; } .text-water { color: #0369a1; }
@@ -1638,26 +1638,17 @@
     function resetToNow() { currentDate = new Date(); updateSelectorsFromDate(currentDate); generatePan(); }
     function shiftHour(dir) { currentDate.setHours(currentDate.getHours() + (dir * 2)); updateSelectorsFromDate(currentDate); generatePan(); }
 
-    function highlightPalace(el) {
-        let wasActive = el.classList.contains('palace-active');
-        document.querySelectorAll('.palace').forEach(p => p.classList.remove('palace-active'));
-        if (!wasActive) {
-            el.classList.add('palace-active');
-        }
-
-        let activePNum = null;
-        if (!wasActive) {
-            let idMatch = el.id.match(/palace-(\d)/);
-            if (idMatch && idMatch[1]) {
-                activePNum = parseInt(idMatch[1]);
-            }
-        }
-
-        // 不開啟中宮的彈窗
-        if (enablePalaceModal && activePNum && activePNum !== 5) {
+function highlightPalace(el) {
+    // 移走藍框邏輯，僅在啟用「按宮看格局」時點擊彈窗（排除中五宮）
+    if (!enablePalaceModal) return;
+    let idMatch = el.id.match(/palace-(\d)/);
+    if (idMatch && idMatch[1]) {
+        let activePNum = parseInt(idMatch[1]);
+        if (activePNum !== 5) {
             showPalaceDetails(activePNum);
         }
     }
+}
 
     function handleGenerateBtn() {
         if (isBaziMode) {
@@ -2553,9 +2544,7 @@ function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
 
             for (let i = 1; i <= 9; i++) {
                 const el = document.getElementById(`palace-${i}`);
-                let wasActive = el.classList.contains('palace-active');
-                el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
-                if (wasActive) el.classList.add('palace-active');
+el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
 
                 let feixingNum = (starC + FLIGHT_OFFSET[i] - 1) % 9 + 1;
                 let feixingSuffix = useFeiXing ? `<span class="text-gray-400 font-normal text-xs sm:text-sm ml-0.5">(流${FEIXING_ZH_WX[feixingNum]})</span>` : "";
@@ -2668,23 +2657,7 @@ function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
 
                 panData.palaces[ACTIVE_PALACES[i].name] = `${tianJiangCopyStr}${godPan[i]}/${starTextDisplay}/${doorTextForCopy}/${hStemsForCopy}/${eStemsForCopy}${isMa?'/**驛馬**':''}${isKong?'/**空亡**':''}`;
             }
-
-            document.querySelectorAll('.palace').forEach(p => p.classList.remove('palace-active'));
-            let hDayPalace = -1;
-            for (let i = 1; i <= 9; i++) {
-                if (i === 5) continue;
-                let hStemsArray = Array.isArray(heavenPan[i]) ? heavenPan[i] : [heavenPan[i]];
-                if (hStemsArray.includes(dayHighlightStem)) { 
-                    hDayPalace = i;
-                    break;
-                }
-            }
-            if (hDayPalace !== -1) {
-                document.getElementById(`palace-${hDayPalace}`).classList.add('palace-active');
-            } else if (heavenPan[5] === dayHighlightStem || (Array.isArray(heavenPan[5]) && heavenPan[5].includes(dayHighlightStem))) { 
-                document.getElementById('palace-5').classList.add('palace-active');
-            }
-
+            
         } catch (e) { alert("起盤錯誤: " + e.message); console.error(e); }
     }
     
