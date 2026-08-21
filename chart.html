@@ -250,7 +250,7 @@
                 <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-blue-100">
                     <span class="text-xs font-bold text-gray-700">按宮看格局</span>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="toggle-palacemodal" class="sr-only peer" onchange="handleToggleSwitch('toggle-palacemodal')">
+                            <input type="checkbox" id="toggle-palacemodal" class="sr-only peer" checked onchange="handleToggleSwitch('toggle-palacemodal')">    
                         <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500 shadow-inner"></div>
                     </label>
                 </div>
@@ -950,7 +950,7 @@
 
     let globalPalaceData = {};
     let useNeiWai = false;
-    let enablePalaceModal = false;
+    let enablePalaceModal = true;
     let isBaziMode = false; 
     let isFilterPanelOpen = false;
 
