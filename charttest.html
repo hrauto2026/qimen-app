@@ -254,6 +254,7 @@
                         <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500 shadow-inner"></div>
                     </label>
                 </div>
+                <!-- Toggle Switch 7: 流年飛星 -->
                 <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-rose-100">
                     <span class="text-xs font-bold text-gray-700">流年飛星</span>
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -523,34 +524,33 @@
         <h3 class="text-xl md:text-2xl mb-3 text-center text-indigo-900 font-bold tracking-widest" id="pm-title">宮位資訊</h3>
         
         <div class="space-y-4">
-<div class="bg-indigo-50/80 p-3 rounded-xl border border-indigo-100 grid grid-cols-2 gap-y-2 gap-x-4 text-sm sm:text-base">
-    <div><span class="text-gray-500">神將：</span><span id="pm-god" class="font-bold text-gray-800"></span></div>
-    <div><span class="text-gray-500">天星：</span><span id="pm-star" class="font-bold text-gray-800"></span></div>
-    <div><span class="text-gray-500">人門：</span><span id="pm-door" class="font-bold text-gray-800"></span></div>
-    <div><span class="text-gray-500">暗干：</span><span id="pm-angan" class="font-bold text-gray-800"></span></div>
-    <div class="col-span-2 border-t border-indigo-200 pt-2 mt-1 leading-relaxed">
-        <span class="text-gray-500">宮 支：</span><span id="pm-branch" class="font-bold text-lg tracking-widest"></span><br>
-        <span class="text-gray-500">天盤干：</span><span id="pm-hstem" class="font-bold text-lg tracking-widest"></span>
-        <span id="pm-hstem-hidden" class="text-indigo-600 font-bold ml-1 text-sm tracking-wide"></span><br>
-        <span class="text-gray-500">地盤干：</span><span id="pm-estem" class="font-bold text-lg tracking-widest"></span>
-        <span id="pm-estem-hidden" class="text-indigo-600 font-bold ml-1 text-sm tracking-wide"></span>
-    </div>
-</div>
+            <div class="bg-indigo-50/80 p-3 rounded-xl border border-indigo-100 grid grid-cols-2 gap-y-2 gap-x-4 text-sm sm:text-base">
+                <div><span class="text-gray-500">神將：</span><span id="pm-god" class="font-bold text-gray-800"></span></div>
+                <div><span class="text-gray-500">天星：</span><span id="pm-star" class="font-bold text-gray-800"></span></div>
+                <div><span class="text-gray-500">人門：</span><span id="pm-door" class="font-bold text-gray-800"></span></div>
+                <div><span class="text-gray-500">暗干：</span><span id="pm-angan" class="font-bold text-gray-800"></span></div>
+                <div class="col-span-2 border-t border-indigo-200 pt-2 mt-1 leading-relaxed">
+                    <span class="text-gray-500">宮 支：</span><span id="pm-branch" class="font-bold text-lg tracking-widest"></span><br>
+                    <span class="text-gray-500">天盤干：</span><span id="pm-hstem" class="font-bold text-lg tracking-widest"></span>
+                    <span id="pm-hstem-hidden" class="text-indigo-600 font-bold ml-1 text-sm tracking-wide"></span><br>
+                    <span class="text-gray-500">地盤干：</span><span id="pm-estem" class="font-bold text-lg tracking-widest"></span>
+                    <span id="pm-estem-hidden" class="text-indigo-600 font-bold ml-1 text-sm tracking-wide"></span>
+                </div>
+            </div>
 
-
-<!-- Cheat Sheet Container -->
-<details id="pm-cheatsheet-details" class="group bg-blue-50/40 border border-blue-200 rounded-lg shadow-sm">
-    <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 flex justify-between items-center select-none">
-        <div class="flex items-center gap-1.5">
-            <span>📚 合/沖/方局資料</span>
-            <span id="pm-cheatsheet-badge" class="text-xs"></span>
-        </div>
-        <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span>
-    </summary>
-    <div id="pm-cheatsheet-content" class="p-3 text-xs text-gray-700 border-t border-blue-200 bg-white rounded-b-lg">
-        <!-- 內容由 JS 動態生成與高亮 -->
-    </div>
-</details>
+            <!-- Cheat Sheet Container -->
+            <details id="pm-cheatsheet-details" class="group bg-blue-50/40 border border-blue-200 rounded-lg shadow-sm">
+                <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 flex justify-between items-center select-none">
+                    <div class="flex items-center gap-1.5">
+                        <span>📚 合/沖/方局資料</span>
+                        <span id="pm-cheatsheet-badge" class="text-xs"></span>
+                    </div>
+                    <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span>
+                </summary>
+                <div id="pm-cheatsheet-content" class="p-3 text-xs text-gray-700 border-t border-blue-200 bg-white rounded-b-lg">
+                    <!-- 內容由 JS 動態生成與高亮 -->
+                </div>
+            </details>
 
             <div>
                 <h4 class="font-bold text-red-700 border-b-2 border-red-100 mb-2 pb-1 flex items-center">⚠️ 四害與狀態</h4>
@@ -673,7 +673,14 @@
                 <p class="text-gray-700"><strong>【複製盤面資料】：</strong>一鍵複製當前局象之完整文字摘要至剪貼簿，方便記錄或討論。<br><strong>【分享起盤連結】：</strong>自動生成帶有當前起盤年月日時分參數之專屬 URL 網址，複製發送給他人即可直接還原相同盤面。</p>
             </section>
 
-
+            <!-- 七、 常見問題 FAQ -->
+            <section class="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <h3 class="text-base sm:text-lg font-black text-gray-900 mb-2">七、 常見問題 (FAQ)</h3>
+                <div class="space-y-2 text-gray-700">
+                    <p><strong>Q: 天盤干篩選中的 <code>=日干</code> 是什麼意思？</strong><br>答：這是極為實用的擇日/預測篩選功能。代表尋找「天盤干正好落在該時辰日干」的盤面，無需手動指定固定天干。</p>
+                    <p><strong>Q: 為何坤二宮會同時出現兩個天干？</strong><br>答：此為奇門遁甲寄宮規則，拆補法中中五宮天干會寄於坤二宮。</p>
+                </div>
+            </section>
         </div>
 
         <div class="pt-4 border-t border-gray-200 text-center">
@@ -1144,7 +1151,7 @@
         }
     }
 
- function closePalaceModal() {
+    function closePalaceModal() {
         document.getElementById('palace-modal').classList.add('hidden');
     }
 
@@ -1275,7 +1282,7 @@
         document.getElementById('pm-hstem-hidden').innerText = hHidden ? `(${hHidden})` : '';
         document.getElementById('pm-estem-hidden').innerText = eHidden ? `(${eHidden})` : '';
 
-// 🌟 收集此宮所有干支並執行合沖高亮（只算宮支、天盤干/遁支、地盤干/遁支）
+        // 🌟 收集此宮所有干支並執行合沖高亮（只算宮支、天盤干/遁支、地盤干/遁支）
         let activeStems = new Set();
         let activeBranches = new Set();
 
@@ -1377,6 +1384,40 @@
                 
                 if (!GEJU_MAP[key] && ((th==='乙'&&te==='庚') || (th==='丙'&&te==='辛') || (th==='丁'&&te==='壬') || (th==='戊'&&te==='癸') || (th==='甲'&&te==='己'))) {
                     results.push({ name: '奇儀相合', type: '吉', desc: '和合之象，利合作、謀事、婚姻。' });
+                }
+            }
+        }
+
+        // 🌟 奇門「四格」（天盤庚 + 地盤年/月/日/時干）自動判定邏輯
+        if (data.hStems && data.hStems.includes('庚')) {
+            for (let te of data.eStems) {
+                if (data.yStemEff && te === data.yStemEff) {
+                    results.push({
+                        name: '年格',
+                        type: '凶',
+                        desc: '天盤庚加臨地盤年干。主長輩、上司或官方阻力，官非纏身，不宜求官拜貴。'
+                    });
+                }
+                if (data.mStemEff && te === data.mStemEff) {
+                    results.push({
+                        name: '月格',
+                        type: '凶',
+                        desc: '天盤庚加臨地盤月干。主同輩、朋友、同事反目破局，當月財運受阻，同行競爭惡化。'
+                    });
+                }
+                if (data.dStemEff && te === data.dStemEff) {
+                    results.push({
+                        name: '日格 (伏干格)',
+                        type: '凶',
+                        desc: '天盤庚加臨地盤日干。主自身受卡關阻礙、疾病災禍、夫妻不和，宜靜不宜動。'
+                    });
+                }
+                if (data.hStemEff && te === data.hStemEff) {
+                    results.push({
+                        name: '時格',
+                        type: '凶',
+                        desc: '天盤庚加臨地盤時干。主下屬拖累、子女操心，當前所謀之近事突發阻礙，百事不宜。'
+                    });
                 }
             }
         }
@@ -2274,6 +2315,21 @@
             
             const dayHighlightStem = (dayStem === '甲') ? XUN_MAP[dayGZ.substring(0,2)] || dayStem : dayStem;
 
+            // 計算有效四柱天干（處理甲干隱遁六儀）
+            const getEffStem = (gz) => {
+                if (!gz) return '';
+                let stem = gz.substring(0, 1);
+                if (stem === '甲') {
+                    return XUN_MAP[gz.substring(0, 2)] || stem;
+                }
+                return stem;
+            };
+
+            const yStemEff = getEffStem(yearGZ);
+            const mStemEff = getEffStem(monthGZ);
+            const dStemEff = getEffStem(dayGZ);
+            const hStemEff = getEffStem(timeGZ_string);
+
             let xunShouPalace = parseInt(Object.keys(earthPan).find(k => earthPan[k] === xunShouStem)), zhiFuStar = BASE_STARS[xunShouPalace], effectiveXunShouPalace = xunShouPalace === 5 ? 2 : xunShouPalace;
             if (xunShouPalace === 5) zhiFuStar = "天禽";
             let heavenPan = {}, starPan = {}, targetPalace = parseInt(Object.keys(earthPan).find(k => earthPan[k] === (timeStem === '甲' ? xunShouStem : timeStem)));
@@ -2524,7 +2580,11 @@
                     hStemRuMu: hStems.filter(s => isRuMu(s, i)),
                     eStemRuMu: eStems.filter(s => isRuMu(s, (i===5)?2:i)),
                     isZhiShi: (pDoor === doorPan[currentD_val]),
-                    palaceNum: i
+                    palaceNum: i,
+                    yStemEff: yStemEff,
+                    mStemEff: mStemEff,
+                    dStemEff: dStemEff,
+                    hStemEff: hStemEff
                 };
 
                 el.innerHTML = `${getBranchHTML(i)}
