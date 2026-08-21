@@ -1688,7 +1688,11 @@
                 const h = d.getHours();
                 const min = d.getMinutes();
 
-                const dateStr = `${y}年 ${m.toString().padStart(2, '0')}月 ${day.toString().padStart(2, '0')}日 ${h.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+                let ziNote = "";
+                if (h === 23) ziNote = " [晚子]";
+                else if (h === 0) ziNote = " [早子]";
+
+                const dateStr = `${y}年 ${m.toString().padStart(2, '0')}月 ${day.toString().padStart(2, '0')}日 ${h.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}${ziNote}`;
 
                 const btn = document.createElement('button');
                 btn.className = "w-full text-left p-4 border-b border-gray-100 hover:bg-amber-50 active:bg-amber-100 transition-colors text-amber-900 focus:outline-none focus:bg-amber-100";
@@ -1701,53 +1705,80 @@
         document.getElementById('bazi-modal').classList.remove('hidden');
     }
 
-    function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
-        let results = [];
-        let start = new Date(1930, 0, 1);
-        let end = new Date(2050, 11, 31);
-        let firstMatch = null;
+function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
+    let results = [];
+    let start = new Date(1930, 0, 1);
+    let end = new Date(2050, 11, 31);
+    let firstMatch = null;
 
-        for (let i = 0; i < 60; i++) {
-            let d = new Date(start);
-            d.setDate(start.getDate() + i);
-            let noonS = Solar.fromYmdHms(d.getFullYear(), d.getMonth() + 1, d.getDate(), 12, 0, 0);
-            if (noonS.getLunar().getDayInGanZhiExact() === tgtD) {
-                firstMatch = d;
-                break;
-            }
+    // 尋找 1930 年起第一個符合目標日柱的基準日
+    for (let i = 0; i < 60; i++) {
+        let d = new Date(start);
+        d.setDate(start.getDate() + i);
+        let noonS = Solar.fromYmdHms(d.getFullYear(), d.getMonth() + 1, d.getDate(), 12, 0, 0);
+        if (noonS.getLunar().getDayInGanZhiExact() === tgtD) {
+            firstMatch = d;
+            break;
+        }
+    }
+
+    if (firstMatch) {
+        const targetHBranch = tgtH.charAt(1);
+        const targetHIdx = BRANCHES.indexOf(targetHBranch);
+        if (targetHIdx === -1) return results;
+
+        // 若目標為子時，需同時比對早子時 (00:30) 與晚子時 (23:30)
+        let slotsToCheck = [];
+        if (targetHBranch === '子') {
+            slotsToCheck = [
+                { h: 0, min: 30 },  // 早子時
+                { h: 23, min: 30 }  // 晚子時
+            ];
+        } else {
+            slotsToCheck = [
+                { h: targetHIdx * 2, min: 30 }
+            ];
         }
 
-        if (firstMatch) {
-            let curr = new Date(firstMatch);
-            while (curr <= end) {
-                let y = curr.getFullYear();
-                let m = curr.getMonth() + 1;
-                let d = curr.getDate();
+        let curr = new Date(firstMatch);
+        while (curr <= end) {
+            let y = curr.getFullYear();
+            let m = curr.getMonth() + 1;
+            let d = curr.getDate();
 
-                let exactLunar = Solar.fromYmdHms(y, m, d, 12, 0, 0).getLunar();
+            for (let slot of slotsToCheck) {
+                let testHour = slot.h;
+                let testMin = slot.min;
+
+                // 1. 依據各時辰的具體時間點精確計算該時刻的年月柱（以交節分秒為準）
+                let exactLunar = Solar.fromYmdHms(y, m, d, testHour, testMin, 0).getLunar();
                 let yGZ = exactLunar.getYearInGanZhiExact();
                 let mGZ = exactLunar.getMonthInGanZhiExact();
 
+                // 2. 當該時辰的年月柱完全符合時，進一步比對時柱
                 if (yGZ === tgtY && mGZ === tgtM) {
-                    let dayStem = tgtD.charAt(0);
-                    let hBranch = tgtH.charAt(1);
-                    let hIdx = BRANCHES.indexOf(hBranch);
-                    let dayStemIdx = STEMS.indexOf(dayStem);
-                    let expectedHStemIdx = ((dayStemIdx % 5) * 2 + hIdx) % 10;
-                    let expectedHStem = STEMS[expectedHStemIdx];
+                    // 依據晚子時跨日五鼠遁邏輯計算正確時干
+                    let wushuDate = new Date(y, m - 1, d, testHour, testMin);
+                    if (testHour >= 23) {
+                        wushuDate.setDate(wushuDate.getDate() + 1);
+                    }
+                    let wushuLunar = Solar.fromYmdHms(wushuDate.getFullYear(), wushuDate.getMonth() + 1, wushuDate.getDate(), 12, 0, 0).getLunar();
+                    let wushuDayStem = wushuLunar.getDayInGanZhi().substring(0, 1);
+                    let wushuDayStemIdx = STEMS.indexOf(wushuDayStem);
 
-                    if (expectedHStem === tgtH.charAt(0)) {
-                        let hourInt = hIdx * 2;
-                        let minInt = 30;
-                        if (hourInt === 24) hourInt = 0;
-                        results.push(new Date(y, m - 1, d, hourInt, minInt));
+                    let testTimeStemIdx = ((wushuDayStemIdx % 5) * 2 + targetHIdx) % 10;
+                    let testTimeGZ = STEMS[testTimeStemIdx] + targetHBranch;
+
+                    if (testTimeGZ === tgtH) {
+                        results.push(new Date(y, m - 1, d, testHour, testMin));
                     }
                 }
-                curr.setDate(curr.getDate() + 60);
             }
+            curr.setDate(curr.getDate() + 60);
         }
-        return results;
     }
+    return results;
+}
 
     function applyBaziResult(y, m, d, h, min) {
         document.getElementById('bazi-modal').classList.add('hidden');
