@@ -254,7 +254,6 @@
                         <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500 shadow-inner"></div>
                     </label>
                 </div>
-                <!-- Toggle Switch 7: 流年飛星 -->
                 <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-rose-100">
                     <span class="text-xs font-bold text-gray-700">流年飛星</span>
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -265,7 +264,7 @@
                 </div>
 
                 <div class="w-full text-center mt-2">
-                    <span class="text-xs text-gray-400 font-normal">created by RS2026 (v27.1)</span>
+                    <span class="text-xs text-gray-400 font-normal">created by RS2026 <button onclick="showManualModal()" class="text-indigo-600 hover:text-indigo-800 underline font-bold transition-colors focus:outline-none cursor-pointer" title="點擊查看使用手冊">(v27.1)</button></span>
                 </div>
             </div>
         </div>
@@ -576,7 +575,124 @@
     </div>
 </div>
 
+<!-- 使用手冊彈窗 Modal -->
+<div id="manual-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm hidden flex justify-center items-center z-[60] p-3 sm:p-6">
+    <div class="bg-white rounded-2xl shadow-2xl p-5 sm:p-7 max-w-3xl w-full max-h-[88vh] overflow-y-auto relative border-t-8 border-indigo-600 text-gray-800 space-y-6">
+        <button onclick="closeManualModal()" class="absolute top-4 right-5 text-gray-400 hover:text-black text-2xl font-bold transition-colors">✖</button>
+        
+        <div class="border-b border-indigo-100 pb-4 text-center">
+            <span class="bg-indigo-100 text-indigo-800 text-xs font-black px-2.5 py-1 rounded-full uppercase tracking-wider">v27.1 Official Guide</span>
+            <h2 class="text-2xl sm:text-3xl font-black text-indigo-950 mt-2 tracking-wide">奇門遁甲 - 拆補法排盤程式使用手冊</h2>
+            <p class="text-xs text-gray-500 mt-1">RS2026 研製 ｜ 高精度古典奇門與多維演算工具</p>
+        </div>
+
+        <!-- 手冊內容章節 -->
+        <div class="space-y-6 text-sm leading-relaxed">
+            <!-- 一、 程式版本概述 -->
+            <section class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                <h3 class="text-base sm:text-lg font-black text-indigo-900 mb-2 flex items-center gap-2">
+                    <span>一、 程式版本概述與核心特點</span>
+                </h3>
+                <p class="text-gray-700 mb-3">本程式（版本 <strong>v27.1</strong>）是一款專為奇門遁甲研習者與實務運用者設計的高精度網頁版排盤與分析工具，採用傳統權威之<strong>拆補法</strong>起局。</p>
+                <ul class="list-disc list-inside space-y-1.5 text-gray-700">
+                    <li><strong>精準天文曆法演算</strong>：集成 <code>lunar-javascript</code> 權威曆法庫，精準計算太陽黃經與節氣交節時間（精確至分秒），自動區分早子時與晚子時。</li>
+                    <li><strong>拆補法自動定局</strong>：根據節氣與符頭（上元、中元、下元）自動推算陰陽遁局數與旬首。</li>
+                    <li><strong>多維古典與現代輔助切換</strong>：先天/後天八卦數、十二長生與星門旺相休囚死能量狀態、內外盤、流年紫白飛星、宮位合/沖/方局自動比對與經典格局名堂自動檢測。</li>
+                    <li><strong>穿壬十二天將</strong>：依據日干、晝夜、月將與時支，精準推算六壬十二天將環繞宮位。</li>
+                    <li><strong>強大雙條件反查篩選引擎</strong>：未來 180 天全時辰範圍內，依據神、星、門、干、四害及特殊時格進行 AND / OR 多重邏輯自動篩選。</li>
+                </ul>
+            </section>
+
+            <!-- 二、 畫面佈局與起盤模式 -->
+            <section class="p-4 bg-amber-50/40 rounded-xl border border-amber-100">
+                <h3 class="text-base sm:text-lg font-black text-amber-900 mb-2">二、 畫面佈局與起盤模式</h3>
+                <div class="space-y-2 text-gray-700">
+                    <p><strong>1. 時間輸入模式（預設）：</strong>選擇公曆年（1930～2050）、月、日、24小時制時與分，點擊「起盤」。可點擊「現在時間」快速載入目前時間，或點擊「◀ 前一時辰 / 後一時辰 ▶」進行時間推演。</p>
+                    <p><strong>2. 四柱（八字）反查模式：</strong>點擊頂部最左側「四柱方式」按鈕切換，選擇年月日時干支後點擊「起盤」，系統自動搜尋 1930~2050 年間所有符合該八字組合之時間點，點選即可起盤。</p>
+                </div>
+            </section>
+
+            <!-- 三、 盤面資訊結構與解讀 -->
+            <section class="p-4 bg-blue-50/40 rounded-xl border border-blue-100">
+                <h3 class="text-base sm:text-lg font-black text-blue-900 mb-2">三、 盤面資訊結構與解讀</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>頂部局象資訊區：</strong>呈現四柱干支（含五行顏色與早晚子註記）、交節時間、局數（如陽遁一局）、旬首、值符、值使、空亡、驛馬，以及天顯時格、五不遇時、伏吟/反吟等特殊提醒。</li>
+                    <li><strong>九宮格佈局：</strong>
+                        <div class="mt-1 pl-4 space-y-1 text-xs sm:text-sm text-gray-600">
+                            <p>• <strong>穿壬天將：</strong>圍繞宮位四周，月令地支帶高亮黃底。</p>
+                            <p>• <strong>特殊符號：</strong>🈳 (空亡)、🐎 (驛馬)、迫 (門迫)、刑/墓 (天/地盤擊刑與入墓)。</p>
+                            <p>• <strong>神/星/門/干：</strong>左上為八神、中部為九星、左下為八門，右下為天盤干與地盤干。當前日干以紫底高亮、時干以橙底高亮。</p>
+                            <p>• <strong>中五宮：</strong>設計為核心八字四柱與起盤參數資訊面板。</p>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- 四、 進階開關與分析工具 -->
+            <section class="p-4 bg-emerald-50/40 rounded-xl border border-emerald-100">
+                <h3 class="text-base sm:text-lg font-black text-emerald-900 mb-2">四、 進階開關與分析工具</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-700">
+                    <div class="bg-white p-2.5 rounded-lg border border-emerald-200">
+                        <span class="font-bold text-emerald-800 block mb-1">1. 先天八卦數 / 後天八卦數</span>
+                        切換宮位顯示為先天八卦數序或傳統後天八卦數序。
+                    </div>
+                    <div class="bg-white p-2.5 rounded-lg border border-emerald-200">
+                        <span class="font-bold text-emerald-800 block mb-1">2. 能量狀態 Mode</span>
+                        動態將天干轉為十二長生狀態，星門轉為旺相休囚死。
+                    </div>
+                    <div class="bg-white p-2.5 rounded-lg border border-emerald-200">
+                        <span class="font-bold text-emerald-800 block mb-1">3. 內外盤</span>
+                        標註陽遁(1,8,3,4宮)與陰遁(9,2,7,6宮)之內盤與外盤。
+                    </div>
+                    <div class="bg-white p-2.5 rounded-lg border border-emerald-200">
+                        <span class="font-bold text-emerald-800 block mb-1">4. 按宮看格局</span>
+                        點擊任意宮位彈出深度分析視窗：包含<strong>合/沖/方局自動比對</strong>、四害詳情與《奇門遁甲秘笈大全》《奇門法竅》古籍格局名堂與吉凶評價。
+                    </div>
+                    <div class="bg-white p-2.5 rounded-lg border border-emerald-200 sm:col-span-2">
+                        <span class="font-bold text-emerald-800 block mb-1">5. 流年飛星</span>
+                        疊加紫白九星流年飛星，支援選擇不同年份進行飛星比對。
+                    </div>
+                </div>
+            </section>
+
+            <!-- 五、 智慧條件篩選系統 -->
+            <section class="p-4 bg-purple-50/40 rounded-xl border border-purple-100">
+                <h3 class="text-base sm:text-lg font-black text-purple-900 mb-2">五、 智慧條件篩選系統 (180 天全時辰引擎)</h3>
+                <ol class="list-decimal list-inside space-y-1.5 text-gray-700">
+                    <li>點擊「🔍 條件篩選起盤」展開右側篩選面板。</li>
+                    <li>設定搜尋開始日期（預設今日）與目標宮位。</li>
+                    <li>可勾選特殊狀態（空亡/門迫/擊刑/入墓/驛馬等）、八神、九星、八門、天盤干（支援動態比對如 <code>=日干</code>）與地盤干。</li>
+                    <li>支援啟用【條件二】並使用 <strong>AND (同時符合)</strong> 或 <strong>OR (任一符合)</strong> 交叉比對。</li>
+                    <li>點擊「⚡ 開始篩選」，於結果列表中點擊任一符合時間即可瞬間起盤繪製。</li>
+                </ol>
+            </section>
+
+            <!-- 六、 便捷匯出與分享功能 -->
+            <section class="p-4 bg-rose-50/40 rounded-xl border border-rose-100">
+                <h3 class="text-base sm:text-lg font-black text-rose-900 mb-2">六、 便捷匯出與分享工具</h3>
+                <p class="text-gray-700"><strong>【複製盤面資料】：</strong>一鍵複製當前局象之完整文字摘要至剪貼簿，方便記錄或討論。<br><strong>【分享起盤連結】：</strong>自動生成帶有當前起盤年月日時分參數之專屬 URL 網址，複製發送給他人即可直接還原相同盤面。</p>
+            </section>
+
+
+        </div>
+
+        <div class="pt-4 border-t border-gray-200 text-center">
+            <button onclick="closeManualModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-8 rounded-xl shadow-lg transition active:scale-95">關閉使用手冊</button>
+        </div>
+    </div>
+</div>
+
 <script>
+    function showManualModal() {
+        const el = document.getElementById('manual-modal');
+        if (el) el.classList.remove('hidden');
+    }
+
+    function closeManualModal() {
+        const el = document.getElementById('manual-modal');
+        if (el) el.classList.add('hidden');
+    }
+
     const STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
     const BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
     const YI_LIU = ['戊', '己', '庚', '辛', '壬', '癸', '丁', '丙', '乙']; 
@@ -1074,7 +1190,7 @@
             ]
         },
         dizhiFangju: {
-            title: "地支方局", type: "branch", min: 2, // 需符合2個
+            title: "地支方局", type: "branch", min: 3, // 3個均需符合
             items: [
                 { chars: ['寅', '卯', '辰'], label: "寅卯辰(木)" },
                 { chars: ['巳', '午', '未'], label: "巳午未(火)" },
