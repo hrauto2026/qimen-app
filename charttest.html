@@ -2388,8 +2388,14 @@ function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
             if (isTianXian) { specialStr += "<span class='text-green-600 font-bold ml-2'>【✅天顯時格】</span>"; rawSpecialInfo += "【✅天顯時格】"; }
             if (isWuBuYu) { specialStr += "<span class='text-red-600 font-bold ml-2'>【❌五不遇時】</span>"; rawSpecialInfo += "【❌五不遇時】"; }
             
-            let displayZiMark = ziMark ? `<span class="text-orange-600 font-bold ml-1">【${ziMark}】</span>` : "";
-            document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} ｜ ${coloredBaziStr}${displayZiMark}${specialStr}`;
+// 計算 星期幾 與 農曆日期
+const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+const weekStr = weekDays[currentDate.getDay()];
+const lunarStr = `農曆${exactLunar.getMonthInChinese()}月${exactLunar.getDayInChinese()}`;
+
+let displayZiMark = ziMark ? `<span class="text-orange-600 font-bold ml-1">【${ziMark}】</span>` : "";
+// 格式：新曆 星期 時間 ｜ 農曆 ｜ 四柱八字
+document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日 ${weekStr} ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} ｜ <span class="text-teal-800 font-bold">${lunarStr}</span> ｜ ${coloredBaziStr}${displayZiMark}${specialStr}`;
             
             let targetWarn = jqData.isCurrentTransition ? "⚠️" : "";
             let nextWarn = jqData.isNextTransition ? "⚠️" : "";
