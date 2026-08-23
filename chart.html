@@ -1251,7 +1251,11 @@ function renderRelationBox(activeStems, activeBranchList) {
                     matchedDisplay = matchedChars;
                 }
             } else {
-                let tempBranches = [...activeBranchList];
+                // 🌟 若為「地支相刑」，全面排除休/傷/景/驚門所帶之地支（門支不參與相刑判定）
+                let tempBranches = (key === 'dizhiXing') 
+                    ? activeBranchList.filter(b => b.source !== 'door') 
+                    : [...activeBranchList];
+
                 let matchedItems = [];
                 for (let reqChar of item.chars) {
                     let idx = tempBranches.findIndex(b => b.char === reqChar);
@@ -1261,10 +1265,10 @@ function renderRelationBox(activeStems, activeBranchList) {
                     }
                 }
 
-                // 🌟 自刑過濾：禁止僅由「天盤遁干 + 地盤遁干」單獨組成，必須有宮支或門支參與
+                // 🌟 自刑過濾：必須有實體「宮支」參與（如巽宮辰+天/地壬、離宮午+天/地辛）
                 if (item.isZiXing) {
-                    const hasPhysicalBranch = matchedItems.some(b => b.source === 'palace' || b.source === 'door');
-                    if (!hasPhysicalBranch) {
+                    const hasPalaceBranch = matchedItems.some(b => b.source === 'palace');
+                    if (!hasPalaceBranch) {
                         matchedItems = [];
                     }
                 }
