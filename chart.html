@@ -1149,7 +1149,7 @@
     // ==================== 合/沖/方局 判定規則表 ====================
 const RELATION_RULES = {
     tianganWuhe: {
-        title: "天干五合", type: "stem", min: 1,
+        title: "天干五合", type: "stem", min: 2,
         items: [
             { chars: ['甲', '己'], label: "甲己合化土" },
             { chars: ['乙', '庚'], label: "乙庚合化金" },
@@ -1159,7 +1159,7 @@ const RELATION_RULES = {
         ]
     },
     tianganChong: {
-        title: "天干相沖", type: "stem", min: 1,
+        title: "天干相沖", type: "stem", min: 2,
         items: [
             { chars: ['甲', '庚'], label: "甲庚相沖" },
             { chars: ['乙', '辛'], label: "乙辛相沖" },
@@ -1197,7 +1197,7 @@ const RELATION_RULES = {
         ]
     },
     dizhiLiuchong: {
-        title: "地支六沖", type: "branch", min: 1,
+        title: "地支六沖", type: "branch", min: 2,
         items: [
             { chars: ['子', '午'], label: "子午沖" },
             { chars: ['丑', '未'], label: "丑未沖" },
