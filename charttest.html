@@ -1323,7 +1323,7 @@ if (data.door && DOOR_BRANCH_MAP[data.door]) {
     const dInfo = DOOR_BRANCH_MAP[data.door];
     // 如果此門落在其原宮（宮支本身已包含該支），不特別標註為（門），直接保留原宮支
     if (!palaceBranches.includes(dInfo.branch)) {
-        activeBranches.set(dInfo.branch, `${dInfo.branch}（${dInfo.label}）`);
+        activeBranches.set(dInfo.branch, `${dInfo.branch}(${dInfo.label})`);
     }
 }
         // 3. 渲染合沖列表並更新徽章
