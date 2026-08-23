@@ -542,7 +542,7 @@
             <details id="pm-cheatsheet-details" class="group bg-blue-50/40 border border-blue-200 rounded-lg shadow-sm">
                 <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 flex justify-between items-center select-none">
                     <div class="flex items-center gap-1.5">
-                        <span>📚 合/沖/方局資料</span>
+                        <span>📚 合/沖/方局/刑害資料</span>
                         <span id="pm-cheatsheet-badge" class="text-xs"></span>
                     </div>
                     <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span>
@@ -1147,70 +1147,91 @@
     }
 
     // ==================== 合/沖/方局 判定規則表 ====================
-    const RELATION_RULES = {
-        tianganWuhe: {
-            title: "天干五合", type: "stem", min: 2,
-            items: [
-                { chars: ['甲', '己'], label: "甲己合化土" },
-                { chars: ['乙', '庚'], label: "乙庚合化金" },
-                { chars: ['丙', '辛'], label: "丙辛合化水" },
-                { chars: ['丁', '壬'], label: "丁壬合化木" },
-                { chars: ['戊', '癸'], label: "戊癸合化火" }
-            ]
-        },
-        tianganChong: {
-            title: "天干相沖", type: "stem", min: 2,
-            items: [
-                { chars: ['甲', '庚'], label: "甲庚相沖" },
-                { chars: ['乙', '辛'], label: "乙辛相沖" },
-                { chars: ['丙', '壬'], label: "丙壬相沖" },
-                { chars: ['丁', '癸'], label: "丁癸相沖" }
-            ]
-        },
-        dizhiSanhe: {
-            title: "地支三合", type: "branch", min: 2, // 2個以上即視為半合/三合
-            items: [
-                { chars: ['申', '子', '辰'], label: "申子辰合成水局" },
-                { chars: ['亥', '卯', '未'], label: "亥卯未合成木局" },
-                { chars: ['寅', '午', '戌'], label: "寅午戌合成火局" },
-                { chars: ['巳', '酉', '丑'], label: "巳酉丑合成金局" }
-            ]
-        },
-        dizhiLiuhe: {
-            title: "地支六合", type: "branch", min: 2,
-            items: [
-                { chars: ['子', '丑'], label: "子丑合化土" },
-                { chars: ['寅', '亥'], label: "寅亥合化木" },
-                { chars: ['卯', '戌'], label: "卯戌合化火" },
-                { chars: ['辰', '酉'], label: "辰酉合化金" },
-                { chars: ['巳', '申'], label: "巳申合化水" },
-                { chars: ['午', '未'], label: "午未合化土" }
-            ]
-        },
-        dizhiFangju: {
-            title: "地支方局", type: "branch", min: 3, // 3個均需符合
-            items: [
-                { chars: ['寅', '卯', '辰'], label: "寅卯辰(木)" },
-                { chars: ['巳', '午', '未'], label: "巳午未(火)" },
-                { chars: ['申', '酉', '戌'], label: "申酉戌(金)" },
-                { chars: ['亥', '子', '丑'], label: "亥子丑(水)" }
-            ]
-        },
-        dizhiLiuchong: {
-            title: "地支六沖", type: "branch", min: 2,
-            items: [
-                { chars: ['子', '午'], label: "子午沖" },
-                { chars: ['丑', '未'], label: "丑未沖" },
-                { chars: ['寅', '申'], label: "寅申沖" },
-                { chars: ['卯', '酉'], label: "卯酉沖" },
-                { chars: ['辰', '戌'], label: "辰戌沖" },
-                { chars: ['巳', '亥'], label: "巳亥沖" }
-            ]
-        }
-    };
-
+const RELATION_RULES = {
+    tianganWuhe: {
+        title: "天干五合", type: "stem", min: 1,
+        items: [
+            { chars: ['甲', '己'], label: "甲己合化土" },
+            { chars: ['乙', '庚'], label: "乙庚合化金" },
+            { chars: ['丙', '辛'], label: "丙辛合化水" },
+            { chars: ['丁', '壬'], label: "丁壬合化木" },
+            { chars: ['戊', '癸'], label: "戊癸合化火" }
+        ]
+    },
+    tianganChong: {
+        title: "天干相沖", type: "stem", min: 1,
+        items: [
+            { chars: ['甲', '庚'], label: "甲庚相沖" },
+            { chars: ['乙', '辛'], label: "乙辛相沖" },
+            { chars: ['丙', '壬'], label: "丙壬相沖" },
+            { chars: ['丁', '癸'], label: "丁癸相沖" }
+        ]
+    },
+    dizhiSanhe: {
+        title: "地支三合", type: "branch", min: 2,
+        items: [
+            { chars: ['申', '子', '辰'], label: "申子辰合成水局" },
+            { chars: ['亥', '卯', '未'], label: "亥卯未合成木局" },
+            { chars: ['寅', '午', '戌'], label: "寅午戌合成火局" },
+            { chars: ['巳', '酉', '丑'], label: "巳酉丑合成金局" }
+        ]
+    },
+    dizhiLiuhe: {
+        title: "地支六合", type: "branch", min: 1,
+        items: [
+            { chars: ['子', '丑'], label: "子丑合化土" },
+            { chars: ['寅', '亥'], label: "寅亥合化木" },
+            { chars: ['卯', '戌'], label: "卯戌合化火" },
+            { chars: ['辰', '酉'], label: "辰酉合化金" },
+            { chars: ['巳', '申'], label: "巳申合化水" },
+            { chars: ['午', '未'], label: "午未合化土" }
+        ]
+    },
+    dizhiFangju: {
+        title: "地支方局", type: "branch", min: 2,
+        items: [
+            { chars: ['寅', '卯', '辰'], label: "寅卯辰(木)" },
+            { chars: ['巳', '午', '未'], label: "巳午未(火)" },
+            { chars: ['申', '酉', '戌'], label: "申酉戌(金)" },
+            { chars: ['亥', '子', '丑'], label: "亥子丑(水)" }
+        ]
+    },
+    dizhiLiuchong: {
+        title: "地支六沖", type: "branch", min: 1,
+        items: [
+            { chars: ['子', '午'], label: "子午沖" },
+            { chars: ['丑', '未'], label: "丑未沖" },
+            { chars: ['寅', '申'], label: "寅申沖" },
+            { chars: ['卯', '酉'], label: "卯酉沖" },
+            { chars: ['辰', '戌'], label: "辰戌沖" },
+            { chars: ['巳', '亥'], label: "巳亥沖" }
+        ]
+    },
+dizhiXing: {
+    title: "地支相刑", type: "branch", min: 2,
+    items: [
+        { chars: ['子', '卯'], label: "子卯相刑(無禮)" },
+        { chars: ['未', '戌'], label: "未戌相刑(恃勢)" },
+        { chars: ['寅', '申'], label: "寅申相刑(無恩)" },
+        { chars: ['寅', '巳'], label: "寅巳相刑(無恩)" },
+        { chars: ['辰', '辰'], label: "辰辰自刑" },
+        { chars: ['午', '午'], label: "午午自刑" }
+    ]
+},
+    dizhiHai: {
+        title: "地支相害", type: "branch", min: 2,
+        items: [
+            { chars: ['子', '未'], label: "子未相害" },
+            { chars: ['丑', '午'], label: "丑午相害" },
+            { chars: ['寅', '巳'], label: "寅巳相害" },
+            { chars: ['卯', '辰'], label: "卯辰相害" },
+            { chars: ['申', '亥'], label: "申亥相害" },
+            { chars: ['酉', '戌'], label: "酉戌相害" }
+        ]
+    }
+};
     // 渲染合沖方局列表並高亮
-function renderRelationBox(activeStems, activeBranches) {
+function renderRelationBox(activeStems, activeBranchList) {
     let totalMatches = 0;
     let html = '<div class="grid grid-cols-2 gap-x-2 gap-y-3">';
 
@@ -1230,9 +1251,17 @@ function renderRelationBox(activeStems, activeBranches) {
                     matchedDisplay = matchedChars;
                 }
             } else {
-                const matchedChars = item.chars.filter(c => activeBranches.has(c));
-                if (matchedChars.length >= grp.min) {
-                    matchedDisplay = matchedChars.map(c => activeBranches.get(c));
+                // 複製地支陣列進行消耗性匹配（可正確比對自刑的重複地支）
+                let tempBranches = [...activeBranchList];
+                for (let reqChar of item.chars) {
+                    let idx = tempBranches.findIndex(b => b.char === reqChar);
+                    if (idx !== -1) {
+                        matchedDisplay.push(tempBranches[idx].display);
+                        tempBranches.splice(idx, 1); // 匹配成功後移出，避免單一地支重複比對
+                    }
+                }
+                if (matchedDisplay.length < grp.min) {
+                    matchedDisplay = [];
                 }
             }
 
@@ -1251,8 +1280,8 @@ function renderRelationBox(activeStems, activeBranches) {
     }
     html += '</div>';
     return { html, totalMatches };
-}
-    // ==================== 彈窗詳細資訊 ====================
+}    
+// ==================== 彈窗詳細資訊 ====================
     function showPalaceDetails(pNum) {
         const data = globalPalaceData[pNum];
         if (!data || data.isCenter) return;
@@ -1282,36 +1311,44 @@ function renderRelationBox(activeStems, activeBranches) {
         document.getElementById('pm-hstem-hidden').innerText = hHidden ? `(${hHidden})` : '';
         document.getElementById('pm-estem-hidden').innerText = eHidden ? `(${eHidden})` : '';
 
-// 🌟 收集此宮所有干支並執行合沖高亮（包含宮支、遁支、休傷景驚門地支）
+// 🌟 收集此宮所有干支並執行合沖刑害高亮
 let activeStems = new Set();
-let activeBranches = new Map();
+let activeBranchList = [];
 
-// 1. 收集天干（僅天盤干、地盤干）
+// 1. 收集天干（天盤干、地盤干）
 if (data.hStems) data.hStems.forEach(s => activeStems.add(s));
 if (data.eStems) data.eStems.forEach(s => activeStems.add(s));
 
-// 2. 收集地支（宮支、天盤干遁支、地盤干遁支）
+// 2. 收集宮位本身地支
 let palaceBranches = [];
 if (data.branch) {
     palaceBranches = data.branch.split('/').filter(Boolean);
-    palaceBranches.forEach(b => activeBranches.set(b, b));
-}
-if (data.hStems) {
-    data.hStems.forEach(s => {
-        if (DUN_GAN_MAP[s] && !activeBranches.has(DUN_GAN_MAP[s])) {
-            activeBranches.set(DUN_GAN_MAP[s], DUN_GAN_MAP[s]);
-        }
+    palaceBranches.forEach(b => {
+        activeBranchList.push({ char: b, display: b });
     });
 }
-if (data.eStems) {
-    data.eStems.forEach(s => {
-        if (DUN_GAN_MAP[s] && !activeBranches.has(DUN_GAN_MAP[s])) {
-            activeBranches.set(DUN_GAN_MAP[s], DUN_GAN_MAP[s]);
+
+// 3. 收集天盤干遁支（如 壬遁辰、辛遁午）
+if (data.hStems) {
+    data.hStems.forEach(s => {
+        if (DUN_GAN_MAP[s]) {
+            let b = DUN_GAN_MAP[s];
+            activeBranchList.push({ char: b, display: `${b}（天${s}）` });
         }
     });
 }
 
-// 3. 收集 休/傷/景/驚門 所帶之地支（子/卯/午/酉）
+// 4. 收集地盤干遁支
+if (data.eStems) {
+    data.eStems.forEach(s => {
+        if (DUN_GAN_MAP[s]) {
+            let b = DUN_GAN_MAP[s];
+            activeBranchList.push({ char: b, display: `${b}（地${s}）` });
+        }
+    });
+}
+
+// 5. 收集 休/傷/景/驚門 所帶之地支（子/卯/午/酉）
 const DOOR_BRANCH_MAP = {
     '休門': { branch: '子', label: '休' },
     '傷門': { branch: '卯', label: '傷' },
@@ -1321,20 +1358,21 @@ const DOOR_BRANCH_MAP = {
 
 if (data.door && DOOR_BRANCH_MAP[data.door]) {
     const dInfo = DOOR_BRANCH_MAP[data.door];
-    // 如果此門落在其原宮（宮支本身已包含該支），不特別標註為（門），直接保留原宮支
+    // 若門落在原宮則不重複計算；若落在其他宮位則將門支納入
     if (!palaceBranches.includes(dInfo.branch)) {
-        activeBranches.set(dInfo.branch, `${dInfo.branch}(${dInfo.label})`);
+        activeBranchList.push({ char: dInfo.branch, display: `${dInfo.branch}（${dInfo.label}）` });
     }
 }
-        // 3. 渲染合沖列表並更新徽章
-        const { html: relationHtml, totalMatches } = renderRelationBox(activeStems, activeBranches);
-        document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
+
+// 6. 渲染合沖刑害列表並更新徽章
+const { html: relationHtml, totalMatches } = renderRelationBox(activeStems, activeBranchList);
+document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
 
         const badgeEl = document.getElementById('pm-cheatsheet-badge');
         const detailsEl = document.getElementById('pm-cheatsheet-details');
         if (badgeEl && detailsEl) {
             if (totalMatches > 0) {
-                badgeEl.innerHTML = `<span class="bg-amber-100 text-amber-800 border border-amber-300 font-bold px-1.5 py-0.2 rounded-full text-[11px]">${totalMatches} 組相合/相沖(**兩個**或以上天干/地支)</span>`;
+                badgeEl.innerHTML = `<span class="bg-amber-100 text-amber-800 border border-amber-300 font-bold px-1.5 py-0.2 rounded-full text-[11px]">${totalMatches} 組相合/沖/方/刑/害</span>`;
                 detailsEl.open = true;
             } else {
                 badgeEl.innerHTML = '';
@@ -2420,7 +2458,7 @@ const lunarStr = `農曆${exactLunar.getMonthInChinese()}月${exactLunar.getDayI
 
 let displayZiMark = ziMark ? `<span class="text-orange-600 font-bold ml-1">【${ziMark}】</span>` : "";
 // 格式：新曆 星期 時間 ｜ 農曆 ｜ 四柱八字
-document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日 ${weekStr} ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} ｜ <span class="text-teal-800 font-bold">${lunarStr}</span> ｜ ${coloredBaziStr}${displayZiMark}${specialStr}`;
+document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日(${weekStr}) ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}｜<span class="text-teal-800 font-bold">${lunarStr}</span>｜<br>${coloredBaziStr}${displayZiMark}${specialStr}`;
             
             let targetWarn = jqData.isCurrentTransition ? "⚠️" : "";
             let nextWarn = jqData.isNextTransition ? "⚠️" : "";
