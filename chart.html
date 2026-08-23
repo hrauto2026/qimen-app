@@ -121,7 +121,7 @@
     <div id="main-panel" class="lg:col-span-12 space-y-6 transition-all duration-500">
         <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-4 md:p-6 border border-white main-container">
             <h1 class="text-2xl md:text-3xl text-center mb-4 text-indigo-900 tracking-widest">
-                奇門遁甲 - 拆補法排盤(<a href="https://hrauto2026.github.io/qimen-app/index.html" class="title-link hover:text-indigo-600 transition-colors duration-300">返回主頁</a>)
+                奇門遁甲拆補法排盤<a href="https://hrauto2026.github.io/qimen-app/index.html" class="title-link hover:text-indigo-600 transition-colors duration-300">🏠</a>
             </h1>
             
             <div class="flex flex-wrap justify-center items-center gap-2 mb-4 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100 shadow-inner">
@@ -184,8 +184,8 @@
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-2 gap-2">
                     <h2 class="text-base sm:text-lg md:text-xl text-indigo-900 font-bold tracking-wide" id="info-bazi"></h2>
                     <div class="flex space-x-2">
-                        <button onclick="shiftHour(-1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">◀ 前一時辰</button>
-                        <button onclick="shiftHour(1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">後一時辰 ▶</button>
+                        <button onclick="shiftHour(-1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">⏪</button>
+                        <button onclick="shiftHour(1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">⏩</button>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-sm sm:text-base md:text-lg leading-tight mb-2">
@@ -607,7 +607,7 @@
             <section class="p-4 bg-amber-50/40 rounded-xl border border-amber-100">
                 <h3 class="text-base sm:text-lg font-black text-amber-900 mb-2">二、 畫面佈局與起盤模式</h3>
                 <div class="space-y-2 text-gray-700">
-                    <p><strong>1. 時間輸入模式（預設）：</strong>選擇公曆年（1930～2050）、月、日、24小時制時與分，點擊「起盤」。可點擊「現在時間」快速載入目前時間，或點擊「◀ 前一時辰 / 後一時辰 ▶」進行時間推演。</p>
+                    <p><strong>1. 時間輸入模式（預設）：</strong>選擇公曆年（1930～2050）、月、日、24小時制時與分，點擊「起盤」。可點擊「現在時間」快速載入目前時間，或點擊「⏪/⏩」進行時間推演。</p>
                     <p><strong>2. 四柱（八字）反查模式：</strong>點擊頂部最左側「四柱方式」按鈕切換，選擇年月日時干支後點擊「起盤」，系統自動搜尋 1930~2050 年間所有符合該八字組合之時間點，點選即可起盤。</p>
                 </div>
             </section>
@@ -1210,39 +1210,48 @@
     };
 
     // 渲染合沖方局列表並高亮
-    function renderRelationBox(activeStems, activeBranches) {
-        let totalMatches = 0;
-        let html = '<div class="grid grid-cols-2 gap-x-2 gap-y-3">';
+function renderRelationBox(activeStems, activeBranches) {
+    let totalMatches = 0;
+    let html = '<div class="grid grid-cols-2 gap-x-2 gap-y-3">';
 
-        for (let key in RELATION_RULES) {
-            const grp = RELATION_RULES[key];
-            const checkSet = (grp.type === 'stem') ? activeStems : activeBranches;
-            
-            html += `<div>
-                <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">${grp.title}</div>
-                <div class="space-y-1">`;
+    for (let key in RELATION_RULES) {
+        const grp = RELATION_RULES[key];
+        const isStem = (grp.type === 'stem');
+        
+        html += `<div>
+            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">${grp.title}</div>
+            <div class="space-y-1">`;
 
-            grp.items.forEach(item => {
-                const matchedChars = item.chars.filter(c => checkSet.has(c));
-                const isMatched = matchedChars.length >= grp.min;
-
-                if (isMatched) {
-                    totalMatches++;
-                    html += `<div class="bg-amber-100 text-amber-950 font-bold px-1.5 py-0.5 rounded border border-amber-300 shadow-sm flex items-center justify-between text-[11px] leading-tight">
-                        <span>✨ ${item.label}</span>
-                        <span class="text-[10px] text-amber-800 bg-amber-200/80 px-1 rounded font-black">${matchedChars.join('·')}</span>
-                    </div>`;
-                } else {
-                    html += `<div class="text-gray-600 px-1 py-0.5">${item.label}</div>`;
+        grp.items.forEach(item => {
+            let matchedDisplay = [];
+            if (isStem) {
+                const matchedChars = item.chars.filter(c => activeStems.has(c));
+                if (matchedChars.length >= grp.min) {
+                    matchedDisplay = matchedChars;
                 }
-            });
+            } else {
+                const matchedChars = item.chars.filter(c => activeBranches.has(c));
+                if (matchedChars.length >= grp.min) {
+                    matchedDisplay = matchedChars.map(c => activeBranches.get(c));
+                }
+            }
 
-            html += `</div></div>`;
-        }
-        html += '</div>';
-        return { html, totalMatches };
+            if (matchedDisplay.length > 0) {
+                totalMatches++;
+                html += `<div class="bg-amber-100 text-amber-950 font-bold px-1.5 py-0.5 rounded border border-amber-300 shadow-sm flex items-center justify-between text-[11px] leading-tight">
+                    <span>✨ ${item.label}</span>
+                    <span class="text-[10px] text-amber-800 bg-amber-200/80 px-1 rounded font-black">${matchedDisplay.join('·')}</span>
+                </div>`;
+            } else {
+                html += `<div class="text-gray-600 px-1 py-0.5">${item.label}</div>`;
+            }
+        });
+
+        html += `</div></div>`;
     }
-
+    html += '</div>';
+    return { html, totalMatches };
+}
     // ==================== 彈窗詳細資訊 ====================
     function showPalaceDetails(pNum) {
         const data = globalPalaceData[pNum];
@@ -1273,25 +1282,50 @@
         document.getElementById('pm-hstem-hidden').innerText = hHidden ? `(${hHidden})` : '';
         document.getElementById('pm-estem-hidden').innerText = eHidden ? `(${eHidden})` : '';
 
-        // 🌟 收集此宮所有干支並執行合沖高亮（只算宮支、天盤干/遁支、地盤干/遁支）
-        let activeStems = new Set();
-        let activeBranches = new Set();
+// 🌟 收集此宮所有干支並執行合沖高亮（包含宮支、遁支、休傷景驚門地支）
+let activeStems = new Set();
+let activeBranches = new Map();
 
-        // 1. 收集天干（僅天盤干、地盤干）
-        if (data.hStems) data.hStems.forEach(s => activeStems.add(s));
-        if (data.eStems) data.eStems.forEach(s => activeStems.add(s));
+// 1. 收集天干（僅天盤干、地盤干）
+if (data.hStems) data.hStems.forEach(s => activeStems.add(s));
+if (data.eStems) data.eStems.forEach(s => activeStems.add(s));
 
-        // 2. 收集地支（僅宮支、天盤干遁支、地盤干遁支）
-        if (data.branch) {
-            data.branch.split('/').forEach(b => { if (b) activeBranches.add(b); });
+// 2. 收集地支（宮支、天盤干遁支、地盤干遁支）
+let palaceBranches = [];
+if (data.branch) {
+    palaceBranches = data.branch.split('/').filter(Boolean);
+    palaceBranches.forEach(b => activeBranches.set(b, b));
+}
+if (data.hStems) {
+    data.hStems.forEach(s => {
+        if (DUN_GAN_MAP[s] && !activeBranches.has(DUN_GAN_MAP[s])) {
+            activeBranches.set(DUN_GAN_MAP[s], DUN_GAN_MAP[s]);
         }
-        if (data.hStems) {
-            data.hStems.forEach(s => { if (DUN_GAN_MAP[s]) activeBranches.add(DUN_GAN_MAP[s]); });
+    });
+}
+if (data.eStems) {
+    data.eStems.forEach(s => {
+        if (DUN_GAN_MAP[s] && !activeBranches.has(DUN_GAN_MAP[s])) {
+            activeBranches.set(DUN_GAN_MAP[s], DUN_GAN_MAP[s]);
         }
-        if (data.eStems) {
-            data.eStems.forEach(s => { if (DUN_GAN_MAP[s]) activeBranches.add(DUN_GAN_MAP[s]); });
-        }
+    });
+}
 
+// 3. 收集 休/傷/景/驚門 所帶之地支（子/卯/午/酉）
+const DOOR_BRANCH_MAP = {
+    '休門': { branch: '子', label: '休' },
+    '傷門': { branch: '卯', label: '傷' },
+    '景門': { branch: '午', label: '景' },
+    '驚門': { branch: '酉', label: '驚' }
+};
+
+if (data.door && DOOR_BRANCH_MAP[data.door]) {
+    const dInfo = DOOR_BRANCH_MAP[data.door];
+    // 如果此門落在其原宮（宮支本身已包含該支），不特別標註為（門），直接保留原宮支
+    if (!palaceBranches.includes(dInfo.branch)) {
+        activeBranches.set(dInfo.branch, `${dInfo.branch}(${dInfo.label})`);
+    }
+}
         // 3. 渲染合沖列表並更新徽章
         const { html: relationHtml, totalMatches } = renderRelationBox(activeStems, activeBranches);
         document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
