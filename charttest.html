@@ -1214,8 +1214,10 @@ dizhiXing: {
         { chars: ['未', '戌'], label: "未戌相刑(恃勢之刑)" },
         { chars: ['寅', '申'], label: "寅申相刑(無恩之刑)" },
         { chars: ['寅', '巳'], label: "寅巳相刑(無恩之刑)" },
-		{ chars: ['辰', '辰'], label: "辰辰自刑", isZiXing: true },
-        { chars: ['午', '午'], label: "午午自刑", isZiXing: true }
+        { chars: ['辰', '辰'], label: "辰辰自刑", isZiXing: true },
+        { chars: ['午', '午'], label: "午午自刑", isZiXing: true },
+        { chars: ['酉', '酉'], label: "酉酉自刑", isZiXing: true },
+        { chars: ['亥', '亥'], label: "亥亥自刑", isZiXing: true }
     ]
 },
     dizhiHai: {
@@ -1251,11 +1253,8 @@ function renderRelationBox(activeStems, activeBranchList) {
                     matchedDisplay = matchedChars;
                 }
             } else {
-                // 🌟 若為「地支相刑」，全面排除休/傷/景/驚門所帶之地支（門支不參與相刑判定）
-                let tempBranches = (key === 'dizhiXing') 
-                    ? activeBranchList.filter(b => b.source !== 'door') 
-                    : [...activeBranchList];
-
+                // 複製地支陣列進行消耗性匹配（包含宮支、遁干支、門支）
+                let tempBranches = [...activeBranchList];
                 let matchedItems = [];
                 for (let reqChar of item.chars) {
                     let idx = tempBranches.findIndex(b => b.char === reqChar);
@@ -1265,10 +1264,10 @@ function renderRelationBox(activeStems, activeBranchList) {
                     }
                 }
 
-                // 🌟 自刑過濾：必須有實體「宮支」參與（如巽宮辰+天/地壬、離宮午+天/地辛）
+                // 🌟 自刑防呆：禁止僅由「天盤遁干 + 地盤遁干」單獨組成，必須有實體「宮支」或「門支」參與
                 if (item.isZiXing) {
-                    const hasPalaceBranch = matchedItems.some(b => b.source === 'palace');
-                    if (!hasPalaceBranch) {
+                    const hasPhysicalBranch = matchedItems.some(b => b.source === 'palace' || b.source === 'door');
+                    if (!hasPhysicalBranch) {
                         matchedItems = [];
                     }
                 }
@@ -1281,7 +1280,7 @@ function renderRelationBox(activeStems, activeBranchList) {
             if (matchedDisplay.length > 0) {
                 totalMatches++;
                 html += `<div class="bg-amber-100 text-amber-950 font-bold px-1.5 py-0.5 rounded border border-amber-300 shadow-sm flex items-center justify-between text-[11px] leading-tight">
-                    <span>✨ ${item.label}</span>
+                    <span>➡️${item.label}</span>
                     <span class="text-[10px] text-amber-800 bg-amber-200/80 px-1 rounded font-black">${matchedDisplay.join('·')}</span>
                 </div>`;
             } else {
@@ -1294,6 +1293,7 @@ function renderRelationBox(activeStems, activeBranchList) {
     html += '</div>';
     return { html, totalMatches };
 }
+
 // ==================== 彈窗詳細資訊 ====================
     function showPalaceDetails(pNum) {
         const data = globalPalaceData[pNum];
