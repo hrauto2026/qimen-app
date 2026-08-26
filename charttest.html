@@ -26,11 +26,10 @@
             overflow-x: auto; 
             -webkit-overflow-scrolling: touch; 
         }
-        @media (max-width: 640px) {
-            .grid-wrapper { padding: 24px 22px; }
-            /* 手機端宮位間距縮至 3px */
-            .grid-qimen { gap: 3px !important; margin: 0 auto; width: 100% !important; max-width: 100% !important; }
-            .palace { min-height: 140px !important; padding: 3px 4px !important; border-radius: 4px !important; }
+@media (max-width: 640px) {
+            .grid-wrapper { padding: 20px 18px; }
+            .grid-qimen { gap: 4px !important; margin: 0 auto; width: 100% !important; max-width: 100% !important; }
+            .palace { min-height: 165px !important; padding: 4px 6px !important; border-radius: 6px !important; }
             .branch-label { font-size: 0.85rem !important; }
             .tian-jiang { font-size: 0.6rem !important; }
             .pos-left { left: -19px !important; }
@@ -39,11 +38,10 @@
             .pos-bottom { bottom: -20px !important; }
         }
 
-        /* 電腦端：間距由 12px 縮減至 4px，盤面適度放寬至 620px */
         .grid-qimen { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
-            gap: 4px; 
+            gap: 5px; 
             max-width: 620px; 
             min-width: 280px; 
             margin: auto; 
@@ -51,9 +49,9 @@
         
         .palace { 
             position: relative; 
-            border-radius: 6px; 
-            padding: 5px 8px; 
-            min-height: 175px; 
+            border-radius: 8px; 
+            padding: 6px 8px; 
+            min-height: 190px; 
             display: flex; 
             flex-direction: column; 
             box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
@@ -71,19 +69,20 @@
         .bg-metal { background-color: #fffbeb; border-color: #fde68a; } .text-metal { color: #b45309; }
         .bg-white-palace { background-color: #ffffff; border-color: #e2e8f0; } 
         
-        /* 核心字體放大：八神、九星、八門 */
+        /* 🌟 顯著放大 神、星、門 字體並加粗 */
         .text-main { 
-            font-size: clamp(1.05rem, 2.7vw, 1.45rem); 
-            line-height: 1.12; 
+            font-size: clamp(1.2rem, 3.8vw, 1.55rem); 
+            font-weight: 900;
+            line-height: 1.15; 
         }
         .text-palace-name { 
-            font-size: clamp(0.78rem, 1.8vw, 0.95rem); 
+            font-size: clamp(0.78rem, 1.9vw, 0.95rem); 
             font-weight: 900; 
         }
         
-        /* 天地盤干字體加大樣式 */
+        /* 🌟 天地盤干專屬加大 */
         .text-tiandi-stem {
-            font-size: clamp(1.15rem, 3vw, 1.65rem);
+            font-size: clamp(1.35rem, 4.2vw, 1.85rem);
             line-height: 1.05;
         }
 
@@ -1560,12 +1559,12 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
     let panData = {}; 
     let currentYiMaPalace = "";
 
-    function renderPalace5Html(s, anGan, centerLabel, bazi5) {
+function renderPalace5Html(s, anGan, centerLabel, bazi5) {
         let baziContent = "";
         if (bazi5) {
             baziContent = `
-<div class="flex flex-col items-center justify-start text-[10px] sm:text-[11px] md:text-xs leading-none font-bold w-full select-none z-10">
-<div class="flex justify-center gap-x-0.5 font-black text-base sm:text-lg md:text-xl mt-1 sm:mt-3">
+<div class="flex flex-col items-center justify-start text-[10px] sm:text-[11px] md:text-xs leading-none font-bold w-full select-none z-10 mt-1">
+    <div class="flex justify-center gap-x-1 font-black text-sm sm:text-base md:text-lg">
         <!-- 年柱 -->
         <div class="flex flex-col items-center gap-y-[1px] leading-none">
             <span style="color:${WUXING_COLORS[bazi5.yS] || '#1a202c'}">${bazi5.yS}</span>
@@ -1588,10 +1587,10 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
         </div>
     </div>
     <!-- 年月日時標籤 -->
-    <div class="text-[9px] sm:text-[10px] text-gray-400 tracking-widest mt-1">年月日時</div>
+    <div class="text-[9px] sm:text-[10px] text-gray-400 tracking-widest mt-0.5">年月日時</div>
 </div>
 
-<div class="flex flex-col items-start w-full text-[9px] sm:text-[10px] md:text-xs text-gray-600 leading-tight space-y-0.5 px-1.5 mt-1">
+<div class="flex flex-col items-start w-full text-[9px] sm:text-[10px] md:text-xs text-gray-600 leading-tight space-y-0.5 px-0.5 mt-1">
     <div class="whitespace-nowrap">旬首：<span class="text-gray-900 font-bold">${bazi5.xun}</span></div>
     <div class="whitespace-nowrap">值符：<span class="text-gray-900 font-bold">${bazi5.zf}</span></div>
     <div class="whitespace-nowrap">值使：<span class="text-gray-900 font-bold">${bazi5.zs}</span></div>
@@ -1609,12 +1608,17 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
 
         return `
             ${getBranchHTML(5)}
-            <div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1 z-20">${centerLabel}</div>
-            ${baziContent}
-            <div class="flex justify-between items-end w-full mt-auto z-10 px-1 pb-1">
-                <div class="mb-1">${anGanHtml}</div>
-                <div class="flex flex-col items-stretch text-right leading-tight text-main font-bold">
-                    <div class="text-xl sm:text-2xl">${mainStemHtml}</div>
+            <div class="flex flex-col h-full justify-between relative select-none">
+                <!-- 頂部居中宮名與飛星，不再使用 absolute 浮動，徹底解決重疊問題 -->
+                <div class="flex flex-col items-center leading-none">
+                    <span class="text-palace-name text-brown">${centerLabel}</span>
+                </div>
+                ${baziContent}
+                <div class="flex justify-between items-end w-full mt-auto z-10 px-0.5 pb-0.5 pt-1">
+                    <div class="flex-shrink-0 self-end pb-0.5">${anGanHtml}</div>
+                    <div class="flex flex-col items-stretch text-right leading-tight text-tiandi-stem font-black">
+                        <div>${mainStemHtml}</div>
+                    </div>
                 </div>
             </div>
         `;
@@ -2716,32 +2720,34 @@ el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                 };
 
 el.innerHTML = `${getBranchHTML(i)}
-    <div class="emoji-container">
-        ${isKong ? '<span>🈳</span>' : ''}
-        ${isMa ? '<span>🐎</span>' : ''}
-    </div>
-    <div class="flex flex-col h-full justify-between relative select-none">
-        <div class="flex flex-col items-center leading-none mb-0.5">
-            <span class="text-palace-name text-${ACTIVE_PALACES[i].type}">${palaceLabel}</span>
-            <span class="text-base sm:text-lg leading-none mt-0.5 font-normal">${guaDisplay}</span>
-        </div>
-        <div class="flex flex-col items-start leading-none mb-0.5">
-            <span class="text-main text-${godColor}">${godPan[i]}</span>
-        </div>
-        <div class="text-main leading-none mb-0.5 tracking-wider">
-            <span class="text-${STAR_COLORS[pStars[0]] || 'black'}">${starTextDisplay}</span>
-        </div>
-        <div class="flex items-start leading-none mb-0.5">
-            <span class="text-main text-${doorColor} tracking-wider">${pDoorDisplay}</span>${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 ml-0.5 font-bold">迫</span>`:""}
-        </div>
-        <div class="flex justify-between items-end mt-auto w-full pt-1">
-            <div class="flex-shrink-0 mr-1 self-end pb-0.5">${renderStem(anGan, i, true)}</div>
-            <div class="flex flex-col items-stretch text-right leading-tight text-tiandi-stem font-black flex-grow max-w-[85%]">
-                <div class="w-full">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
-                <div class="border-t-[2px] border-gray-400 min-w-[2.2rem] w-full pt-0.5 mt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
-            </div>
-        </div>
-    </div>`;                
+                    <div class="emoji-container">
+                        ${isKong ? '<span>🈳</span>' : ''}
+                        ${isMa ? '<span>🐎</span>' : ''}
+                    </div>
+                    <div class="flex flex-col h-full justify-between relative select-none">
+                        <!-- 頂部：宮名 + 八卦/內外盤符號 -->
+                        <div class="flex flex-col items-center leading-none mb-1">
+                            <span class="text-palace-name text-${ACTIVE_PALACES[i].type}">${palaceLabel}</span>
+                            <span class="text-sm sm:text-base leading-none mt-0.5 font-normal">${guaDisplay}</span>
+                        </div>
+                        <!-- 中部：八神、九星、八門 (顯著放大並充實宮內高度) -->
+                        <div class="flex flex-col items-start leading-none space-y-1">
+                            <span class="text-main text-${godColor}">${godPan[i]}</span>
+                            <span class="text-main text-${STAR_COLORS[pStars[0]] || 'black'} tracking-wider">${starTextDisplay}</span>
+                            <div class="flex items-center leading-none">
+                                <span class="text-main text-${doorColor} tracking-wider">${pDoorDisplay}</span>
+                                ${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 ml-0.5 font-bold">迫</span>`:""}
+                            </div>
+                        </div>
+                        <!-- 底部：暗干 (左) + 天盤干/地盤干 (右) -->
+                        <div class="flex justify-between items-end mt-auto w-full pt-1">
+                            <div class="flex-shrink-0 mr-1 self-end pb-0.5">${renderStem(anGan, i, true)}</div>
+                            <div class="flex flex-col items-stretch text-right leading-tight text-tiandi-stem font-black flex-grow max-w-[85%]">
+                                <div class="w-full">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
+                                <div class="border-t-[2px] border-gray-400 min-w-[2.2rem] w-full pt-0.5 mt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
+                            </div>
+                        </div>
+                    </div>`;                
                 let doorTextForCopy = pDoorDisplay + (isMenPo(pDoor, i) ? "(迫)" : "");
                 
                 let hStemsForCopy = hStems.map((s, idx) => {
