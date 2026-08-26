@@ -20,32 +20,48 @@
             transition: all 0.5s ease;
         }
         
+/* 外層間距與手機端優化 */
         .grid-wrapper { 
-            padding: 40px 50px; 
+            padding: 32px 38px; 
             overflow-x: auto; 
             -webkit-overflow-scrolling: touch; 
         }
         @media (max-width: 640px) {
-            .grid-wrapper { padding: 30px 25px; }
-            .grid-qimen { gap: 8px !important; margin: 0 auto; width: calc(100% - 6px); }
-            .palace { min-height: 150px !important; padding: 5px !important; }
-            .branch-label { font-size: 0.9rem !important; }
-            .tian-jiang { font-size: 0.65rem !important; }
-            .pos-left { left: -22px !important; }
-            .pos-right { right: -22px !important; }
-            .pos-top { top: -22px !important; }
-            .pos-bottom { bottom: -22px !important; }
+            .grid-wrapper { padding: 24px 22px; }
+            /* 手機端宮位間距縮至 3px */
+            .grid-qimen { gap: 3px !important; margin: 0 auto; width: 100% !important; max-width: 100% !important; }
+            .palace { min-height: 140px !important; padding: 3px 4px !important; border-radius: 4px !important; }
+            .branch-label { font-size: 0.85rem !important; }
+            .tian-jiang { font-size: 0.6rem !important; }
+            .pos-left { left: -19px !important; }
+            .pos-right { right: -19px !important; }
+            .pos-top { top: -20px !important; }
+            .pos-bottom { bottom: -20px !important; }
         }
 
-        .grid-qimen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 550px; min-width: 280px; margin: auto; }
+        /* 電腦端：間距由 12px 縮減至 4px，盤面適度放寬至 620px */
+        .grid-qimen { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 4px; 
+            max-width: 620px; 
+            min-width: 280px; 
+            margin: auto; 
+        }
         
         .palace { 
-            position: relative; border-radius: 10px; padding: 10px; min-height: 180px; 
-            display: flex; flex-direction: column; box-shadow: 0 3px 10px rgba(0,0,0,0.08); 
-            border: 1.5px solid; background-color: rgba(255, 255, 255, 0.95); 
-            transition: all 0.3s ease; cursor: pointer;
+            position: relative; 
+            border-radius: 6px; 
+            padding: 5px 8px; 
+            min-height: 175px; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
+            border: 1.5px solid; 
+            background-color: rgba(255, 255, 255, 0.95); 
+            transition: all 0.2s ease; 
+            cursor: pointer;
         }
-
 
         /* 古典五行配色 */
         .bg-water { background-color: #f0f9ff; border-color: #bae6fd; } .text-water { color: #0369a1; }
@@ -55,14 +71,26 @@
         .bg-metal { background-color: #fffbeb; border-color: #fde68a; } .text-metal { color: #b45309; }
         .bg-white-palace { background-color: #ffffff; border-color: #e2e8f0; } 
         
-        .text-main { font-size: clamp(0.9rem, 2.2vw, 1.25rem); line-height: 1.1; }
-        .text-palace-name { font-weight: 900; }
+        /* 核心字體放大：八神、九星、八門 */
+        .text-main { 
+            font-size: clamp(1.05rem, 2.7vw, 1.45rem); 
+            line-height: 1.12; 
+        }
+        .text-palace-name { 
+            font-size: clamp(0.78rem, 1.8vw, 0.95rem); 
+            font-weight: 900; 
+        }
         
+        /* 天地盤干字體加大樣式 */
+        .text-tiandi-stem {
+            font-size: clamp(1.15rem, 3vw, 1.65rem);
+            line-height: 1.05;
+        }
+
         .day-stem { display: inline-block; background-color: #f3e8ff; border: 1.5px solid #a855f7; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         .hour-stem { display: inline-block; background-color: #ffedd5; border: 1.5px solid #f97316; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         
-        .emoji-container { position: absolute; top: 6px; right: 6px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 1.1rem; line-height: 1; z-index: 10; }
-
+        .emoji-container { position: absolute; top: 4px; right: 4px; display: flex; flex-direction: column; align-items: flex-end; gap: 1px; font-size: 1rem; line-height: 1; z-index: 10; }
         .branch-label {
             position: absolute;
             display: flex;
@@ -1537,7 +1565,7 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
         if (bazi5) {
             baziContent = `
 <div class="flex flex-col items-center justify-start text-[10px] sm:text-[11px] md:text-xs leading-none font-bold w-full select-none z-10">
-    <div class="flex justify-center gap-x-0.5 font-black text-xl sm:text-xl md:text-lg mt-2 sm:mt-7">
+<div class="flex justify-center gap-x-0.5 font-black text-base sm:text-lg md:text-xl mt-1 sm:mt-3">
         <!-- 年柱 -->
         <div class="flex flex-col items-center gap-y-[1px] leading-none">
             <span style="color:${WUXING_COLORS[bazi5.yS] || '#1a202c'}">${bazi5.yS}</span>
@@ -2687,30 +2715,33 @@ el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                     hStemEff: hStemEff
                 };
 
-                el.innerHTML = `${getBranchHTML(i)}
-                    <div class="emoji-container">
-                        ${isKong ? '<span>🈳</span>' : ''}
-                        ${isMa ? '<span>🐎</span>' : ''}
-                    </div>
-                    <div class="flex flex-col h-full justify-between relative">
-                        <div class="flex flex-col items-center leading-none mb-1 text-main">
-                            <span class="text-palace-name text-${ACTIVE_PALACES[i].type}">${palaceLabel}</span>
-                            <span class="text-xl leading-none mt-0.5">${guaDisplay}</span>
-                        </div>
-                        <div class="flex flex-col items-start leading-none mb-1">
-                            <span class="text-main text-${godColor}">${godPan[i]}</span>
-                        </div>
-                        <div class="text-main leading-none mb-1 tracking-wider"><span class="text-${STAR_COLORS[pStars[0]] || 'black'}">${starTextDisplay}</span></div>
-                        <div class="flex items-start leading-none mb-1"><span class="text-main text-${doorColor} tracking-wider">${pDoorDisplay}</span>${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 mt-1 ml-0.5 font-bold">迫</span>`:""}</div>
-                        <div class="flex justify-between items-end mt-auto w-full">
-                            <div class="mb-1 flex-shrink-0 mr-2">${renderStem(anGan, i, true)}</div>
-                            <div class="flex flex-col items-stretch text-right leading-tight text-main font-bold flex-grow max-w-[80%]">
-                                <div class="mb-1 w-full">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">|</span>')}</div>
-                                <div class="border-t-[1.5px] border-gray-300 min-w-[2.5rem] w-full pt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">|</span>')}</div>
-                            </div>
-                        </div>
-                    </div>`;
-                
+el.innerHTML = `${getBranchHTML(i)}
+    <div class="emoji-container">
+        ${isKong ? '<span>🈳</span>' : ''}
+        ${isMa ? '<span>🐎</span>' : ''}
+    </div>
+    <div class="flex flex-col h-full justify-between relative select-none">
+        <div class="flex flex-col items-center leading-none mb-0.5">
+            <span class="text-palace-name text-${ACTIVE_PALACES[i].type}">${palaceLabel}</span>
+            <span class="text-base sm:text-lg leading-none mt-0.5 font-normal">${guaDisplay}</span>
+        </div>
+        <div class="flex flex-col items-start leading-none mb-0.5">
+            <span class="text-main text-${godColor}">${godPan[i]}</span>
+        </div>
+        <div class="text-main leading-none mb-0.5 tracking-wider">
+            <span class="text-${STAR_COLORS[pStars[0]] || 'black'}">${starTextDisplay}</span>
+        </div>
+        <div class="flex items-start leading-none mb-0.5">
+            <span class="text-main text-${doorColor} tracking-wider">${pDoorDisplay}</span>${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 ml-0.5 font-bold">迫</span>`:""}
+        </div>
+        <div class="flex justify-between items-end mt-auto w-full pt-1">
+            <div class="flex-shrink-0 mr-1 self-end pb-0.5">${renderStem(anGan, i, true)}</div>
+            <div class="flex flex-col items-stretch text-right leading-tight text-tiandi-stem font-black flex-grow max-w-[85%]">
+                <div class="w-full">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
+                <div class="border-t-[2px] border-gray-400 min-w-[2.2rem] w-full pt-0.5 mt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
+            </div>
+        </div>
+    </div>`;                
                 let doorTextForCopy = pDoorDisplay + (isMenPo(pDoor, i) ? "(迫)" : "");
                 
                 let hStemsForCopy = hStems.map((s, idx) => {
