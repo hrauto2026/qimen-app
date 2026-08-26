@@ -20,32 +20,71 @@
             transition: all 0.5s ease;
         }
         
-        .grid-wrapper { 
-            padding: 40px 50px; 
+/* 外層間距與手機端優化 */
+.grid-wrapper { 
+            padding: 30px 42px; 
             overflow-x: auto; 
             -webkit-overflow-scrolling: touch; 
         }
         @media (max-width: 640px) {
-            .grid-wrapper { padding: 30px 25px; }
-            .grid-qimen { gap: 8px !important; margin: 0 auto; width: calc(100% - 6px); }
-            .palace { min-height: 150px !important; padding: 5px !important; }
-            .branch-label { font-size: 0.9rem !important; }
-            .tian-jiang { font-size: 0.65rem !important; }
-            .pos-left { left: -22px !important; }
-            .pos-right { right: -22px !important; }
-            .pos-top { top: -22px !important; }
-            .pos-bottom { bottom: -22px !important; }
+            /* 🌟 手機端左右保留 28px 安全空間，徹底避免兩側天將被裁切 */
+            .grid-wrapper { 
+                padding: 24px 28px !important; 
+            }
+            .grid-qimen { 
+                gap: 4px !important; 
+                margin: 0 auto; 
+                width: 100% !important; 
+                max-width: 100% !important; 
+            }
+            .palace { 
+                min-height: 175px !important; 
+                padding: 4px 6px !important; 
+                border-radius: 6px !important; 
+            }
+            .branch-label { 
+                font-size: 0.85rem !important; 
+            }
+            .tian-jiang { 
+                font-size: 0.6rem !important; 
+            }
+            /* 🌟 精準定位：使兩側天將剛好緊貼九宮格外框且完全落在安全區內 */
+            .pos-left { 
+                left: -21px !important; 
+            }
+            .pos-right { 
+                right: -21px !important; 
+            }
+            .pos-top { 
+                top: -22px !important; 
+            }
+            .pos-bottom { 
+                bottom: -22px !important; 
+            }
         }
 
-        .grid-qimen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 550px; min-width: 280px; margin: auto; }
+        .grid-qimen { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 6px; 
+            max-width: 640px; 
+            min-width: 280px; 
+            margin: auto; 
+        }
         
         .palace { 
-            position: relative; border-radius: 10px; padding: 10px; min-height: 180px; 
-            display: flex; flex-direction: column; box-shadow: 0 3px 10px rgba(0,0,0,0.08); 
-            border: 1.5px solid; background-color: rgba(255, 255, 255, 0.95); 
-            transition: all 0.3s ease; cursor: pointer;
+            position: relative; 
+            border-radius: 8px; 
+            padding: 6px 8px; 
+            min-height: 200px; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
+            border: 1.5px solid; 
+            background-color: rgba(255, 255, 255, 0.95); 
+            transition: all 0.2s ease; 
+            cursor: pointer;
         }
-
 
         /* 古典五行配色 */
         .bg-water { background-color: #f0f9ff; border-color: #bae6fd; } .text-water { color: #0369a1; }
@@ -55,14 +94,29 @@
         .bg-metal { background-color: #fffbeb; border-color: #fde68a; } .text-metal { color: #b45309; }
         .bg-white-palace { background-color: #ffffff; border-color: #e2e8f0; } 
         
-        .text-main { font-size: clamp(0.9rem, 2.2vw, 1.25rem); line-height: 1.1; }
-        .text-palace-name { font-weight: 900; }
+        /* 🌟 進取型八神／九星／八門字體（加粗、加大、加寬間距充滿橫向空間） */
+        .text-main { 
+            font-size: clamp(1.4rem, 5vw, 1.95rem); 
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            line-height: 1.15; 
+        }
+        .text-palace-name { 
+            font-size: clamp(0.78rem, 1.9vw, 0.95rem); 
+            font-weight: 900; 
+        }
         
+        /* 🌟 天地盤干字級：保證小於星門神 */
+        .text-tiandi-stem {
+            font-size: clamp(1.2rem, 4.0vw, 1.55rem);
+            font-weight: 900;
+            line-height: 1.05;
+        }
+
         .day-stem { display: inline-block; background-color: #f3e8ff; border: 1.5px solid #a855f7; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         .hour-stem { display: inline-block; background-color: #ffedd5; border: 1.5px solid #f97316; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         
-        .emoji-container { position: absolute; top: 6px; right: 6px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 1.1rem; line-height: 1; z-index: 10; }
-
+        .emoji-container { position: absolute; top: 4px; right: 4px; display: flex; flex-direction: column; align-items: flex-end; gap: 1px; font-size: 1rem; line-height: 1; z-index: 10; }
         .branch-label {
             position: absolute;
             display: flex;
@@ -119,7 +173,7 @@
 <div id="app-workspace" class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     
     <div id="main-panel" class="lg:col-span-12 space-y-6 transition-all duration-500">
-        <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-4 md:p-6 border border-white main-container">
+<div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-2.5 sm:p-4 md:p-6 border border-white main-container">
             <h1 class="text-2xl md:text-3xl text-center mb-4 text-indigo-900 tracking-widest">
                 奇門遁甲拆補法排盤<a href="https://hrauto2026.github.io/qimen-app/index.html" class="title-link hover:text-indigo-600 transition-colors duration-300">🏠</a>
             </h1>
@@ -518,9 +572,10 @@
     </div>
 </div>
 
-<div id="palace-modal" class="fixed inset-0 bg-gray-900/60 hidden flex justify-center items-center z-50 p-4">
-    <div class="bg-white rounded-2xl shadow-2xl p-5 max-w-sm sm:max-w-md md:max-w-xl w-full max-h-[85vh] overflow-y-auto relative border-t-8 border-indigo-600">
-        <button onclick="closePalaceModal()" class="absolute top-3 right-4 text-gray-400 hover:text-black text-2xl">✖</button>
+<div id="palace-modal" class="fixed inset-0 bg-gray-900/60 hidden flex justify-center items-center z-50 p-2 sm:p-4">
+    <!-- 🌟 手機端改為 w-full max-w-full，邊距縮小至 p-3.5，在手機上完全符合 screen width；電腦端擴大至 max-w-2xl -->
+    <div class="bg-white rounded-2xl shadow-2xl p-3.5 sm:p-5 max-w-full sm:max-w-lg md:max-w-2xl w-full max-h-[92vh] sm:max-h-[85vh] overflow-y-auto relative border-t-8 border-indigo-600">
+        <button onclick="closePalaceModal()" class="absolute top-3 right-4 text-gray-400 hover:text-black text-2xl font-bold">✖</button>
         <h3 class="text-xl md:text-2xl mb-3 text-center text-indigo-900 font-bold tracking-widest" id="pm-title">宮位資訊</h3>
         
         <div class="space-y-4">
@@ -540,26 +595,32 @@
 
             <!-- Cheat Sheet Container -->
             <details id="pm-cheatsheet-details" class="group bg-blue-50/40 border border-blue-200 rounded-lg shadow-sm">
-                <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 flex justify-between items-center select-none">
+                <summary class="p-2 cursor-pointer text-sm sm:text-base font-bold text-blue-900 flex justify-between items-center select-none">
                     <div class="flex items-center gap-1.5">
                         <span>📚 合/沖/方局/刑害資料</span>
-                        <span id="pm-cheatsheet-badge" class="text-xs"></span>
+                        <span id="pm-cheatsheet-badge" class="text-xs sm:text-sm"></span>
                     </div>
                     <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span>
                 </summary>
-                <div id="pm-cheatsheet-content" class="p-3 text-xs text-gray-700 border-t border-blue-200 bg-white rounded-b-lg">
+                <!-- 🌟 電腦端字體提升至 text-sm ~ text-base -->
+                <div id="pm-cheatsheet-content" class="p-3 text-xs sm:text-sm md:text-base text-gray-700 border-t border-blue-200 bg-white rounded-b-lg">
                     <!-- 內容由 JS 動態生成與高亮 -->
                 </div>
             </details>
 
             <div>
-                <h4 class="font-bold text-red-700 border-b-2 border-red-100 mb-2 pb-1 flex items-center">⚠️ 四害與狀態</h4>
-                <div id="pm-harms" class="text-sm flex flex-wrap gap-2 min-h-[24px]"></div>
+                <h4 class="font-bold text-red-700 border-b-2 border-red-100 mb-2 pb-1 flex items-center text-sm sm:text-base">⚠️ 四害與狀態</h4>
+                <div id="pm-harms" class="text-sm sm:text-base flex flex-wrap gap-2 min-h-[24px]"></div>
             </div>
 
             <div>
-                <h4 class="font-bold text-blue-700 border-b-2 border-blue-100 mb-2 pb-1 flex items-center">📜 格局名堂</h4>
-                <div id="pm-geju" class="space-y-2 text-sm min-h-[24px]"></div>
+                <h4 class="font-bold text-blue-700 border-b-2 border-blue-100 mb-2 pb-1 flex items-center text-sm sm:text-base">📜 格局名堂</h4>
+                <div id="pm-geju" class="space-y-2 text-sm sm:text-base min-h-[24px]"></div>
+            </div>
+
+            <!-- 🌟 (1) 底部新增「關閉」按鈕 -->
+            <div class="pt-3 border-t border-gray-200 text-center">
+                <button onclick="closePalaceModal()" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-10 rounded-xl shadow transition active:scale-95 text-sm sm:text-base">關閉</button>
             </div>
         </div>
     </div>
@@ -824,17 +885,17 @@
         5: { name: "中五", num: "五", gua: "", type: "brown", branch: [], baseDoor: "死門" }
     };
 
-    const PALACES_XIAN = {
-        1: { name: "坤八", num: "八", gua: "☷", type: "brown", branch: ["子"], baseDoor: "休門" },
-        8: { name: "震四", num: "四", gua: "☳", type: "wood", branch: ["丑", "寅"], baseDoor: "生門" },
-        3: { name: "離三", num: "三", gua: "☲", type: "fire", branch: ["卯"], baseDoor: "傷門" },
-        4: { name: "兌二", num: "二", gua: "☱", type: "metal", branch: ["辰", "巳"], baseDoor: "杜門" },
-        9: { name: "乾一", num: "一", gua: "☰", type: "metal", branch: ["午"], baseDoor: "景門" },
-        2: { name: "巽五", num: "五", gua: "☴", type: "wood", branch: ["未", "申"], baseDoor: "死門" },
-        7: { name: "坎六", num: "六", gua: "☵", type: "water", branch: ["酉"], baseDoor: "驚門" },
-        6: { name: "艮七", num: "七", gua: "☶", type: "brown", branch: ["戌", "亥"], baseDoor: "開門" },
-        5: { name: "中五", num: "五", gua: "", type: "brown", branch: [], baseDoor: "死門" }
-    };
+const PALACES_XIAN = {
+    1: { name: "坤八", num: "八", gua: "☷", type: "brown", branch: ["子"], baseDoor: "休門" },
+    8: { name: "震四", num: "四", gua: "☳", type: "wood", branch: ["丑", "寅"], baseDoor: "生門" },
+    3: { name: "離三", num: "三", gua: "☲", type: "fire", branch: ["卯"], baseDoor: "傷門" },
+    4: { name: "兌二", num: "二", gua: "☱", type: "metal", branch: ["辰", "巳"], baseDoor: "杜門" },
+    9: { name: "乾一", num: "一", gua: "☰", type: "metal", branch: ["午"], baseDoor: "景門" },
+    2: { name: "巽五", num: "五", gua: "☴", type: "wood", branch: ["未", "申"], baseDoor: "死門" },
+    7: { name: "坎六", num: "六", gua: "☵", type: "water", branch: ["酉"], baseDoor: "驚門" },
+    6: { name: "艮七", num: "七", gua: "☶", type: "brown", branch: ["戌", "亥"], baseDoor: "開門" },
+    5: { name: "中宮", num: "", gua: "", type: "brown", branch: [], baseDoor: "死門" }
+};
 
     const BRANCH_POSITIONS_TEMPLATE = { 1: `子`, 8: `丑寅`, 3: `卯`, 4: `辰巳`, 9: `午`, 2: `未申`, 7: `酉`, 6: `戌亥`, 5: `` };
     const STAR_COLORS = { "天蓬": "water", "天任": "brown", "天衝": "wood", "天輔": "wood", "天英": "fire", "天芮": "brown", "天柱": "metal", "天心": "metal", "天禽": "brown" };
@@ -1235,15 +1296,17 @@ dizhiXing: {
     // 渲染合沖方局列表並高亮
 function renderRelationBox(activeStems, activeBranchList) {
     let totalMatches = 0;
-    let html = '<div class="grid grid-cols-2 gap-x-2 gap-y-3">';
+    // 🌟 電腦端加大欄距與垂直間距
+    let html = '<div class="grid grid-cols-2 gap-x-4 gap-y-3.5">';
 
     for (let key in RELATION_RULES) {
         const grp = RELATION_RULES[key];
         const isStem = (grp.type === 'stem');
         
         html += `<div>
-            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">${grp.title}</div>
-            <div class="space-y-1">`;
+            <!-- 🌟 分類標題：電腦端放大至 text-sm ~ text-base -->
+            <div class="font-black text-blue-900 mb-1 border-b border-blue-100 pb-0.5 text-xs sm:text-sm md:text-base">${grp.title}</div>
+            <div class="space-y-1 sm:space-y-1.5">`;
 
         grp.items.forEach(item => {
             let matchedDisplay = [];
@@ -1253,7 +1316,6 @@ function renderRelationBox(activeStems, activeBranchList) {
                     matchedDisplay = matchedChars;
                 }
             } else {
-                // 複製地支陣列進行消耗性匹配（包含宮支、遁干支、門支）
                 let tempBranches = [...activeBranchList];
                 let matchedItems = [];
                 for (let reqChar of item.chars) {
@@ -1264,7 +1326,6 @@ function renderRelationBox(activeStems, activeBranchList) {
                     }
                 }
 
-                // 🌟 自刑防呆：禁止僅由「天盤遁干 + 地盤遁干」單獨組成，必須有實體「宮支」或「門支」參與
                 if (item.isZiXing) {
                     const hasPhysicalBranch = matchedItems.some(b => b.source === 'palace' || b.source === 'door');
                     if (!hasPhysicalBranch) {
@@ -1279,12 +1340,14 @@ function renderRelationBox(activeStems, activeBranchList) {
 
             if (matchedDisplay.length > 0) {
                 totalMatches++;
-                html += `<div class="bg-amber-100 text-amber-950 font-bold px-1.5 py-0.5 rounded border border-amber-300 shadow-sm flex items-center justify-between text-[11px] leading-tight">
-                    <span>➡️${item.label}</span>
-                    <span class="text-[10px] text-amber-800 bg-amber-200/80 px-1 rounded font-black">${matchedDisplay.join('·')}</span>
+                // 🌟 符合項目：電腦端字級放大至 text-sm / md:text-sm，徽章同步放大
+                html += `<div class="bg-amber-100 text-amber-950 font-bold px-2 py-1 rounded border border-amber-300 shadow-sm flex items-center justify-between text-xs sm:text-sm md:text-sm leading-tight">
+                    <span>➡️ ${item.label}</span>
+                    <span class="text-[11px] sm:text-xs md:text-xs text-amber-900 bg-amber-200/90 px-1.5 py-0.5 rounded font-black">${matchedDisplay.join('·')}</span>
                 </div>`;
             } else {
-                html += `<div class="text-gray-600 px-1 py-0.5">${item.label}</div>`;
+                // 🌟 一般項目：電腦端放大至 text-xs sm:text-sm md:text-sm
+                html += `<div class="text-gray-600 px-1 py-0.5 text-xs sm:text-sm md:text-sm">${item.label}</div>`;
             }
         });
 
@@ -1293,7 +1356,6 @@ function renderRelationBox(activeStems, activeBranchList) {
     html += '</div>';
     return { html, totalMatches };
 }
-
 // ==================== 彈窗詳細資訊 ====================
     function showPalaceDetails(pNum) {
         const data = globalPalaceData[pNum];
@@ -1532,41 +1594,43 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
     let panData = {}; 
     let currentYiMaPalace = "";
 
-    function renderPalace5Html(s, anGan, centerLabel, bazi5) {
+function renderPalace5Html(s, anGan, centerLabel, bazi5) {
         let baziContent = "";
         if (bazi5) {
             baziContent = `
-<div class="flex flex-col items-center justify-start text-[10px] sm:text-[11px] md:text-xs leading-none font-bold w-full select-none z-10">
-    <div class="flex justify-center gap-x-0.5 font-black text-xl sm:text-xl md:text-lg mt-2 sm:mt-7">
+<div class="flex flex-col items-center justify-center w-full select-none z-10 my-auto">
+    <!-- 🌟 四柱干支：大幅放大字級 (text-lg ~ text-2xl)，加大字距 -->
+    <div class="flex justify-center items-center gap-x-1.5 sm:gap-x-2 font-black text-lg sm:text-xl md:text-2xl leading-none mt-1">
         <!-- 年柱 -->
-        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.yS] || '#1a202c'}">${bazi5.yS}</span>
             <span style="color:${WUXING_COLORS[bazi5.yB] || '#1a202c'}">${bazi5.yB}</span>
         </div>
         <!-- 月柱 -->
-        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.mS] || '#1a202c'}">${bazi5.mS}</span>
             <span style="color:${WUXING_COLORS[bazi5.mB] || '#1a202c'}">${bazi5.mB}</span>
         </div>
         <!-- 日柱 -->
-        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.dS] || '#1a202c'}">${bazi5.dS}</span>
             <span style="color:${WUXING_COLORS[bazi5.dB] || '#1a202c'}">${bazi5.dB}</span>
         </div>
         <!-- 時柱 -->
-        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.hS] || '#1a202c'}">${bazi5.hS}</span>
             <span style="color:${WUXING_COLORS[bazi5.hB] || '#1a202c'}">${bazi5.hB}</span>
         </div>
     </div>
     <!-- 年月日時標籤 -->
-    <div class="text-[9px] sm:text-[10px] text-gray-400 tracking-widest mt-1">年月日時</div>
-</div>
+    <div class="text-[10px] sm:text-xs text-gray-400 font-bold tracking-widest mt-1">年月日時</div>
 
-<div class="flex flex-col items-start w-full text-[9px] sm:text-[10px] md:text-xs text-gray-600 leading-tight space-y-0.5 px-1.5 mt-1">
-    <div class="whitespace-nowrap">旬首：<span class="text-gray-900 font-bold">${bazi5.xun}</span></div>
-    <div class="whitespace-nowrap">值符：<span class="text-gray-900 font-bold">${bazi5.zf}</span></div>
-    <div class="whitespace-nowrap">值使：<span class="text-gray-900 font-bold">${bazi5.zs}</span></div>
+    <!-- 🌟 旬首、值符、值使：字級提升至 text-xs ~ text-base，加強字重與垂直間距以填滿下方空間 -->
+    <div class="flex flex-col items-start w-full text-xs sm:text-sm md:text-base text-gray-700 font-bold leading-normal space-y-1.5 mt-2 sm:mt-3 px-1">
+        <div class="whitespace-nowrap flex items-center">旬首：<span class="text-gray-950 font-black ml-0.5">${bazi5.xun}</span></div>
+        <div class="whitespace-nowrap flex items-center">值符：<span class="text-gray-950 font-black ml-0.5">${bazi5.zf}</span></div>
+        <div class="whitespace-nowrap flex items-center">值使：<span class="text-gray-950 font-black ml-0.5">${bazi5.zs}</span></div>
+    </div>
 </div>
             `;
         }
@@ -1581,17 +1645,22 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
 
         return `
             ${getBranchHTML(5)}
-            <div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1 z-20">${centerLabel}</div>
-            ${baziContent}
-            <div class="flex justify-between items-end w-full mt-auto z-10 px-1 pb-1">
-                <div class="mb-1">${anGanHtml}</div>
-                <div class="flex flex-col items-stretch text-right leading-tight text-main font-bold">
-                    <div class="text-xl sm:text-2xl">${mainStemHtml}</div>
+            <div class="flex flex-col h-full justify-between relative select-none">
+                <!-- 頂部宮名 -->
+                <div class="flex flex-col items-center leading-none">
+                    <span class="text-palace-name text-brown">${centerLabel}</span>
+                </div>
+                ${baziContent}
+                <!-- 底部暗干與中宮天干 -->
+                <div class="flex justify-between items-end w-full mt-auto z-10 px-0.5 pb-0.5 pt-1">
+                    <div class="flex-shrink-0 self-end pb-0.5">${anGanHtml}</div>
+                    <div class="flex flex-col items-stretch text-right leading-tight text-tiandi-stem font-black">
+                        <div>${mainStemHtml}</div>
+                    </div>
                 </div>
             </div>
         `;
     }
-
     function toggleInputMode() {
         isBaziMode = !isBaziMode;
         const btn = document.getElementById('btn-mode-toggle');
@@ -2640,11 +2709,12 @@ el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                     guaDisplay = isInner ? "內" : "外";
                 }
 
-                if(i === 5) {
+if(i === 5) {
                     let s = earthPan[5], anGan = anGanPan[5];
-                    let centerLabel = `中五${feixingSuffix}`;
+                    // 🌟 依據先天／後天動態讀取宮名（先天為「中宮」，後天為「中五」）
+                    let centerLabel = `${ACTIVE_PALACES[5].name}${feixingSuffix}`;
                     el.innerHTML = renderPalace5Html(s, anGan, centerLabel, panData.bazi5Info);
-                    panData.palaces["中五"] = s;
+                    panData.palaces[ACTIVE_PALACES[5].name] = s;
                     
                     globalPalaceData[5] = { name: ACTIVE_PALACES[5].name, branch: '', hStems: [s], eStems: [s], anGan: anGan, isCenter: true };
                     continue;
@@ -2657,7 +2727,7 @@ el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                 if(isMa) currentYiMaPalace = ACTIVE_PALACES[i].name;
                 
                 let godColor = GOD_COLORS[godPan[i]] || "black", doorColor = DOOR_COLORS[pDoor] || "black", anGan = anGanPan[i];
-                let starText = (pStars[0] === "天芮" && pStars[1] === "天禽") ? "天芮/禽" : pStars[0];
+                let starText = (pStars[0] === "天芮" && pStars[1] === "天禽") ? "芮/禽" : pStars[0];
                 let palaceLabel = `${ACTIVE_PALACES[i].name}${feixingSuffix}`;
 
                 let pDoorDisplay = useEnergy ? DOOR_ENERGY[pDoor][i] : pDoor;
@@ -2692,25 +2762,30 @@ el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                         ${isKong ? '<span>🈳</span>' : ''}
                         ${isMa ? '<span>🐎</span>' : ''}
                     </div>
-                    <div class="flex flex-col h-full justify-between relative">
-                        <div class="flex flex-col items-center leading-none mb-1 text-main">
+                    <div class="flex flex-col h-full justify-between relative select-none">
+                        <!-- 頂部：宮名 + 八卦/內外盤符號 -->
+                        <div class="flex flex-col items-center leading-none mb-0.5">
                             <span class="text-palace-name text-${ACTIVE_PALACES[i].type}">${palaceLabel}</span>
-                            <span class="text-xl leading-none mt-0.5">${guaDisplay}</span>
+                            <span class="text-sm sm:text-base leading-none mt-0.5 font-normal">${guaDisplay}</span>
                         </div>
-                        <div class="flex flex-col items-start leading-none mb-1">
-                            <span class="text-main text-${godColor}">${godPan[i]}</span>
-                        </div>
-                        <div class="text-main leading-none mb-1 tracking-wider"><span class="text-${STAR_COLORS[pStars[0]] || 'black'}">${starTextDisplay}</span></div>
-                        <div class="flex items-start leading-none mb-1"><span class="text-main text-${doorColor} tracking-wider">${pDoorDisplay}</span>${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 mt-1 ml-0.5 font-bold">迫</span>`:""}</div>
-                        <div class="flex justify-between items-end mt-auto w-full">
-                            <div class="mb-1 flex-shrink-0 mr-2">${renderStem(anGan, i, true)}</div>
-                            <div class="flex flex-col items-stretch text-right leading-tight text-main font-bold flex-grow max-w-[80%]">
-                                <div class="mb-1 w-full">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">|</span>')}</div>
-                                <div class="border-t-[1.5px] border-gray-300 min-w-[2.5rem] w-full pt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">|</span>')}</div>
+                        <!-- 中部：八神、九星、八門 (進取型加大並善用整行空間) -->
+                        <div class="flex flex-col items-start leading-none space-y-1 w-full my-0.5">
+                            <span class="text-main text-${godColor} w-full">${godPan[i]}</span>
+<span class="text-main text-${STAR_COLORS[pStars[0]] || 'black'} w-full tracking-wide">${starTextDisplay}</span>
+                            <div class="flex items-center leading-none w-full">
+                                <span class="text-main text-${doorColor} tracking-wide">${pDoorDisplay}</span>
+                                ${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 ml-1 font-black px-0.5 bg-red-50 border border-red-200 rounded">迫</span>`:""}
                             </div>
                         </div>
-                    </div>`;
-                
+                        <!-- 底部：暗干 (左) + 天盤干/地盤干 (右，字級嚴格小於星門神) -->
+                        <div class="flex justify-between items-end mt-auto w-full pt-1">
+                            <div class="flex-shrink-0 self-end pb-0.5">${renderStem(anGan, i, true)}</div>
+                            <div class="flex flex-col items-stretch text-right leading-tight text-tiandi-stem font-black flex-grow max-w-[80%]">
+                                <div class="w-full">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
+                                <div class="border-t-[2px] border-gray-400 min-w-[2.2rem] w-full pt-0.5 mt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
+                            </div>
+                        </div>
+                    </div>`;               
                 let doorTextForCopy = pDoorDisplay + (isMenPo(pDoor, i) ? "(迫)" : "");
                 
                 let hStemsForCopy = hStems.map((s, idx) => {
