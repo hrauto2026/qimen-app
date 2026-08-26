@@ -1590,37 +1590,43 @@ function renderPalace5Html(s, anGan, centerLabel, bazi5) {
         let baziContent = "";
         if (bazi5) {
             baziContent = `
-<div class="flex flex-col items-center justify-start text-[10px] sm:text-[11px] md:text-xs leading-none font-bold w-full select-none z-10 mt-1">
-    <div class="flex justify-center gap-x-1 font-black text-sm sm:text-base md:text-lg">
+function renderPalace5Html(s, anGan, centerLabel, bazi5) {
+        let baziContent = "";
+        if (bazi5) {
+            baziContent = `
+<div class="flex flex-col items-center justify-center w-full select-none z-10 my-auto">
+    <!-- 🌟 四柱干支：大幅放大字級 (text-lg ~ text-2xl)，加大字距 -->
+    <div class="flex justify-center items-center gap-x-1.5 sm:gap-x-2 font-black text-lg sm:text-xl md:text-2xl leading-none mt-1">
         <!-- 年柱 -->
-        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.yS] || '#1a202c'}">${bazi5.yS}</span>
             <span style="color:${WUXING_COLORS[bazi5.yB] || '#1a202c'}">${bazi5.yB}</span>
         </div>
         <!-- 月柱 -->
-        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.mS] || '#1a202c'}">${bazi5.mS}</span>
             <span style="color:${WUXING_COLORS[bazi5.mB] || '#1a202c'}">${bazi5.mB}</span>
         </div>
         <!-- 日柱 -->
-        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.dS] || '#1a202c'}">${bazi5.dS}</span>
             <span style="color:${WUXING_COLORS[bazi5.dB] || '#1a202c'}">${bazi5.dB}</span>
         </div>
         <!-- 時柱 -->
-        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.hS] || '#1a202c'}">${bazi5.hS}</span>
             <span style="color:${WUXING_COLORS[bazi5.hB] || '#1a202c'}">${bazi5.hB}</span>
         </div>
     </div>
     <!-- 年月日時標籤 -->
-    <div class="text-[9px] sm:text-[10px] text-gray-400 tracking-widest mt-0.5">年月日時</div>
-</div>
+    <div class="text-[10px] sm:text-xs text-gray-400 font-bold tracking-widest mt-1">年月日時</div>
 
-<div class="flex flex-col items-start w-full text-[9px] sm:text-[10px] md:text-xs text-gray-600 leading-tight space-y-0.5 px-0.5 mt-1">
-    <div class="whitespace-nowrap">旬首：<span class="text-gray-900 font-bold">${bazi5.xun}</span></div>
-    <div class="whitespace-nowrap">值符：<span class="text-gray-900 font-bold">${bazi5.zf}</span></div>
-    <div class="whitespace-nowrap">值使：<span class="text-gray-900 font-bold">${bazi5.zs}</span></div>
+    <!-- 🌟 旬首、值符、值使：字級提升至 text-xs ~ text-base，加強字重與垂直間距以填滿下方空間 -->
+    <div class="flex flex-col items-start w-full text-xs sm:text-sm md:text-base text-gray-700 font-bold leading-normal space-y-1.5 mt-2 sm:mt-3 px-1">
+        <div class="whitespace-nowrap flex items-center">旬首：<span class="text-gray-950 font-black ml-0.5">${bazi5.xun}</span></div>
+        <div class="whitespace-nowrap flex items-center">值符：<span class="text-gray-950 font-black ml-0.5">${bazi5.zf}</span></div>
+        <div class="whitespace-nowrap flex items-center">值使：<span class="text-gray-950 font-black ml-0.5">${bazi5.zs}</span></div>
+    </div>
 </div>
             `;
         }
@@ -1636,11 +1642,12 @@ function renderPalace5Html(s, anGan, centerLabel, bazi5) {
         return `
             ${getBranchHTML(5)}
             <div class="flex flex-col h-full justify-between relative select-none">
-                <!-- 頂部居中宮名與飛星，不再使用 absolute 浮動，徹底解決重疊問題 -->
+                <!-- 頂部宮名 -->
                 <div class="flex flex-col items-center leading-none">
                     <span class="text-palace-name text-brown">${centerLabel}</span>
                 </div>
                 ${baziContent}
+                <!-- 底部暗干與中宮天干 -->
                 <div class="flex justify-between items-end w-full mt-auto z-10 px-0.5 pb-0.5 pt-1">
                     <div class="flex-shrink-0 self-end pb-0.5">${anGanHtml}</div>
                     <div class="flex flex-col items-stretch text-right leading-tight text-tiandi-stem font-black">
