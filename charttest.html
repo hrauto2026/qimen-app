@@ -22,20 +22,45 @@
         
 /* 外層間距與手機端優化 */
 .grid-wrapper { 
-            padding: 24px 30px; 
+            padding: 30px 42px; 
             overflow-x: auto; 
             -webkit-overflow-scrolling: touch; 
         }
         @media (max-width: 640px) {
-            .grid-wrapper { padding: 16px 12px; }
-            .grid-qimen { gap: 4px !important; margin: 0 auto; width: 100% !important; max-width: 100% !important; }
-            .palace { min-height: 175px !important; padding: 4px 6px !important; border-radius: 6px !important; }
-            .branch-label { font-size: 0.85rem !important; }
-            .tian-jiang { font-size: 0.6rem !important; }
-            .pos-left { left: -18px !important; }
-            .pos-right { right: -18px !important; }
-            .pos-top { top: -19px !important; }
-            .pos-bottom { bottom: -19px !important; }
+            /* 🌟 手機端左右保留 28px 安全空間，徹底避免兩側天將被裁切 */
+            .grid-wrapper { 
+                padding: 24px 28px !important; 
+            }
+            .grid-qimen { 
+                gap: 4px !important; 
+                margin: 0 auto; 
+                width: 100% !important; 
+                max-width: 100% !important; 
+            }
+            .palace { 
+                min-height: 175px !important; 
+                padding: 4px 6px !important; 
+                border-radius: 6px !important; 
+            }
+            .branch-label { 
+                font-size: 0.85rem !important; 
+            }
+            .tian-jiang { 
+                font-size: 0.6rem !important; 
+            }
+            /* 🌟 精準定位：使兩側天將剛好緊貼九宮格外框且完全落在安全區內 */
+            .pos-left { 
+                left: -21px !important; 
+            }
+            .pos-right { 
+                right: -21px !important; 
+            }
+            .pos-top { 
+                top: -22px !important; 
+            }
+            .pos-bottom { 
+                bottom: -22px !important; 
+            }
         }
 
         .grid-qimen { 
@@ -148,7 +173,7 @@
 <div id="app-workspace" class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     
     <div id="main-panel" class="lg:col-span-12 space-y-6 transition-all duration-500">
-        <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-4 md:p-6 border border-white main-container">
+<div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-2.5 sm:p-4 md:p-6 border border-white main-container">
             <h1 class="text-2xl md:text-3xl text-center mb-4 text-indigo-900 tracking-widest">
                 奇門遁甲拆補法排盤<a href="https://hrauto2026.github.io/qimen-app/index.html" class="title-link hover:text-indigo-600 transition-colors duration-300">🏠</a>
             </h1>
