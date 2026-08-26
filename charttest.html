@@ -21,28 +21,28 @@
         }
         
 /* 外層間距與手機端優化 */
-        .grid-wrapper { 
-            padding: 32px 38px; 
+.grid-wrapper { 
+            padding: 24px 30px; 
             overflow-x: auto; 
             -webkit-overflow-scrolling: touch; 
         }
-@media (max-width: 640px) {
-            .grid-wrapper { padding: 20px 18px; }
+        @media (max-width: 640px) {
+            .grid-wrapper { padding: 16px 12px; }
             .grid-qimen { gap: 4px !important; margin: 0 auto; width: 100% !important; max-width: 100% !important; }
-            .palace { min-height: 165px !important; padding: 4px 6px !important; border-radius: 6px !important; }
+            .palace { min-height: 175px !important; padding: 4px 6px !important; border-radius: 6px !important; }
             .branch-label { font-size: 0.85rem !important; }
             .tian-jiang { font-size: 0.6rem !important; }
-            .pos-left { left: -19px !important; }
-            .pos-right { right: -19px !important; }
-            .pos-top { top: -20px !important; }
-            .pos-bottom { bottom: -20px !important; }
+            .pos-left { left: -18px !important; }
+            .pos-right { right: -18px !important; }
+            .pos-top { top: -19px !important; }
+            .pos-bottom { bottom: -19px !important; }
         }
 
         .grid-qimen { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
-            gap: 5px; 
-            max-width: 620px; 
+            gap: 6px; 
+            max-width: 640px; 
             min-width: 280px; 
             margin: auto; 
         }
@@ -51,7 +51,7 @@
             position: relative; 
             border-radius: 8px; 
             padding: 6px 8px; 
-            min-height: 190px; 
+            min-height: 200px; 
             display: flex; 
             flex-direction: column; 
             box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
@@ -69,10 +69,11 @@
         .bg-metal { background-color: #fffbeb; border-color: #fde68a; } .text-metal { color: #b45309; }
         .bg-white-palace { background-color: #ffffff; border-color: #e2e8f0; } 
         
-        /* 🌟 顯著放大 神、星、門 字體並加粗 */
+        /* 🌟 進取型八神／九星／八門字體（加粗、加大、加寬間距充滿橫向空間） */
         .text-main { 
-            font-size: clamp(1.2rem, 3.8vw, 1.55rem); 
+            font-size: clamp(1.4rem, 5vw, 1.95rem); 
             font-weight: 900;
+            letter-spacing: 0.08em;
             line-height: 1.15; 
         }
         .text-palace-name { 
@@ -80,9 +81,10 @@
             font-weight: 900; 
         }
         
-        /* 🌟 天地盤干專屬加大 */
+        /* 🌟 天地盤干字級：保證小於星門神 */
         .text-tiandi-stem {
-            font-size: clamp(1.35rem, 4.2vw, 1.85rem);
+            font-size: clamp(1.2rem, 4.0vw, 1.55rem);
+            font-weight: 900;
             line-height: 1.05;
         }
 
@@ -851,17 +853,17 @@
         5: { name: "中五", num: "五", gua: "", type: "brown", branch: [], baseDoor: "死門" }
     };
 
-    const PALACES_XIAN = {
-        1: { name: "坤八", num: "八", gua: "☷", type: "brown", branch: ["子"], baseDoor: "休門" },
-        8: { name: "震四", num: "四", gua: "☳", type: "wood", branch: ["丑", "寅"], baseDoor: "生門" },
-        3: { name: "離三", num: "三", gua: "☲", type: "fire", branch: ["卯"], baseDoor: "傷門" },
-        4: { name: "兌二", num: "二", gua: "☱", type: "metal", branch: ["辰", "巳"], baseDoor: "杜門" },
-        9: { name: "乾一", num: "一", gua: "☰", type: "metal", branch: ["午"], baseDoor: "景門" },
-        2: { name: "巽五", num: "五", gua: "☴", type: "wood", branch: ["未", "申"], baseDoor: "死門" },
-        7: { name: "坎六", num: "六", gua: "☵", type: "water", branch: ["酉"], baseDoor: "驚門" },
-        6: { name: "艮七", num: "七", gua: "☶", type: "brown", branch: ["戌", "亥"], baseDoor: "開門" },
-        5: { name: "中五", num: "五", gua: "", type: "brown", branch: [], baseDoor: "死門" }
-    };
+const PALACES_XIAN = {
+    1: { name: "坤八", num: "八", gua: "☷", type: "brown", branch: ["子"], baseDoor: "休門" },
+    8: { name: "震四", num: "四", gua: "☳", type: "wood", branch: ["丑", "寅"], baseDoor: "生門" },
+    3: { name: "離三", num: "三", gua: "☲", type: "fire", branch: ["卯"], baseDoor: "傷門" },
+    4: { name: "兌二", num: "二", gua: "☱", type: "metal", branch: ["辰", "巳"], baseDoor: "杜門" },
+    9: { name: "乾一", num: "一", gua: "☰", type: "metal", branch: ["午"], baseDoor: "景門" },
+    2: { name: "巽五", num: "五", gua: "☴", type: "wood", branch: ["未", "申"], baseDoor: "死門" },
+    7: { name: "坎六", num: "六", gua: "☵", type: "water", branch: ["酉"], baseDoor: "驚門" },
+    6: { name: "艮七", num: "七", gua: "☶", type: "brown", branch: ["戌", "亥"], baseDoor: "開門" },
+    5: { name: "中宮", num: "", gua: "", type: "brown", branch: [], baseDoor: "死門" }
+};
 
     const BRANCH_POSITIONS_TEMPLATE = { 1: `子`, 8: `丑寅`, 3: `卯`, 4: `辰巳`, 9: `午`, 2: `未申`, 7: `酉`, 6: `戌亥`, 5: `` };
     const STAR_COLORS = { "天蓬": "water", "天任": "brown", "天衝": "wood", "天輔": "wood", "天英": "fire", "天芮": "brown", "天柱": "metal", "天心": "metal", "天禽": "brown" };
@@ -2672,11 +2674,12 @@ el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                     guaDisplay = isInner ? "內" : "外";
                 }
 
-                if(i === 5) {
+if(i === 5) {
                     let s = earthPan[5], anGan = anGanPan[5];
-                    let centerLabel = `中五${feixingSuffix}`;
+                    // 🌟 依據先天／後天動態讀取宮名（先天為「中宮」，後天為「中五」）
+                    let centerLabel = `${ACTIVE_PALACES[5].name}${feixingSuffix}`;
                     el.innerHTML = renderPalace5Html(s, anGan, centerLabel, panData.bazi5Info);
-                    panData.palaces["中五"] = s;
+                    panData.palaces[ACTIVE_PALACES[5].name] = s;
                     
                     globalPalaceData[5] = { name: ACTIVE_PALACES[5].name, branch: '', hStems: [s], eStems: [s], anGan: anGan, isCenter: true };
                     continue;
@@ -2689,7 +2692,7 @@ el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                 if(isMa) currentYiMaPalace = ACTIVE_PALACES[i].name;
                 
                 let godColor = GOD_COLORS[godPan[i]] || "black", doorColor = DOOR_COLORS[pDoor] || "black", anGan = anGanPan[i];
-                let starText = (pStars[0] === "天芮" && pStars[1] === "天禽") ? "天芮/禽" : pStars[0];
+                let starText = (pStars[0] === "天芮" && pStars[1] === "天禽") ? "芮/禽" : pStars[0];
                 let palaceLabel = `${ACTIVE_PALACES[i].name}${feixingSuffix}`;
 
                 let pDoorDisplay = useEnergy ? DOOR_ENERGY[pDoor][i] : pDoor;
@@ -2719,35 +2722,35 @@ el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                     hStemEff: hStemEff
                 };
 
-el.innerHTML = `${getBranchHTML(i)}
+                el.innerHTML = `${getBranchHTML(i)}
                     <div class="emoji-container">
                         ${isKong ? '<span>🈳</span>' : ''}
                         ${isMa ? '<span>🐎</span>' : ''}
                     </div>
                     <div class="flex flex-col h-full justify-between relative select-none">
                         <!-- 頂部：宮名 + 八卦/內外盤符號 -->
-                        <div class="flex flex-col items-center leading-none mb-1">
+                        <div class="flex flex-col items-center leading-none mb-0.5">
                             <span class="text-palace-name text-${ACTIVE_PALACES[i].type}">${palaceLabel}</span>
                             <span class="text-sm sm:text-base leading-none mt-0.5 font-normal">${guaDisplay}</span>
                         </div>
-                        <!-- 中部：八神、九星、八門 (顯著放大並充實宮內高度) -->
-                        <div class="flex flex-col items-start leading-none space-y-1">
-                            <span class="text-main text-${godColor}">${godPan[i]}</span>
-                            <span class="text-main text-${STAR_COLORS[pStars[0]] || 'black'} tracking-wider">${starTextDisplay}</span>
-                            <div class="flex items-center leading-none">
-                                <span class="text-main text-${doorColor} tracking-wider">${pDoorDisplay}</span>
-                                ${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 ml-0.5 font-bold">迫</span>`:""}
+                        <!-- 中部：八神、九星、八門 (進取型加大並善用整行空間) -->
+                        <div class="flex flex-col items-start leading-none space-y-1 w-full my-0.5">
+                            <span class="text-main text-${godColor} w-full">${godPan[i]}</span>
+<span class="text-main text-${STAR_COLORS[pStars[0]] || 'black'} w-full tracking-wide">${starTextDisplay}</span>
+                            <div class="flex items-center leading-none w-full">
+                                <span class="text-main text-${doorColor} tracking-wide">${pDoorDisplay}</span>
+                                ${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 ml-1 font-black px-0.5 bg-red-50 border border-red-200 rounded">迫</span>`:""}
                             </div>
                         </div>
-                        <!-- 底部：暗干 (左) + 天盤干/地盤干 (右) -->
+                        <!-- 底部：暗干 (左) + 天盤干/地盤干 (右，字級嚴格小於星門神) -->
                         <div class="flex justify-between items-end mt-auto w-full pt-1">
-                            <div class="flex-shrink-0 mr-1 self-end pb-0.5">${renderStem(anGan, i, true)}</div>
-                            <div class="flex flex-col items-stretch text-right leading-tight text-tiandi-stem font-black flex-grow max-w-[85%]">
+                            <div class="flex-shrink-0 self-end pb-0.5">${renderStem(anGan, i, true)}</div>
+                            <div class="flex flex-col items-stretch text-right leading-tight text-tiandi-stem font-black flex-grow max-w-[80%]">
                                 <div class="w-full">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
                                 <div class="border-t-[2px] border-gray-400 min-w-[2.2rem] w-full pt-0.5 mt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
                             </div>
                         </div>
-                    </div>`;                
+                    </div>`;               
                 let doorTextForCopy = pDoorDisplay + (isMenPo(pDoor, i) ? "(迫)" : "");
                 
                 let hStemsForCopy = hStems.map((s, idx) => {
