@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>奇門遁甲 - 拆補法排盤 (v27.1)</title>
     <link rel="icon" type="image/jpeg" href="icon.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,32 +20,61 @@
             transition: all 0.5s ease;
         }
         
+        /* 外層間距與手機端優化 */
         .grid-wrapper { 
-            padding: 40px 50px; 
+            padding: 24px 36px; 
             overflow-x: auto; 
             -webkit-overflow-scrolling: touch; 
         }
         @media (max-width: 640px) {
-            .grid-wrapper { padding: 30px 25px; }
-            .grid-qimen { gap: 8px !important; margin: 0 auto; width: calc(100% - 6px); }
-            .palace { min-height: 150px !important; padding: 5px !important; }
-            .branch-label { font-size: 0.9rem !important; }
-            .tian-jiang { font-size: 0.65rem !important; }
-            .pos-left { left: -22px !important; }
-            .pos-right { right: -22px !important; }
+            .grid-wrapper { 
+                padding: 20px 24px !important; 
+            }
+            .grid-qimen { 
+                gap: 4px !important; 
+                margin: 0 auto; 
+                width: 100% !important; 
+                max-width: 100% !important; 
+            }
+            .palace { 
+                min-height: 175px !important; 
+                padding: 4px 6px !important; 
+                border-radius: 6px !important; 
+            }
+            .branch-label { 
+                font-size: 0.85rem !important; 
+            }
+            .tian-jiang { 
+                font-size: 0.6rem !important; 
+            }
+            .pos-left { left: -21px !important; }
+            .pos-right { right: -21px !important; }
             .pos-top { top: -22px !important; }
             .pos-bottom { bottom: -22px !important; }
         }
 
-        .grid-qimen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 550px; min-width: 280px; margin: auto; }
+        .grid-qimen { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 6px; 
+            max-width: 640px; 
+            min-width: 280px; 
+            margin: auto; 
+        }
         
         .palace { 
-            position: relative; border-radius: 10px; padding: 10px; min-height: 180px; 
-            display: flex; flex-direction: column; box-shadow: 0 3px 10px rgba(0,0,0,0.08); 
-            border: 1.5px solid; background-color: rgba(255, 255, 255, 0.95); 
-            transition: all 0.3s ease; cursor: pointer;
+            position: relative; 
+            border-radius: 8px; 
+            padding: 6px 8px; 
+            min-height: 200px; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
+            border: 1.5px solid; 
+            background-color: rgba(255, 255, 255, 0.95); 
+            transition: all 0.2s ease; 
+            cursor: pointer;
         }
-
 
         /* 古典五行配色 */
         .bg-water { background-color: #f0f9ff; border-color: #bae6fd; } .text-water { color: #0369a1; }
@@ -55,14 +84,29 @@
         .bg-metal { background-color: #fffbeb; border-color: #fde68a; } .text-metal { color: #b45309; }
         .bg-white-palace { background-color: #ffffff; border-color: #e2e8f0; } 
         
-        .text-main { font-size: clamp(0.9rem, 2.2vw, 1.25rem); line-height: 1.1; }
-        .text-palace-name { font-weight: 900; }
+        /* 八神／九星／八門字體 */
+        .text-main { 
+            font-size: clamp(1.4rem, 5vw, 1.95rem); 
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            line-height: 1.15; 
+        }
+        .text-palace-name { 
+            font-size: clamp(0.78rem, 1.9vw, 0.95rem); 
+            font-weight: 900; 
+        }
         
+        /* 天地盤干字級：小於星門神 */
+        .text-tiandi-stem {
+            font-size: clamp(1.2rem, 4.0vw, 1.55rem);
+            font-weight: 900;
+            line-height: 1.05;
+        }
+
         .day-stem { display: inline-block; background-color: #f3e8ff; border: 1.5px solid #a855f7; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         .hour-stem { display: inline-block; background-color: #ffedd5; border: 1.5px solid #f97316; padding: 0 3px; border-radius: 4px; line-height: 1.1; }
         
-        .emoji-container { position: absolute; top: 6px; right: 6px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 1.1rem; line-height: 1; z-index: 10; }
-
+        .emoji-container { position: absolute; top: 4px; right: 4px; display: flex; flex-direction: column; align-items: flex-end; gap: 1px; font-size: 1rem; line-height: 1; z-index: 10; }
         .branch-label {
             position: absolute;
             display: flex;
@@ -118,88 +162,89 @@
 
 <div id="app-workspace" class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     
-    <div id="main-panel" class="lg:col-span-12 space-y-6 transition-all duration-500">
-        <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-4 md:p-6 border border-white main-container">
-            <h1 class="text-2xl md:text-3xl text-center mb-4 text-indigo-900 tracking-widest">
+    <div id="main-panel" class="lg:col-span-12 space-y-4 transition-all duration-500">
+        <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-2.5 sm:p-4 md:p-6 border border-white main-container">
+
+<!-- 🌟 1. 加入 id="app-title"，起盤後自動隱藏 -->
+            <h1 id="app-title" class="text-xl sm:text-2xl md:text-3xl text-center mb-2.5 text-indigo-900 tracking-widest">
                 奇門遁甲拆補法排盤<a href="https://hrauto2026.github.io/qimen-app/index.html" class="title-link hover:text-indigo-600 transition-colors duration-300">🏠</a>
             </h1>
             
-            <div class="flex flex-wrap justify-center items-center gap-2 mb-4 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100 shadow-inner">
-                <!-- Mode Toggle Button -->
-                <button id="btn-mode-toggle" onclick="toggleInputMode()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold py-1.5 px-4 rounded-lg shadow-sm text-sm transition-colors border border-indigo-200">四柱方式</button>
+            <!-- 🌟 2. 折疊欄一：起盤時間與參數設定 (高度縮減為超扁平樣式) -->
+            <details id="accordion-controls" class="group bg-indigo-50/70 border border-indigo-200 rounded-lg mb-1.5 shadow-sm" open>
+                <summary class="py-1 px-3 cursor-pointer text-xs sm:text-sm font-bold text-indigo-900 bg-indigo-100/60 rounded-lg group-open:rounded-b-none group-open:border-b border-indigo-200 flex justify-between items-center select-none">
+                    <span class="flex items-center gap-1">⚙️ 起盤時間與參數設定</span>
+                    <span class="transform group-open:rotate-180 transition-transform duration-200 text-[10px]">▼</span>
+                </summary>
+                
+                <div class="p-2.5 bg-white/70 space-y-2.5">
+                    <div class="flex flex-wrap justify-center items-center gap-1.5">
+                        <!-- Mode Toggle Button -->
+                        <button id="btn-mode-toggle" onclick="toggleInputMode()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold py-1 px-3 rounded shadow-sm text-xs transition-colors border border-indigo-200">四柱方式</button>
 
-                <!-- Standard Date Selectors -->
-                <div id="date-selectors" class="flex flex-wrap justify-center items-center gap-2">
-                    <div class="flex items-center gap-1">
-                        <select id="sel-year" class="p-1 border border-gray-300 rounded bg-white text-base outline-none" onchange="updateJieQiYearBtn()"></select>
-                        <span class="text-gray-600 text-sm">年</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <select id="sel-month" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
-                        <span class="text-gray-600 text-sm">月</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <select id="sel-day" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
-                        <span class="text-gray-600 text-sm">日</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <select id="sel-hour24" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
-                        <span class="text-gray-600 text-sm">時</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <select id="sel-minute" class="p-1 border border-gray-300 rounded bg-white text-base outline-none"></select>
-                        <span class="text-gray-600 text-sm">分</span>
-                    </div>
-                </div>
+                        <!-- Standard Date Selectors -->
+                        <div id="date-selectors" class="flex flex-wrap justify-center items-center gap-1">
+                            <div class="flex items-center gap-0.5"><select id="sel-year" class="p-1 border border-gray-300 rounded bg-white text-sm outline-none" onchange="updateJieQiYearBtn()"></select><span class="text-gray-600 text-xs">年</span></div>
+                            <div class="flex items-center gap-0.5"><select id="sel-month" class="p-1 border border-gray-300 rounded bg-white text-sm outline-none"></select><span class="text-gray-600 text-xs">月</span></div>
+                            <div class="flex items-center gap-0.5"><select id="sel-day" class="p-1 border border-gray-300 rounded bg-white text-sm outline-none"></select><span class="text-gray-600 text-xs">日</span></div>
+                            <div class="flex items-center gap-0.5"><select id="sel-hour24" class="p-1 border border-gray-300 rounded bg-white text-sm outline-none"></select><span class="text-gray-600 text-xs">時</span></div>
+                            <div class="flex items-center gap-0.5"><select id="sel-minute" class="p-1 border border-gray-300 rounded bg-white text-sm outline-none"></select><span class="text-gray-600 text-xs">分</span></div>
+                        </div>
 
-                <div id="bazi-selectors" class="hidden justify-center items-center gap-2 flex-wrap">
-                    <div class="flex items-center gap-1">
-                        <select id="sel-bazi-y" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
-                        <span class="text-gray-600 text-sm font-bold">年</span>
+                        <!-- Bazi Selectors -->
+                        <div id="bazi-selectors" class="hidden justify-center items-center gap-1.5 flex-wrap">
+                            <div class="flex items-center gap-0.5"><select id="sel-bazi-y" class="p-1 border border-amber-300 rounded bg-amber-50 text-sm outline-none"></select><span class="text-gray-600 text-xs font-bold">年</span></div>
+                            <div class="flex items-center gap-0.5"><select id="sel-bazi-m" class="p-1 border border-amber-300 rounded bg-amber-50 text-sm outline-none"></select><span class="text-gray-600 text-xs font-bold">月</span></div>
+                            <div class="flex items-center gap-0.5"><select id="sel-bazi-d" class="p-1 border border-amber-300 rounded bg-amber-50 text-sm outline-none"></select><span class="text-gray-600 text-xs font-bold">日</span></div>
+                            <div class="flex items-center gap-0.5"><select id="sel-bazi-h" class="p-1 border border-amber-300 rounded bg-amber-50 text-sm outline-none"></select><span class="text-gray-600 text-xs font-bold">時</span></div>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-1">
-                        <select id="sel-bazi-m" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
-                        <span class="text-gray-600 text-sm font-bold">月</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <select id="sel-bazi-d" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
-                        <span class="text-gray-600 text-sm font-bold">日</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <select id="sel-bazi-h" class="p-1 border border-amber-300 rounded bg-amber-50 text-base outline-none"></select>
-                        <span class="text-gray-600 text-sm font-bold">時</span>
-                    </div>
-                </div>
 
-                <!-- Action Buttons -->
-                <div class="w-full sm:w-auto flex flex-wrap justify-center gap-2 mt-2 sm:mt-0 transition-opacity" id="action-buttons-group">
-                    <button id="btn-now" onclick="resetToNow()" class="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-3 rounded-lg shadow text-sm transition-all">現在時間</button>
-                    <button onclick="handleGenerateBtn()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-1.5 px-5 rounded-lg shadow text-sm font-bold">起盤</button>
-                    <button id="btn-show-jieqi" onclick="showJieQiModal()" class="bg-teal-600 hover:bg-teal-700 text-white py-1.5 px-3 rounded-lg shadow text-xs transition-all">🗓️ <span id="btn-jieqi-year"></span>年廿四節氣</button>
-                    <button id="btn-toggle-filter" onclick="toggleFilterPanel()" class="bg-amber-500 hover:bg-amber-600 text-white py-1.5 px-3 rounded-lg shadow text-xs font-bold flex items-center gap-1">🔍 條件篩選起盤</button>
-                </div>
-            </div>
-
-            <div id="pan-header" class="hidden mb-4 p-4 border-l-4 border-indigo-500 bg-indigo-50/80 rounded-r-lg text-gray-800 shadow-sm">
-                <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-2 gap-2">
-                    <h2 class="text-base sm:text-lg md:text-xl text-indigo-900 font-bold tracking-wide" id="info-bazi"></h2>
-                    <div class="flex space-x-2">
-                        <button onclick="shiftHour(-1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">⏪</button>
-                        <button onclick="shiftHour(1)" class="flex-1 sm:flex-none bg-white border border-indigo-200 text-indigo-700 py-1.5 px-4 rounded shadow-sm text-xs sm:text-sm font-bold">⏩</button>
+                    <!-- Action Buttons -->
+                    <div class="w-full flex flex-wrap justify-center gap-1.5 pt-1 border-t border-indigo-100/80" id="action-buttons-group">
+                        <button id="btn-now" onclick="resetToNow()" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2.5 rounded shadow text-xs font-bold transition-all">現在時間</button>
+                        <button onclick="handleGenerateBtn()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-5 rounded shadow text-xs sm:text-sm font-black tracking-wider">起盤</button>
+                        <button id="btn-show-jieqi" onclick="showJieQiModal()" class="bg-teal-600 hover:bg-teal-700 text-white py-1 px-2.5 rounded shadow text-xs font-bold transition-all">🗓️ <span id="btn-jieqi-year"></span>年廿四節氣</button>
+                        <button id="btn-toggle-filter" onclick="toggleFilterPanel()" class="bg-amber-500 hover:bg-amber-600 text-white py-1 px-2.5 rounded shadow text-xs font-bold flex items-center gap-1">🔍 條件篩選</button>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-sm sm:text-base md:text-lg leading-tight mb-2">
-                    <div class="col-span-2 sm:col-span-2"><span class="text-gray-500">現時節氣：</span><span id="info-jieqi" class="text-indigo-800 font-bold tracking-wide"></span></div>
-                    <div class="col-span-2 sm:col-span-2"><span class="text-gray-500">下一節氣：</span><span id="info-next-jieqi" class="text-teal-800 font-bold tracking-wide"></span></div>
+            </details>
+
+            <!-- 🌟 3. 折疊欄二：簡化為「📋 排盤資料」且高度扁平化 -->
+            <details id="accordion-pan-info" class="group bg-indigo-50/80 border-l-4 border-indigo-500 rounded-r-lg rounded-l-none mb-1.5 shadow-sm hidden">
+                <summary class="py-1 px-3 cursor-pointer text-xs sm:text-sm font-bold text-indigo-900 flex justify-between items-center select-none">
+                    <span id="pan-summary-title">📋 排盤資料</span>
+                    <span class="transform group-open:rotate-180 transition-transform duration-200 text-[10px]">▼</span>
+                </summary>
+                
+                <div class="p-2.5 text-gray-800 border-t border-indigo-100 bg-white/60 space-y-1.5">
+                    <div class="text-xs sm:text-sm font-bold text-indigo-950" id="info-bazi"></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs border-t border-indigo-100 pt-1.5">
+                        <div><span class="text-gray-500">現時節氣：</span><span id="info-jieqi" class="text-indigo-800 font-bold"></span></div>
+                        <div><span class="text-gray-500">下一節氣：</span><span id="info-next-jieqi" class="text-teal-800 font-bold"></span></div>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-1 text-xs border-t border-indigo-100 pt-1.5">
+                        <div><span class="text-gray-500">局數：</span><span id="info-ju" class="text-red-600 font-bold"></span></div>
+                        <div><span class="text-gray-500">旬首：</span><span id="info-xunshou" class="font-bold"></span></div>
+                        <div><span class="text-gray-500">值符：</span><span id="info-zhifu" class="font-bold"></span></div>
+                        <div><span class="text-gray-500">值使：</span><span id="info-zhishi" class="font-bold"></span></div>
+                        <div><span class="text-gray-500">空亡：</span><span id="info-kongwang" class="font-bold"></span></div>
+                    </div>
+                    <div id="info-special" class="hidden text-xs pt-1 font-bold"></div>
                 </div>
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-1 sm:gap-2 text-sm sm:text-base md:text-lg leading-tight border-t border-indigo-200/50 pt-2">
-                    <div><span class="text-gray-500">局數：</span><span id="info-ju" class="text-red-600 font-bold"></span></div>
-                    <div><span class="text-gray-500">旬首：</span><span id="info-xunshou"></span></div>
-                    <div><span class="text-gray-500">值符：</span><span id="info-zhifu"></span></div>
-                    <div><span class="text-gray-500">值使：</span><span id="info-zhishi"></span></div>
-                    <div><span class="text-gray-500">空亡：</span><span id="info-kongwang"></span></div>
+            </details>
+
+            <!-- 🌟 4. 頂部常駐快調 Bar：移除四柱，改為單行精準呈現時間與農曆 -->
+            <div id="quick-time-bar" class="hidden justify-between items-center bg-white/95 border border-indigo-200 rounded-lg py-1 px-2 shadow-sm mb-1.5 max-w-xl mx-auto">
+                <button onclick="shiftHour(-1)" class="bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-800 py-1 px-2.5 sm:px-3 rounded border border-indigo-200 text-xs font-black transition-all">
+                    <span>⏪</span>
+                </button>
+                <div class="flex items-center text-center text-xs sm:text-sm font-bold text-indigo-950 px-1">
+                    <span id="quick-bar-time"></span>
                 </div>
-                <div id="info-special" class="hidden text-sm sm:text-base md:text-lg mt-2 border-t border-indigo-200 pt-2 font-bold"></div>
+                <button onclick="shiftHour(1)" class="bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-800 py-1 px-2.5 sm:px-3 rounded border border-indigo-200 text-xs font-black transition-all">
+                    <span>⏩</span>
+                </button>
             </div>
 
             <div class="grid-wrapper">
@@ -250,7 +295,7 @@
                 <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-blue-100">
                     <span class="text-xs font-bold text-gray-700">按宮看格局</span>
                     <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-palacemodal" class="sr-only peer" checked onchange="handleToggleSwitch('toggle-palacemodal')">    
+                        <input type="checkbox" id="toggle-palacemodal" class="sr-only peer" checked onchange="handleToggleSwitch('toggle-palacemodal')">    
                         <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500 shadow-inner"></div>
                     </label>
                 </div>
@@ -518,9 +563,9 @@
     </div>
 </div>
 
-<div id="palace-modal" class="fixed inset-0 bg-gray-900/60 hidden flex justify-center items-center z-50 p-4">
-    <div class="bg-white rounded-2xl shadow-2xl p-5 max-w-sm sm:max-w-md md:max-w-xl w-full max-h-[85vh] overflow-y-auto relative border-t-8 border-indigo-600">
-        <button onclick="closePalaceModal()" class="absolute top-3 right-4 text-gray-400 hover:text-black text-2xl">✖</button>
+<div id="palace-modal" class="fixed inset-0 bg-gray-900/60 hidden flex justify-center items-center z-50 p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-3.5 sm:p-5 max-w-full sm:max-w-lg md:max-w-2xl w-full max-h-[92vh] sm:max-h-[85vh] overflow-y-auto relative border-t-8 border-indigo-600">
+        <button onclick="closePalaceModal()" class="absolute top-3 right-4 text-gray-400 hover:text-black text-2xl font-bold">✖</button>
         <h3 class="text-xl md:text-2xl mb-3 text-center text-indigo-900 font-bold tracking-widest" id="pm-title">宮位資訊</h3>
         
         <div class="space-y-4">
@@ -540,26 +585,30 @@
 
             <!-- Cheat Sheet Container -->
             <details id="pm-cheatsheet-details" class="group bg-blue-50/40 border border-blue-200 rounded-lg shadow-sm">
-                <summary class="p-2 cursor-pointer text-sm font-bold text-blue-900 flex justify-between items-center select-none">
+                <summary class="p-2 cursor-pointer text-sm sm:text-base font-bold text-blue-900 flex justify-between items-center select-none">
                     <div class="flex items-center gap-1.5">
                         <span>📚 合/沖/方局/刑害資料</span>
-                        <span id="pm-cheatsheet-badge" class="text-xs"></span>
+                        <span id="pm-cheatsheet-badge" class="text-xs sm:text-sm"></span>
                     </div>
                     <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs">▼</span>
                 </summary>
-                <div id="pm-cheatsheet-content" class="p-3 text-xs text-gray-700 border-t border-blue-200 bg-white rounded-b-lg">
+                <div id="pm-cheatsheet-content" class="p-3 text-xs sm:text-sm md:text-base text-gray-700 border-t border-blue-200 bg-white rounded-b-lg">
                     <!-- 內容由 JS 動態生成與高亮 -->
                 </div>
             </details>
 
             <div>
-                <h4 class="font-bold text-red-700 border-b-2 border-red-100 mb-2 pb-1 flex items-center">⚠️ 四害與狀態</h4>
-                <div id="pm-harms" class="text-sm flex flex-wrap gap-2 min-h-[24px]"></div>
+                <h4 class="font-bold text-red-700 border-b-2 border-red-100 mb-2 pb-1 flex items-center text-sm sm:text-base">⚠️ 四害與狀態</h4>
+                <div id="pm-harms" class="text-sm sm:text-base flex flex-wrap gap-2 min-h-[24px]"></div>
             </div>
 
             <div>
-                <h4 class="font-bold text-blue-700 border-b-2 border-blue-100 mb-2 pb-1 flex items-center">📜 格局名堂</h4>
-                <div id="pm-geju" class="space-y-2 text-sm min-h-[24px]"></div>
+                <h4 class="font-bold text-blue-700 border-b-2 border-blue-100 mb-2 pb-1 flex items-center text-sm sm:text-base">📜 格局名堂</h4>
+                <div id="pm-geju" class="space-y-2 text-sm sm:text-base min-h-[24px]"></div>
+            </div>
+
+            <div class="pt-3 border-t border-gray-200 text-center">
+                <button onclick="closePalaceModal()" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-10 rounded-xl shadow transition active:scale-95 text-sm sm:text-base">關閉</button>
             </div>
         </div>
     </div>
@@ -588,7 +637,6 @@
 
         <!-- 手冊內容章節 -->
         <div class="space-y-6 text-sm leading-relaxed">
-            <!-- 一、 程式版本概述 -->
             <section class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
                 <h3 class="text-base sm:text-lg font-black text-indigo-900 mb-2 flex items-center gap-2">
                     <span>一、 程式版本概述與核心特點</span>
@@ -603,16 +651,14 @@
                 </ul>
             </section>
 
-            <!-- 二、 畫面佈局與起盤模式 -->
             <section class="p-4 bg-amber-50/40 rounded-xl border border-amber-100">
                 <h3 class="text-base sm:text-lg font-black text-amber-900 mb-2">二、 畫面佈局與起盤模式</h3>
                 <div class="space-y-2 text-gray-700">
-                    <p><strong>1. 時間輸入模式（預設）：</strong>選擇公曆年（1930～2050）、月、日、24小時制時與分，點擊「起盤」。可點擊「現在時間」快速載入目前時間，或點擊「⏪/⏩」進行時間推演。</p>
+                    <p><strong>1. 時間輸入模式（預設）：</strong>選擇公曆年（1930～2050）、月、日、24小時制時與分，點擊「起盤」。可點擊「現在時間」快速載入目前時間，或點擊「⏪ 前時 / 後時 ⏩」進行時間推演。</p>
                     <p><strong>2. 四柱（八字）反查模式：</strong>點擊頂部最左側「四柱方式」按鈕切換，選擇年月日時干支後點擊「起盤」，系統自動搜尋 1930~2050 年間所有符合該八字組合之時間點，點選即可起盤。</p>
                 </div>
             </section>
 
-            <!-- 三、 盤面資訊結構與解讀 -->
             <section class="p-4 bg-blue-50/40 rounded-xl border border-blue-100">
                 <h3 class="text-base sm:text-lg font-black text-blue-900 mb-2">三、 盤面資訊結構與解讀</h3>
                 <ul class="list-disc list-inside space-y-2 text-gray-700">
@@ -626,51 +672,6 @@
                         </div>
                     </li>
                 </ul>
-            </section>
-
-            <!-- 四、 進階開關與分析工具 -->
-            <section class="p-4 bg-emerald-50/40 rounded-xl border border-emerald-100">
-                <h3 class="text-base sm:text-lg font-black text-emerald-900 mb-2">四、 進階開關與分析工具</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-700">
-                    <div class="bg-white p-2.5 rounded-lg border border-emerald-200">
-                        <span class="font-bold text-emerald-800 block mb-1">1. 先天八卦數 / 後天八卦數</span>
-                        切換宮位顯示為先天八卦數序或傳統後天八卦數序。
-                    </div>
-                    <div class="bg-white p-2.5 rounded-lg border border-emerald-200">
-                        <span class="font-bold text-emerald-800 block mb-1">2. 能量狀態 Mode</span>
-                        動態將天干轉為十二長生狀態，星門轉為旺相休囚死。
-                    </div>
-                    <div class="bg-white p-2.5 rounded-lg border border-emerald-200">
-                        <span class="font-bold text-emerald-800 block mb-1">3. 內外盤</span>
-                        標註陽遁(1,8,3,4宮)與陰遁(9,2,7,6宮)之內盤與外盤。
-                    </div>
-                    <div class="bg-white p-2.5 rounded-lg border border-emerald-200">
-                        <span class="font-bold text-emerald-800 block mb-1">4. 按宮看格局</span>
-                        點擊任意宮位彈出深度分析視窗：包含<strong>合/沖/方局自動比對</strong>、四害詳情與《奇門遁甲秘笈大全》《奇門法竅》古籍格局名堂與吉凶評價。
-                    </div>
-                    <div class="bg-white p-2.5 rounded-lg border border-emerald-200 sm:col-span-2">
-                        <span class="font-bold text-emerald-800 block mb-1">5. 流年飛星</span>
-                        疊加紫白九星流年飛星，支援選擇不同年份進行飛星比對。
-                    </div>
-                </div>
-            </section>
-
-            <!-- 五、 智慧條件篩選系統 -->
-            <section class="p-4 bg-purple-50/40 rounded-xl border border-purple-100">
-                <h3 class="text-base sm:text-lg font-black text-purple-900 mb-2">五、 智慧條件篩選系統 (180 天全時辰引擎)</h3>
-                <ol class="list-decimal list-inside space-y-1.5 text-gray-700">
-                    <li>點擊「🔍 條件篩選起盤」展開右側篩選面板。</li>
-                    <li>設定搜尋開始日期（預設今日）與目標宮位。</li>
-                    <li>可勾選特殊狀態（空亡/門迫/擊刑/入墓/驛馬等）、八神、九星、八門、天盤干（支援動態比對如 <code>=日干</code>）與地盤干。</li>
-                    <li>支援啟用【條件二】並使用 <strong>AND (同時符合)</strong> 或 <strong>OR (任一符合)</strong> 交叉比對。</li>
-                    <li>點擊「⚡ 開始篩選」，於結果列表中點擊任一符合時間即可瞬間起盤繪製。</li>
-                </ol>
-            </section>
-
-            <!-- 六、 便捷匯出與分享功能 -->
-            <section class="p-4 bg-rose-50/40 rounded-xl border border-rose-100">
-                <h3 class="text-base sm:text-lg font-black text-rose-900 mb-2">六、 便捷匯出與分享工具</h3>
-                <p class="text-gray-700"><strong>【複製盤面資料】：</strong>一鍵複製當前局象之完整文字摘要至剪貼簿，方便記錄或討論。<br><strong>【分享起盤連結】：</strong>自動生成帶有當前起盤年月日時分參數之專屬 URL 網址，複製發送給他人即可直接還原相同盤面。</p>
             </section>
         </div>
 
@@ -833,7 +834,7 @@
         2: { name: "巽五", num: "五", gua: "☴", type: "wood", branch: ["未", "申"], baseDoor: "死門" },
         7: { name: "坎六", num: "六", gua: "☵", type: "water", branch: ["酉"], baseDoor: "驚門" },
         6: { name: "艮七", num: "七", gua: "☶", type: "brown", branch: ["戌", "亥"], baseDoor: "開門" },
-        5: { name: "中五", num: "五", gua: "", type: "brown", branch: [], baseDoor: "死門" }
+        5: { name: "中宮", num: "", gua: "", type: "brown", branch: [], baseDoor: "死門" }
     };
 
     const BRANCH_POSITIONS_TEMPLATE = { 1: `子`, 8: `丑寅`, 3: `卯`, 4: `辰巳`, 9: `午`, 2: `未申`, 7: `酉`, 6: `戌亥`, 5: `` };
@@ -957,7 +958,7 @@
     // Toggle switch variables
     let useXianTian = false;
     let useEnergy = false;
-    let useFeiXing = false; // 流年飛星開關
+    let useFeiXing = false;
 
     function handleToggleSwitch(activeId) {
         const allToggles = [
@@ -1147,161 +1148,156 @@
     }
 
     // ==================== 合/沖/方局 判定規則表 ====================
-const RELATION_RULES = {
-    tianganWuhe: {
-        title: "天干五合", type: "stem", min: 2,
-        items: [
-            { chars: ['甲', '己'], label: "甲己合化土" },
-            { chars: ['乙', '庚'], label: "乙庚合化金" },
-            { chars: ['丙', '辛'], label: "丙辛合化水" },
-            { chars: ['丁', '壬'], label: "丁壬合化木" },
-            { chars: ['戊', '癸'], label: "戊癸合化火" }
-        ]
-    },
-    tianganChong: {
-        title: "天干相沖", type: "stem", min: 2,
-        items: [
-            { chars: ['甲', '庚'], label: "甲庚相沖" },
-            { chars: ['乙', '辛'], label: "乙辛相沖" },
-            { chars: ['丙', '壬'], label: "丙壬相沖" },
-            { chars: ['丁', '癸'], label: "丁癸相沖" }
-        ]
-    },
-    dizhiSanhe: {
-        title: "地支三合", type: "branch", min: 2,
-        items: [
-            { chars: ['申', '子', '辰'], label: "申子辰合成水局" },
-            { chars: ['亥', '卯', '未'], label: "亥卯未合成木局" },
-            { chars: ['寅', '午', '戌'], label: "寅午戌合成火局" },
-            { chars: ['巳', '酉', '丑'], label: "巳酉丑合成金局" }
-        ]
-    },
-    dizhiLiuhe: {
-        title: "地支六合", type: "branch", min: 2,
-        items: [
-            { chars: ['子', '丑'], label: "子丑合化土" },
-            { chars: ['寅', '亥'], label: "寅亥合化木" },
-            { chars: ['卯', '戌'], label: "卯戌合化火" },
-            { chars: ['辰', '酉'], label: "辰酉合化金" },
-            { chars: ['巳', '申'], label: "巳申合化水" },
-            { chars: ['午', '未'], label: "午未合化土" }
-        ]
-    },
-    dizhiFangju: {
-        title: "地支方局", type: "branch", min: 3,
-        items: [
-            { chars: ['寅', '卯', '辰'], label: "寅卯辰(木)" },
-            { chars: ['巳', '午', '未'], label: "巳午未(火)" },
-            { chars: ['申', '酉', '戌'], label: "申酉戌(金)" },
-            { chars: ['亥', '子', '丑'], label: "亥子丑(水)" }
-        ]
-    },
-    dizhiLiuchong: {
-        title: "地支六沖", type: "branch", min: 2,
-        items: [
-            { chars: ['子', '午'], label: "子午沖" },
-            { chars: ['丑', '未'], label: "丑未沖" },
-            { chars: ['寅', '申'], label: "寅申沖" },
-            { chars: ['卯', '酉'], label: "卯酉沖" },
-            { chars: ['辰', '戌'], label: "辰戌沖" },
-            { chars: ['巳', '亥'], label: "巳亥沖" }
-        ]
-    },
-dizhiXing: {
-    title: "地支相刑", type: "branch", min: 2,
-    items: [
-        { chars: ['子', '卯'], label: "子卯相刑(無禮之刑)" },
-        { chars: ['未', '戌'], label: "未戌相刑(恃勢之刑)" },
-        { chars: ['寅', '申'], label: "寅申相刑(無恩之刑)" },
-        { chars: ['寅', '巳'], label: "寅巳相刑(無恩之刑)" },
-        { chars: ['辰', '辰'], label: "辰辰自刑", isZiXing: true },
-        { chars: ['午', '午'], label: "午午自刑", isZiXing: true },
-        { chars: ['酉', '酉'], label: "酉酉自刑", isZiXing: true },
-        { chars: ['亥', '亥'], label: "亥亥自刑", isZiXing: true }
-    ]
-},
-    dizhiHai: {
-        title: "地支相害", type: "branch", min: 2,
-        items: [
-            { chars: ['子', '未'], label: "子未相害" },
-            { chars: ['丑', '午'], label: "丑午相害" },
-            { chars: ['寅', '巳'], label: "寅巳相害" },
-            { chars: ['卯', '辰'], label: "卯辰相害" },
-            { chars: ['申', '亥'], label: "申亥相害" },
-            { chars: ['酉', '戌'], label: "酉戌相害" }
-        ]
-    }
-};
-    // 渲染合沖方局列表並高亮
-function renderRelationBox(activeStems, activeBranchList) {
-    let totalMatches = 0;
-    let html = '<div class="grid grid-cols-2 gap-x-2 gap-y-3">';
+    const RELATION_RULES = {
+        tianganWuhe: {
+            title: "天干五合", type: "stem", min: 2,
+            items: [
+                { chars: ['甲', '己'], label: "甲己合化土" },
+                { chars: ['乙', '庚'], label: "乙庚合化金" },
+                { chars: ['丙', '辛'], label: "丙辛合化水" },
+                { chars: ['丁', '壬'], label: "丁壬合化木" },
+                { chars: ['戊', '癸'], label: "戊癸合化火" }
+            ]
+        },
+        tianganChong: {
+            title: "天干相沖", type: "stem", min: 2,
+            items: [
+                { chars: ['甲', '庚'], label: "甲庚相沖" },
+                { chars: ['乙', '辛'], label: "乙辛相沖" },
+                { chars: ['丙', '壬'], label: "丙壬相沖" },
+                { chars: ['丁', '癸'], label: "丁癸相沖" }
+            ]
+        },
+        dizhiSanhe: {
+            title: "地支三合", type: "branch", min: 2,
+            items: [
+                { chars: ['申', '子', '辰'], label: "申子辰合成水局" },
+                { chars: ['亥', '卯', '未'], label: "亥卯未合成木局" },
+                { chars: ['寅', '午', '戌'], label: "寅午戌合成火局" },
+                { chars: ['巳', '酉', '丑'], label: "巳酉丑合成金局" }
+            ]
+        },
+        dizhiLiuhe: {
+            title: "地支六合", type: "branch", min: 2,
+            items: [
+                { chars: ['子', '丑'], label: "子丑合化土" },
+                { chars: ['寅', '亥'], label: "寅亥合化木" },
+                { chars: ['卯', '戌'], label: "卯戌合化火" },
+                { chars: ['辰', '酉'], label: "辰酉合化金" },
+                { chars: ['巳', '申'], label: "巳申合化水" },
+                { chars: ['午', '未'], label: "午未合化土" }
+            ]
+        },
+        dizhiFangju: {
+            title: "地支方局", type: "branch", min: 3,
+            items: [
+                { chars: ['寅', '卯', '辰'], label: "寅卯辰(木)" },
+                { chars: ['巳', '午', '未'], label: "巳午未(火)" },
+                { chars: ['申', '酉', '戌'], label: "申酉戌(金)" },
+                { chars: ['亥', '子', '丑'], label: "亥子丑(水)" }
+            ]
+        },
+        dizhiLiuchong: {
+            title: "地支六沖", type: "branch", min: 2,
+            items: [
+                { chars: ['子', '午'], label: "子午沖" },
+                { chars: ['丑', '未'], label: "丑未沖" },
+                { chars: ['寅', '申'], label: "寅申沖" },
+                { chars: ['卯', '酉'], label: "卯酉沖" },
+                { chars: ['辰', '戌'], label: "辰戌沖" },
+                { chars: ['巳', '亥'], label: "巳亥沖" }
+            ]
+        },
+        dizhiXing: {
+            title: "地支相刑", type: "branch", min: 2,
+            items: [
+                { chars: ['子', '卯'], label: "子卯相刑(無禮之刑)" },
+                { chars: ['未', '戌'], label: "未戌相刑(恃勢之刑)" },
+                { chars: ['寅', '申'], label: "寅申相刑(無恩之刑)" },
+                { chars: ['寅', '巳'], label: "寅巳相刑(無恩之刑)" },
+                { chars: ['辰', '辰'], label: "辰辰自刑", isZiXing: true },
+                { chars: ['午', '午'], label: "午午自刑", isZiXing: true },
+                { chars: ['酉', '酉'], label: "酉酉自刑", isZiXing: true },
+                { chars: ['亥', '亥'], label: "亥亥自刑", isZiXing: true }
+            ]
+        },
+        dizhiHai: {
+            title: "地支相害", type: "branch", min: 2,
+            items: [
+                { chars: ['子', '未'], label: "子未相害" },
+                { chars: ['丑', '午'], label: "丑午相害" },
+                { chars: ['寅', '巳'], label: "寅巳相害" },
+                { chars: ['卯', '辰'], label: "卯辰相害" },
+                { chars: ['申', '亥'], label: "申亥相害" },
+                { chars: ['酉', '戌'], label: "酉戌相害" }
+            ]
+        }
+    };
 
-    for (let key in RELATION_RULES) {
-        const grp = RELATION_RULES[key];
-        const isStem = (grp.type === 'stem');
-        
-        html += `<div>
-            <div class="font-bold text-blue-800 mb-1 border-b border-blue-100 pb-0.5">${grp.title}</div>
-            <div class="space-y-1">`;
+    function renderRelationBox(activeStems, activeBranchList) {
+        let totalMatches = 0;
+        let html = '<div class="grid grid-cols-2 gap-x-4 gap-y-3.5">';
 
-        grp.items.forEach(item => {
-            let matchedDisplay = [];
-            if (isStem) {
-                const matchedChars = item.chars.filter(c => activeStems.has(c));
-                if (matchedChars.length >= grp.min) {
-                    matchedDisplay = matchedChars;
-                }
-            } else {
-                // 複製地支陣列進行消耗性匹配（包含宮支、遁干支、門支）
-                let tempBranches = [...activeBranchList];
-                let matchedItems = [];
-                for (let reqChar of item.chars) {
-                    let idx = tempBranches.findIndex(b => b.char === reqChar);
-                    if (idx !== -1) {
-                        matchedItems.push(tempBranches[idx]);
-                        tempBranches.splice(idx, 1);
+        for (let key in RELATION_RULES) {
+            const grp = RELATION_RULES[key];
+            const isStem = (grp.type === 'stem');
+            
+            html += `<div>
+                <div class="font-black text-blue-900 mb-1 border-b border-blue-100 pb-0.5 text-xs sm:text-sm md:text-base">${grp.title}</div>
+                <div class="space-y-1 sm:space-y-1.5">`;
+
+            grp.items.forEach(item => {
+                let matchedDisplay = [];
+                if (isStem) {
+                    const matchedChars = item.chars.filter(c => activeStems.has(c));
+                    if (matchedChars.length >= grp.min) {
+                        matchedDisplay = matchedChars;
+                    }
+                } else {
+                    let tempBranches = [...activeBranchList];
+                    let matchedItems = [];
+                    for (let reqChar of item.chars) {
+                        let idx = tempBranches.findIndex(b => b.char === reqChar);
+                        if (idx !== -1) {
+                            matchedItems.push(tempBranches[idx]);
+                            tempBranches.splice(idx, 1);
+                        }
+                    }
+
+                    if (item.isZiXing) {
+                        const hasPhysicalBranch = matchedItems.some(b => b.source === 'palace' || b.source === 'door');
+                        if (!hasPhysicalBranch) {
+                            matchedItems = [];
+                        }
+                    }
+
+                    if (matchedItems.length >= grp.min) {
+                        matchedDisplay = matchedItems.map(b => b.display);
                     }
                 }
 
-                // 🌟 自刑防呆：禁止僅由「天盤遁干 + 地盤遁干」單獨組成，必須有實體「宮支」或「門支」參與
-                if (item.isZiXing) {
-                    const hasPhysicalBranch = matchedItems.some(b => b.source === 'palace' || b.source === 'door');
-                    if (!hasPhysicalBranch) {
-                        matchedItems = [];
-                    }
+                if (matchedDisplay.length > 0) {
+                    totalMatches++;
+                    html += `<div class="bg-amber-100 text-amber-950 font-bold px-2 py-1 rounded border border-amber-300 shadow-sm flex items-center justify-between text-xs sm:text-sm md:text-sm leading-tight">
+                        <span>➡️ ${item.label}</span>
+                        <span class="text-[11px] sm:text-xs md:text-xs text-amber-900 bg-amber-200/90 px-1.5 py-0.5 rounded font-black">${matchedDisplay.join('·')}</span>
+                    </div>`;
+                } else {
+                    html += `<div class="text-gray-600 px-1 py-0.5 text-xs sm:text-sm md:text-sm">${item.label}</div>`;
                 }
+            });
 
-                if (matchedItems.length >= grp.min) {
-                    matchedDisplay = matchedItems.map(b => b.display);
-                }
-            }
-
-            if (matchedDisplay.length > 0) {
-                totalMatches++;
-                html += `<div class="bg-amber-100 text-amber-950 font-bold px-1.5 py-0.5 rounded border border-amber-300 shadow-sm flex items-center justify-between text-[11px] leading-tight">
-                    <span>➡️${item.label}</span>
-                    <span class="text-[10px] text-amber-800 bg-amber-200/80 px-1 rounded font-black">${matchedDisplay.join('·')}</span>
-                </div>`;
-            } else {
-                html += `<div class="text-gray-600 px-1 py-0.5">${item.label}</div>`;
-            }
-        });
-
-        html += `</div></div>`;
+            html += `</div></div>`;
+        }
+        html += '</div>';
+        return { html, totalMatches };
     }
-    html += '</div>';
-    return { html, totalMatches };
-}
 
-// ==================== 彈窗詳細資訊 ====================
     function showPalaceDetails(pNum) {
         const data = globalPalaceData[pNum];
         if (!data || data.isCenter) return;
 
         document.getElementById('pm-title').innerText = data.name + " 詳細資訊";
-        
-        // 宮支（套用五行顏色）
         document.getElementById('pm-branch').innerHTML = data.branch ? colorizeGanZhi(data.branch) : "-";
 
         let doorText = data.door || "";
@@ -1324,61 +1320,54 @@ function renderRelationBox(activeStems, activeBranchList) {
         document.getElementById('pm-hstem-hidden').innerText = hHidden ? `(${hHidden})` : '';
         document.getElementById('pm-estem-hidden').innerText = eHidden ? `(${eHidden})` : '';
 
-// 🌟 收集此宮所有干支並執行合沖刑害高亮
-let activeStems = new Set();
-let activeBranchList = [];
+        let activeStems = new Set();
+        let activeBranchList = [];
 
-// 1. 收集天干（天盤干、地盤干）
-if (data.hStems) data.hStems.forEach(s => activeStems.add(s));
-if (data.eStems) data.eStems.forEach(s => activeStems.add(s));
+        if (data.hStems) data.hStems.forEach(s => activeStems.add(s));
+        if (data.eStems) data.eStems.forEach(s => activeStems.add(s));
 
-// 2. 收集宮位本身地支（宮支放最前）
-let palaceBranches = [];
-if (data.branch) {
-    palaceBranches = data.branch.split('/').filter(Boolean);
-    palaceBranches.forEach(b => {
-        activeBranchList.push({ char: b, display: b, source: 'palace' });
-    });
-}
-
-// 3. 收集 休/傷/景/驚門 所帶之地支（門支）
-const DOOR_BRANCH_MAP = {
-    '休門': { branch: '子', label: '休' },
-    '傷門': { branch: '卯', label: '傷' },
-    '景門': { branch: '午', label: '景' },
-    '驚門': { branch: '酉', label: '驚' }
-};
-
-if (data.door && DOOR_BRANCH_MAP[data.door]) {
-    const dInfo = DOOR_BRANCH_MAP[data.door];
-    if (!palaceBranches.includes(dInfo.branch)) {
-        activeBranchList.push({ char: dInfo.branch, display: `${dInfo.branch}（${dInfo.label}）`, source: 'door' });
-    }
-}
-
-// 4. 收集天盤干遁支
-if (data.hStems) {
-    data.hStems.forEach(s => {
-        if (DUN_GAN_MAP[s]) {
-            let b = DUN_GAN_MAP[s];
-            activeBranchList.push({ char: b, display: `${b}（天${s}）`, source: 'hStem' });
+        let palaceBranches = [];
+        if (data.branch) {
+            palaceBranches = data.branch.split('/').filter(Boolean);
+            palaceBranches.forEach(b => {
+                activeBranchList.push({ char: b, display: b, source: 'palace' });
+            });
         }
-    });
-}
 
-// 5. 收集地盤干遁支
-if (data.eStems) {
-    data.eStems.forEach(s => {
-        if (DUN_GAN_MAP[s]) {
-            let b = DUN_GAN_MAP[s];
-            activeBranchList.push({ char: b, display: `${b}（地${s}）`, source: 'eStem' });
+        const DOOR_BRANCH_MAP = {
+            '休門': { branch: '子', label: '休' },
+            '傷門': { branch: '卯', label: '傷' },
+            '景門': { branch: '午', label: '景' },
+            '驚門': { branch: '酉', label: '驚' }
+        };
+
+        if (data.door && DOOR_BRANCH_MAP[data.door]) {
+            const dInfo = DOOR_BRANCH_MAP[data.door];
+            if (!palaceBranches.includes(dInfo.branch)) {
+                activeBranchList.push({ char: dInfo.branch, display: `${dInfo.branch}（${dInfo.label}）`, source: 'door' });
+            }
         }
-    });
-}
 
-// 6. 渲染合沖刑害列表並更新徽章
-const { html: relationHtml, totalMatches } = renderRelationBox(activeStems, activeBranchList);
-document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
+        if (data.hStems) {
+            data.hStems.forEach(s => {
+                if (DUN_GAN_MAP[s]) {
+                    let b = DUN_GAN_MAP[s];
+                    activeBranchList.push({ char: b, display: `${b}（天${s}）`, source: 'hStem' });
+                }
+            });
+        }
+
+        if (data.eStems) {
+            data.eStems.forEach(s => {
+                if (DUN_GAN_MAP[s]) {
+                    let b = DUN_GAN_MAP[s];
+                    activeBranchList.push({ char: b, display: `${b}（地${s}）`, source: 'eStem' });
+                }
+            });
+        }
+
+        const { html: relationHtml, totalMatches } = renderRelationBox(activeStems, activeBranchList);
+        document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
         const badgeEl = document.getElementById('pm-cheatsheet-badge');
         const detailsEl = document.getElementById('pm-cheatsheet-details');
         if (badgeEl && detailsEl) {
@@ -1391,7 +1380,6 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
             }
         }
 
-        // 4. 四害狀態渲染
         let harmsHTML = "";
         const tagStyle = "px-2 py-0.5 rounded text-xs font-bold text-white shadow-sm";
         if (data.isKong) harmsHTML += `<span class="bg-gray-500 ${tagStyle}">空亡</span>`;
@@ -1405,7 +1393,6 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
 
         document.getElementById('pm-harms').innerHTML = harmsHTML || '<span class="text-gray-400">無特殊狀態</span>';
 
-        // 5. 格局名堂渲染
         let gejuHTML = "";
         let gejus = calculateGeju(data);
         if (gejus.length === 0) {
@@ -1440,9 +1427,7 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
         let hasA = (s) => hasH(s) || hasE(s); 
         
         let door = data.door.replace('門', '');
-        let god = data.god;
         let pNum = data.palaceNum;
-        let isJiMen = ['開', '休', '生'].includes(door);
         let isSanQi = (s) => ['乙', '丙', '丁'].includes(s);
 
         for (let th of data.hStems) {
@@ -1462,58 +1447,30 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
             }
         }
 
-        // 🌟 奇門「四格」（天盤庚 + 地盤年/月/日/時干）自動判定邏輯
         if (data.hStems && data.hStems.includes('庚')) {
             for (let te of data.eStems) {
                 if (data.yStemEff && te === data.yStemEff) {
-                    results.push({
-                        name: '年格',
-                        type: '凶',
-                        desc: '天盤庚加臨地盤年干。主長輩、上司或官方阻力，官非纏身，不宜求官拜貴。'
-                    });
+                    results.push({ name: '年格', type: '凶', desc: '天盤庚加臨地盤年干。主長輩、上司或官方阻力，官非纏身，不宜求官拜貴。' });
                 }
                 if (data.mStemEff && te === data.mStemEff) {
-                    results.push({
-                        name: '月格',
-                        type: '凶',
-                        desc: '天盤庚加臨地盤月干。主同輩、朋友、同事反目破局，當月財運受阻，同行競爭惡化。'
-                    });
+                    results.push({ name: '月格', type: '凶', desc: '天盤庚加臨地盤月干。主同輩、朋友、同事反目破局，當月財運受阻，同行競爭惡化。' });
                 }
                 if (data.dStemEff && te === data.dStemEff) {
-                    results.push({
-                        name: '日格 (伏干格)',
-                        type: '凶',
-                        desc: '天盤庚加臨地盤日干。主自身受卡關阻礙、疾病災禍、夫妻不和，宜靜不宜動。'
-                    });
+                    results.push({ name: '日格 (伏干格)', type: '凶', desc: '天盤庚加臨地盤日干。主自身受卡關阻礙、疾病災禍、夫妻不和，宜靜不宜動。' });
                 }
                 if (data.hStemEff && te === data.hStemEff) {
-                    results.push({
-                        name: '時格',
-                        type: '凶',
-                        desc: '天盤庚加臨地盤時干。主下屬拖累、子女操心，當前所謀之近事突發阻礙，百事不宜。'
-                    });
+                    results.push({ name: '時格', type: '凶', desc: '天盤庚加臨地盤時干。主下屬拖累、子女操心，當前所謀之近事突發阻礙，百事不宜。' });
                 }
             }
         }
 
-        if (pNum === 3 && hasA('乙')) {
-            results.push({ name: '三奇升殿 / 奇游祿位 (乙)', type: '大吉', desc: '乙奇臨震宮。主有貴人提攜，求財吉利，官職高陞，百事大吉。' });
-        }
-        if (pNum === 9 && hasA('丙')) {
-            results.push({ name: '三奇升殿 (丙)', type: '大吉', desc: '丙奇臨離宮。主有貴人提攜，利見大人，百事大吉。' });
-        }
-        if (pNum === 7 && hasA('丁')) {
-            results.push({ name: '三奇升殿 (丁)', type: '大吉', desc: '丁奇臨兌宮。主有貴人提攜，利見大人，百事大吉。' });
-        }
-        if (pNum === 4 && hasA('丙')) {
-            results.push({ name: '奇游祿位 (丙)', type: '大吉', desc: '丙奇臨巽宮祿位。求財吉利，官職高陞。' });
-        }
-        if (pNum === 9 && hasA('丁')) {
-            results.push({ name: '奇游祿位 (丁)', type: '大吉', desc: '丁奇臨離宮祿位。求財吉利，官職高陞。' });
-        }
+        if (pNum === 3 && hasA('乙')) results.push({ name: '三奇升殿 / 奇游祿位 (乙)', type: '大吉', desc: '乙奇臨震宮。主有貴人提攜，求財吉利，官職高陞，百事大吉。' });
+        if (pNum === 9 && hasA('丙')) results.push({ name: '三奇升殿 (丙)', type: '大吉', desc: '丙奇臨離宮。主有貴人提攜，利見大人，百事大吉。' });
+        if (pNum === 7 && hasA('丁')) results.push({ name: '三奇升殿 (丁)', type: '大吉', desc: '丁奇臨兌宮。主有貴人提攜，利見大人，百事大吉。' });
+        if (pNum === 4 && hasA('丙')) results.push({ name: '奇游祿位 (丙)', type: '大吉', desc: '丙奇臨巽宮祿位。求財吉利，官職高陞。' });
+        if (pNum === 9 && hasA('丁')) results.push({ name: '奇游祿位 (丁)', type: '大吉', desc: '丁奇臨離宮祿位。求財吉利，官職高陞。' });
 
         let hHasQi = data.hStems.some(s => isSanQi(s)); 
-
         if (data.isZhiShi && hasE('丁')) results.push({ name: '玉女守門', type: '吉', desc: '利私下謀劃、宴會、和解。' });
         if (data.isZhiShi && hHasQi) results.push({ name: '三奇得使', type: '吉', desc: '奇兵得主將調遣，化險為夷。' });
 
@@ -1536,60 +1493,55 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
         let baziContent = "";
         if (bazi5) {
             baziContent = `
-<div class="flex flex-col items-center justify-start text-[10px] sm:text-[11px] md:text-xs leading-none font-bold w-full select-none z-10">
-    <div class="flex justify-center gap-x-0.5 font-black text-xl sm:text-xl md:text-lg mt-2 sm:mt-7">
-        <!-- 年柱 -->
-        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+<div class="flex flex-col items-center justify-center w-full select-none z-10 my-auto">
+    <div class="flex justify-center items-center gap-x-1.5 sm:gap-x-2 font-black text-lg sm:text-xl md:text-2xl leading-none mt-1">
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.yS] || '#1a202c'}">${bazi5.yS}</span>
             <span style="color:${WUXING_COLORS[bazi5.yB] || '#1a202c'}">${bazi5.yB}</span>
         </div>
-        <!-- 月柱 -->
-        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.mS] || '#1a202c'}">${bazi5.mS}</span>
             <span style="color:${WUXING_COLORS[bazi5.mB] || '#1a202c'}">${bazi5.mB}</span>
         </div>
-        <!-- 日柱 -->
-        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.dS] || '#1a202c'}">${bazi5.dS}</span>
             <span style="color:${WUXING_COLORS[bazi5.dB] || '#1a202c'}">${bazi5.dB}</span>
         </div>
-        <!-- 時柱 -->
-        <div class="flex flex-col items-center gap-y-[1px] leading-none">
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.hS] || '#1a202c'}">${bazi5.hS}</span>
             <span style="color:${WUXING_COLORS[bazi5.hB] || '#1a202c'}">${bazi5.hB}</span>
         </div>
     </div>
-    <!-- 年月日時標籤 -->
-    <div class="text-[9px] sm:text-[10px] text-gray-400 tracking-widest mt-1">年月日時</div>
-</div>
-
-<div class="flex flex-col items-start w-full text-[9px] sm:text-[10px] md:text-xs text-gray-600 leading-tight space-y-0.5 px-1.5 mt-1">
-    <div class="whitespace-nowrap">旬首：<span class="text-gray-900 font-bold">${bazi5.xun}</span></div>
-    <div class="whitespace-nowrap">值符：<span class="text-gray-900 font-bold">${bazi5.zf}</span></div>
-    <div class="whitespace-nowrap">值使：<span class="text-gray-900 font-bold">${bazi5.zs}</span></div>
-</div>
-            `;
+    <div class="text-[10px] sm:text-xs text-gray-400 font-bold tracking-widest mt-1">年月日時</div>
+    <div class="flex flex-col items-start w-full text-xs sm:text-sm md:text-base text-gray-700 font-bold leading-normal space-y-1.5 mt-2 sm:mt-3 px-1">
+        <div class="whitespace-nowrap flex items-center">旬首：<span class="text-gray-950 font-black ml-0.5">${bazi5.xun}</span></div>
+        <div class="whitespace-nowrap flex items-center">值符：<span class="text-gray-950 font-black ml-0.5">${bazi5.zf}</span></div>
+        <div class="whitespace-nowrap flex items-center">值使：<span class="text-gray-950 font-black ml-0.5">${bazi5.zs}</span></div>
+    </div>
+</div>`;
         }
         
         let stemColor = WUXING_COLORS[s] || "#1a202c";
         const dayHighlightStem = panData.dayHighlightStem;
         const targetHighlightStem = panData.targetHighlightStem;
         let highlightClass = (s === targetHighlightStem) ? "hour-stem" : (s === dayHighlightStem ? "day-stem" : "");
-        
         let mainStemHtml = highlightClass ? `<span class="${highlightClass} font-bold" style="color: ${stemColor} !important;">${s}</span>` : `<span class="font-bold" style="color: ${stemColor};">${s}</span>`;
         let anGanHtml = `<span class="text-gray-400 text-sm sm:text-base">${anGan}</span>`;
 
         return `
             ${getBranchHTML(5)}
-            <div class="absolute top-0 right-0 text-[10px] text-gray-400 m-1 z-20">${centerLabel}</div>
-            ${baziContent}
-            <div class="flex justify-between items-end w-full mt-auto z-10 px-1 pb-1">
-                <div class="mb-1">${anGanHtml}</div>
-                <div class="flex flex-col items-stretch text-right leading-tight text-main font-bold">
-                    <div class="text-xl sm:text-2xl">${mainStemHtml}</div>
+            <div class="flex flex-col h-full justify-between relative select-none">
+                <div class="flex flex-col items-center leading-none">
+                    <span class="text-palace-name text-brown">${centerLabel}</span>
                 </div>
-            </div>
-        `;
+                ${baziContent}
+                <div class="flex justify-between items-end w-full mt-auto z-10 px-0.5 pb-0.5 pt-1">
+                    <div class="flex-shrink-0 self-end pb-0.5">${anGanHtml}</div>
+                    <div class="flex flex-col items-stretch text-right leading-tight text-tiandi-stem font-black">
+                        <div>${mainStemHtml}</div>
+                    </div>
+                </div>
+            </div>`;
     }
 
     function toggleInputMode() {
@@ -1606,11 +1558,9 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
             btn.classList.replace('text-indigo-800', 'text-amber-900');
             btn.classList.replace('hover:bg-indigo-200', 'hover:bg-amber-200');
             btn.classList.replace('border-indigo-200', 'border-amber-300');
-            
             dateSels.classList.add('hidden');
             baziSels.classList.remove('hidden');
             baziSels.classList.add('flex');
-            
             nowBtn.classList.add('hidden');
             jqBtn.classList.add('hidden');
         } else {
@@ -1619,11 +1569,9 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
             btn.classList.replace('text-amber-900', 'text-indigo-800');
             btn.classList.replace('hover:bg-amber-200', 'hover:bg-indigo-200');
             btn.classList.replace('border-amber-300', 'border-indigo-200');
-            
             baziSels.classList.add('hidden');
             baziSels.classList.remove('flex');
             dateSels.classList.remove('hidden');
-            
             nowBtn.classList.remove('hidden');
             jqBtn.classList.remove('hidden');
         }
@@ -1679,7 +1627,6 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
         try {
             const nowLunar = Solar.fromDate(new Date()).getLunar();
             const noonLunar = Solar.fromYmdHms(new Date().getFullYear(), new Date().getMonth()+1, new Date().getDate(), 12, 0, 0).getLunar();
-            
             document.getElementById('sel-bazi-y').value = nowLunar.getYearInGanZhiExact();
             document.getElementById('sel-bazi-m').value = nowLunar.getMonthInGanZhiExact();
             document.getElementById('sel-bazi-d').value = noonLunar.getDayInGanZhiExact();
@@ -1704,7 +1651,6 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
         if (fxSel && !useFeiXing) {
             fxSel.value = d.getFullYear();
         }
-
         updateJieQiYearBtn();
     }
 
@@ -1712,17 +1658,16 @@ document.getElementById('pm-cheatsheet-content').innerHTML = relationHtml;
     function resetToNow() { currentDate = new Date(); updateSelectorsFromDate(currentDate); generatePan(); }
     function shiftHour(dir) { currentDate.setHours(currentDate.getHours() + (dir * 2)); updateSelectorsFromDate(currentDate); generatePan(); }
 
-function highlightPalace(el) {
-    // 移走藍框邏輯，僅在啟用「按宮看格局」時點擊彈窗（排除中五宮）
-    if (!enablePalaceModal) return;
-    let idMatch = el.id.match(/palace-(\d)/);
-    if (idMatch && idMatch[1]) {
-        let activePNum = parseInt(idMatch[1]);
-        if (activePNum !== 5) {
-            showPalaceDetails(activePNum);
+    function highlightPalace(el) {
+        if (!enablePalaceModal) return;
+        let idMatch = el.id.match(/palace-(\d)/);
+        if (idMatch && idMatch[1]) {
+            let activePNum = parseInt(idMatch[1]);
+            if (activePNum !== 5) {
+                showPalaceDetails(activePNum);
+            }
         }
     }
-}
 
     function handleGenerateBtn() {
         if (isBaziMode) {
@@ -1739,7 +1684,6 @@ function highlightPalace(el) {
         const tgtH = document.getElementById('sel-bazi-h').value;
 
         const results = searchBaziDates(tgtY, tgtM, tgtD, tgtH);
-        
         const listEl = document.getElementById('bazi-result-list');
         listEl.innerHTML = '';
         
@@ -1753,10 +1697,7 @@ function highlightPalace(el) {
                 const h = d.getHours();
                 const min = d.getMinutes();
 
-                let ziNote = "";
-                if (h === 23) ziNote = " [晚子]";
-                else if (h === 0) ziNote = " [早子]";
-
+                let ziNote = (h === 23) ? " [晚子]" : (h === 0 ? " [早子]" : "");
                 const dateStr = `${y}年 ${m.toString().padStart(2, '0')}月 ${day.toString().padStart(2, '0')}日 ${h.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}${ziNote}`;
 
                 const btn = document.createElement('button');
@@ -1766,91 +1707,73 @@ function highlightPalace(el) {
                 listEl.appendChild(btn);
             });
         }
-
         document.getElementById('bazi-modal').classList.remove('hidden');
     }
 
-function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
-    let results = [];
-    let start = new Date(1930, 0, 1);
-    let end = new Date(2050, 11, 31);
-    let firstMatch = null;
+    function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
+        let results = [];
+        let start = new Date(1930, 0, 1);
+        let end = new Date(2050, 11, 31);
+        let firstMatch = null;
 
-    // 尋找 1930 年起第一個符合目標日柱的基準日
-    for (let i = 0; i < 60; i++) {
-        let d = new Date(start);
-        d.setDate(start.getDate() + i);
-        let noonS = Solar.fromYmdHms(d.getFullYear(), d.getMonth() + 1, d.getDate(), 12, 0, 0);
-        if (noonS.getLunar().getDayInGanZhiExact() === tgtD) {
-            firstMatch = d;
-            break;
-        }
-    }
-
-    if (firstMatch) {
-        const targetHBranch = tgtH.charAt(1);
-        const targetHIdx = BRANCHES.indexOf(targetHBranch);
-        if (targetHIdx === -1) return results;
-
-        // 若目標為子時，需同時比對早子時 (00:30) 與晚子時 (23:30)
-        let slotsToCheck = [];
-        if (targetHBranch === '子') {
-            slotsToCheck = [
-                { h: 0, min: 30 },  // 早子時
-                { h: 23, min: 30 }  // 晚子時
-            ];
-        } else {
-            slotsToCheck = [
-                { h: targetHIdx * 2, min: 30 }
-            ];
+        for (let i = 0; i < 60; i++) {
+            let d = new Date(start);
+            d.setDate(start.getDate() + i);
+            let noonS = Solar.fromYmdHms(d.getFullYear(), d.getMonth() + 1, d.getDate(), 12, 0, 0);
+            if (noonS.getLunar().getDayInGanZhiExact() === tgtD) {
+                firstMatch = d;
+                break;
+            }
         }
 
-        let curr = new Date(firstMatch);
-        while (curr <= end) {
-            let y = curr.getFullYear();
-            let m = curr.getMonth() + 1;
-            let d = curr.getDate();
+        if (firstMatch) {
+            const targetHBranch = tgtH.charAt(1);
+            const targetHIdx = BRANCHES.indexOf(targetHBranch);
+            if (targetHIdx === -1) return results;
 
-            for (let slot of slotsToCheck) {
-                let testHour = slot.h;
-                let testMin = slot.min;
+            let slotsToCheck = (targetHBranch === '子') 
+                ? [{ h: 0, min: 30 }, { h: 23, min: 30 }]
+                : [{ h: targetHIdx * 2, min: 30 }];
 
-                // 1. 依據各時辰的具體時間點精確計算該時刻的年月柱（以交節分秒為準）
-                let exactLunar = Solar.fromYmdHms(y, m, d, testHour, testMin, 0).getLunar();
-                let yGZ = exactLunar.getYearInGanZhiExact();
-                let mGZ = exactLunar.getMonthInGanZhiExact();
+            let curr = new Date(firstMatch);
+            while (curr <= end) {
+                let y = curr.getFullYear();
+                let m = curr.getMonth() + 1;
+                let d = curr.getDate();
 
-                // 2. 當該時辰的年月柱完全符合時，進一步比對時柱
-                if (yGZ === tgtY && mGZ === tgtM) {
-                    // 依據晚子時跨日五鼠遁邏輯計算正確時干
-                    let wushuDate = new Date(y, m - 1, d, testHour, testMin);
-                    if (testHour >= 23) {
-                        wushuDate.setDate(wushuDate.getDate() + 1);
-                    }
-                    let wushuLunar = Solar.fromYmdHms(wushuDate.getFullYear(), wushuDate.getMonth() + 1, wushuDate.getDate(), 12, 0, 0).getLunar();
-                    let wushuDayStem = wushuLunar.getDayInGanZhi().substring(0, 1);
-                    let wushuDayStemIdx = STEMS.indexOf(wushuDayStem);
+                for (let slot of slotsToCheck) {
+                    let testHour = slot.h;
+                    let testMin = slot.min;
 
-                    let testTimeStemIdx = ((wushuDayStemIdx % 5) * 2 + targetHIdx) % 10;
-                    let testTimeGZ = STEMS[testTimeStemIdx] + targetHBranch;
+                    let exactLunar = Solar.fromYmdHms(y, m, d, testHour, testMin, 0).getLunar();
+                    let yGZ = exactLunar.getYearInGanZhiExact();
+                    let mGZ = exactLunar.getMonthInGanZhiExact();
 
-                    if (testTimeGZ === tgtH) {
-                        results.push(new Date(y, m - 1, d, testHour, testMin));
+                    if (yGZ === tgtY && mGZ === tgtM) {
+                        let wushuDate = new Date(y, m - 1, d, testHour, testMin);
+                        if (testHour >= 23) wushuDate.setDate(wushuDate.getDate() + 1);
+                        
+                        let wushuLunar = Solar.fromYmdHms(wushuDate.getFullYear(), wushuDate.getMonth() + 1, wushuDate.getDate(), 12, 0, 0).getLunar();
+                        let wushuDayStem = wushuLunar.getDayInGanZhi().substring(0, 1);
+                        let wushuDayStemIdx = STEMS.indexOf(wushuDayStem);
+
+                        let testTimeStemIdx = ((wushuDayStemIdx % 5) * 2 + targetHIdx) % 10;
+                        let testTimeGZ = STEMS[testTimeStemIdx] + targetHBranch;
+
+                        if (testTimeGZ === tgtH) {
+                            results.push(new Date(y, m - 1, d, testHour, testMin));
+                        }
                     }
                 }
+                curr.setDate(curr.getDate() + 60);
             }
-            curr.setDate(curr.getDate() + 60);
         }
+        return results;
     }
-    return results;
-}
 
     function applyBaziResult(y, m, d, h, min) {
         document.getElementById('bazi-modal').classList.add('hidden');
-        
-        if (isBaziMode) {
-            toggleInputMode();
-        }
+        if (isBaziMode) toggleInputMode();
 
         document.getElementById('sel-year').value = y;
         document.getElementById('sel-month').value = m;
@@ -1982,9 +1905,7 @@ function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
             const timeStem = timeGZ_string.substring(0, 1);
             const timeBranchIdx = BRANCHES.indexOf(timeBranch);
 
-            let ziMark = "";
-            if (h >= 23) ziMark = "晚子";
-            else if (h === 0) ziMark = "早子";
+            let ziMark = (h >= 23) ? "晚子" : (h === 0 ? "早子" : "");
 
             const jqData = getAccurateJieQi(new Date(y, m - 1, d, h, min));
             const jieQi = jqData.name;
@@ -2256,12 +2177,7 @@ function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
                     if (pNum2 !== "0") {
                         let elements2 = getQimenElements(y, m, d, h, min, pNum2);
                         let match2 = elements2 ? evalCriteria(elements2, criteria2) : false;
-                        
-                        if (logicOp === 'AND') {
-                            matchOverall = match1 && match2;
-                        } else {
-                            matchOverall = match1 || match2;
-                        }
+                        matchOverall = (logicOp === 'AND') ? (match1 && match2) : (match1 || match2);
                     }
 
                     if (matchOverall) {
@@ -2310,13 +2226,11 @@ function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
     function resetFilter() {
         const today = new Date();
         document.getElementById('filter-start-date').value = `${today.getFullYear()}/${(today.getMonth()+1).toString().padStart(2,'0')}/${today.getDate().toString().padStart(2,'0')}`;
-        
         document.getElementById('filter-target-palace-1').value = "1";
         document.getElementById('filter-target-palace-2').value = "0";
         document.getElementById('filter-logic-operator').value = "AND";
         
         document.querySelectorAll('.chk-label input[type="checkbox"]').forEach(cb => cb.checked = false);
-        
         document.getElementById('filter-results-list').innerHTML = '<div class="p-3 text-center text-gray-400 text-sm bg-gray-50 rounded-lg border border-dashed border-gray-200">已重置。<br>設定好上方的條件然後按下按鈕即可獲得符合之奇門遁甲列表！</div>';
         document.getElementById('filter-results-count').innerText = "0 筆";
         
@@ -2366,9 +2280,7 @@ function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
             const timeStem = timeGZ.substring(0, 1);
             const timeBranchIdx = BRANCHES.indexOf(timeBranch);
 
-            let ziMark = "";
-            if (h >= 23) ziMark = "晚子";
-            else if (h === 0) ziMark = "早子";
+            let ziMark = (h >= 23) ? "晚子" : (h === 0 ? "早子" : "");
 
             let prevQi = exactLunar.getPrevQi(true);
             let zqName = prevQi.getName();
@@ -2376,7 +2288,6 @@ function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
             
             let timeBranchIdxForDayNight = BRANCHES.indexOf(timeBranch);
             let isDay = (timeBranchIdxForDayNight >= 3 && timeBranchIdxForDayNight <= 8);
-            
             let guiRenBaseBranch = GUI_REN_MAP[dayStem][isDay ? 'day' : 'night'];
             
             let yjIdx = BRANCHES.indexOf(yueJiangBranchCalculated);
@@ -2408,16 +2319,12 @@ function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
             for (let i = 0; i < 9; i++) { earthPan[currentPalaceNum] = YI_LIU[i]; currentPalaceNum = isYang ? currentPalaceNum + 1 : currentPalaceNum - 1; if (currentPalaceNum > 9) currentPalaceNum = 1; else if (currentPalaceNum < 1) currentPalaceNum = 9; }
             
             const xunShouIdx = (timeBranchIdx - timeStemIdx + 12) % 12, xunShouGZ = "甲" + BRANCHES[xunShouIdx], XUN_MAP = { "甲子": "戊", "甲戌": "己", "甲申": "庚", "甲午": "辛", "甲辰": "壬", "甲寅": "癸" }, xunShouStem = XUN_MAP[xunShouGZ], targetHighlightStem = (timeStem === '甲') ? xunShouStem : timeStem;
-            
             const dayHighlightStem = (dayStem === '甲') ? XUN_MAP[dayGZ.substring(0,2)] || dayStem : dayStem;
 
-            // 計算有效四柱天干（處理甲干隱遁六儀）
             const getEffStem = (gz) => {
                 if (!gz) return '';
                 let stem = gz.substring(0, 1);
-                if (stem === '甲') {
-                    return XUN_MAP[gz.substring(0, 2)] || stem;
-                }
+                if (stem === '甲') return XUN_MAP[gz.substring(0, 2)] || stem;
                 return stem;
             };
 
@@ -2462,14 +2369,34 @@ function searchBaziDates(tgtY, tgtM, tgtD, tgtH) {
             if (isTianXian) { specialStr += "<span class='text-green-600 font-bold ml-2'>【✅天顯時格】</span>"; rawSpecialInfo += "【✅天顯時格】"; }
             if (isWuBuYu) { specialStr += "<span class='text-red-600 font-bold ml-2'>【❌五不遇時】</span>"; rawSpecialInfo += "【❌五不遇時】"; }
             
-// 計算 星期幾 與 農曆日期
-const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-const weekStr = weekDays[currentDate.getDay()];
-const lunarStr = `農曆${exactLunar.getMonthInChinese()}月${exactLunar.getDayInChinese()}`;
+            const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const weekStr = weekDays[currentDate.getDay()];
+            const lunarStr = `農曆${exactLunar.getMonthInChinese()}月${exactLunar.getDayInChinese()}`;
+            let displayZiMark = ziMark ? `<span class="text-orange-600 font-bold ml-1">【${ziMark}】</span>` : "";
+            
+// 🌟 起盤後自動隱藏頂部大標題
+            const appTitle = document.getElementById('app-title');
+            if (appTitle) appTitle.classList.add('hidden');
 
-let displayZiMark = ziMark ? `<span class="text-orange-600 font-bold ml-1">【${ziMark}】</span>` : "";
-// 格式：新曆 星期 時間 ｜ 農曆 ｜ 四柱八字
-document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日(${weekStr}) ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}｜<span class="text-teal-800 font-bold">${lunarStr}</span>｜<br>${coloredBaziStr}${displayZiMark}${specialStr}`;
+            // 🌟 1. 收折「設定」Accordion，並展示簡化的「📋 排盤資料」Accordion
+            const accControls = document.getElementById('accordion-controls');
+            const accInfo = document.getElementById('accordion-pan-info');
+            const quickBar = document.getElementById('quick-time-bar');
+
+            if (accControls) accControls.open = false; // 自動收起時間設定欄
+            if (accInfo) {
+                accInfo.classList.remove('hidden');
+                document.getElementById('pan-summary-title').innerHTML = `📋 排盤資料`;
+            }
+
+            // 🌟 2. 顯示並更新單行快調 Bar（不含四柱，僅保留時間、農曆與早晚子）
+if (quickBar) {
+    quickBar.classList.remove('hidden');
+    quickBar.classList.add('flex');
+    document.getElementById('quick-bar-time').innerHTML = `${y}年${m}月${d}日(${weekStr}) ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}${displayZiMark}`;
+}
+
+            document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日(${weekStr}) ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} ｜ <span class="text-teal-800 font-bold">${lunarStr}</span> ｜ ${coloredBaziStr}${displayZiMark}${specialStr}`;
             
             let targetWarn = jqData.isCurrentTransition ? "⚠️" : "";
             let nextWarn = jqData.isNextTransition ? "⚠️" : "";
@@ -2533,7 +2460,6 @@ document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日(${weekSt
                 document.getElementById('info-special').innerHTML = combinedStatusHTML;
             }
 
-            document.getElementById('pan-header').classList.remove('hidden');
             document.getElementById('qimen-grid').classList.remove('hidden');
             document.getElementById('action-footer').classList.remove('hidden');
             document.getElementById('action-footer').classList.add('flex');
@@ -2550,7 +2476,7 @@ document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日(${weekSt
                 return tags.length ? tags.join("+") : "";
             };
 
-            let copyBaziLine = `${baziRawStr} (${y}年${m}月${d}日 ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}${ziMark ? ' ' + ziMark : ''})`;
+            let copyBaziLine = `${baziRawStr} (${y}年${m}月${d}日 ${weekStr} ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}${ziMark ? ' ' + ziMark : ''})`;
             
             const fxSelVal = document.getElementById('sel-feixing-year')?.value;
             let flightYear = (useFeiXing && fxSelVal) ? parseInt(fxSelVal) : y;
@@ -2595,7 +2521,6 @@ document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日(${weekSt
 
             const renderStem = (s, pNum, isAnGan = false) => {
                 let tagStr = "";
-                // 暗干不顯示刑墓
                 if (!isAnGan) {
                     let tags = []; 
                     if(isJiXing(s, pNum)) tags.push("刑"); 
@@ -2624,7 +2549,7 @@ document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日(${weekSt
 
             for (let i = 1; i <= 9; i++) {
                 const el = document.getElementById(`palace-${i}`);
-el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
+                el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
 
                 let feixingNum = (starC + FLIGHT_OFFSET[i] - 1) % 9 + 1;
                 let feixingSuffix = useFeiXing ? `<span class="text-gray-400 font-normal text-xs sm:text-sm ml-0.5">(流${FEIXING_ZH_WX[feixingNum]})</span>` : "";
@@ -2642,9 +2567,9 @@ el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
 
                 if(i === 5) {
                     let s = earthPan[5], anGan = anGanPan[5];
-                    let centerLabel = `中五${feixingSuffix}`;
+                    let centerLabel = `${ACTIVE_PALACES[5].name}${feixingSuffix}`;
                     el.innerHTML = renderPalace5Html(s, anGan, centerLabel, panData.bazi5Info);
-                    panData.palaces["中五"] = s;
+                    panData.palaces[ACTIVE_PALACES[5].name] = s;
                     
                     globalPalaceData[5] = { name: ACTIVE_PALACES[5].name, branch: '', hStems: [s], eStems: [s], anGan: anGan, isCenter: true };
                     continue;
@@ -2657,7 +2582,7 @@ el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                 if(isMa) currentYiMaPalace = ACTIVE_PALACES[i].name;
                 
                 let godColor = GOD_COLORS[godPan[i]] || "black", doorColor = DOOR_COLORS[pDoor] || "black", anGan = anGanPan[i];
-                let starText = (pStars[0] === "天芮" && pStars[1] === "天禽") ? "天芮/禽" : pStars[0];
+                let starText = (pStars[0] === "天芮" && pStars[1] === "天禽") ? "芮/禽" : pStars[0];
                 let palaceLabel = `${ACTIVE_PALACES[i].name}${feixingSuffix}`;
 
                 let pDoorDisplay = useEnergy ? DOOR_ENERGY[pDoor][i] : pDoor;
@@ -2692,27 +2617,29 @@ el.className = `palace bg-${ACTIVE_PALACES[i].type}`;
                         ${isKong ? '<span>🈳</span>' : ''}
                         ${isMa ? '<span>🐎</span>' : ''}
                     </div>
-                    <div class="flex flex-col h-full justify-between relative">
-                        <div class="flex flex-col items-center leading-none mb-1 text-main">
+                    <div class="flex flex-col h-full justify-between relative select-none">
+                        <div class="flex flex-col items-center leading-none mb-0.5">
                             <span class="text-palace-name text-${ACTIVE_PALACES[i].type}">${palaceLabel}</span>
-                            <span class="text-xl leading-none mt-0.5">${guaDisplay}</span>
+                            <span class="text-sm sm:text-base leading-none mt-0.5 font-normal">${guaDisplay}</span>
                         </div>
-                        <div class="flex flex-col items-start leading-none mb-1">
-                            <span class="text-main text-${godColor}">${godPan[i]}</span>
-                        </div>
-                        <div class="text-main leading-none mb-1 tracking-wider"><span class="text-${STAR_COLORS[pStars[0]] || 'black'}">${starTextDisplay}</span></div>
-                        <div class="flex items-start leading-none mb-1"><span class="text-main text-${doorColor} tracking-wider">${pDoorDisplay}</span>${isMenPo(pDoor, i)?`<span class="text-xs sm:text-sm text-red-600 ml-1 font-black">迫</span>`:""}</div>
-                        <div class="flex justify-between items-end mt-auto w-full">
-                            <div class="mb-1 flex-shrink-0 mr-2">${renderStem(anGan, i, true)}</div>
-                            <div class="flex flex-col items-stretch text-right leading-tight text-main font-bold flex-grow max-w-[80%]">
-                                <div class="mb-1 w-full">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">|</span>')}</div>
-                                <div class="border-t-[1.5px] border-gray-300 min-w-[2.5rem] w-full pt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5">|</span>')}</div>
+                        <div class="flex flex-col items-start leading-none space-y-1 w-full my-0.5">
+                            <span class="text-main text-${godColor} w-full">${godPan[i]}</span>
+                            <span class="text-main text-${STAR_COLORS[pStars[0]] || 'black'} w-full tracking-wide">${starTextDisplay}</span>
+                            <div class="flex items-center leading-none w-full">
+                                <span class="text-main text-${doorColor} tracking-wide">${pDoorDisplay}</span>
+                                ${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 ml-1 font-black px-0.5 bg-red-50 border border-red-200 rounded">迫</span>`:""}
                             </div>
                         </div>
-                    </div>`;
+                        <div class="flex justify-between items-end mt-auto w-full pt-1">
+                            <div class="flex-shrink-0 self-end pb-0.5">${renderStem(anGan, i, true)}</div>
+                            <div class="flex flex-col items-stretch text-right leading-tight text-tiandi-stem font-black flex-grow max-w-[80%]">
+                                <div class="w-full">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
+                                <div class="border-t-[2px] border-gray-400 min-w-[2.2rem] w-full pt-0.5 mt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
+                            </div>
+                        </div>
+                    </div>`;               
                 
                 let doorTextForCopy = pDoorDisplay + (isMenPo(pDoor, i) ? "(迫)" : "");
-                
                 let hStemsForCopy = hStems.map((s, idx) => {
                     let tagsText = getStemTagsText(s, i);
                     let txt = (useEnergy ? resolveStemEnergy(s, i, timeBranch) : s) + (tagsText ? `(${tagsText})` : "");
