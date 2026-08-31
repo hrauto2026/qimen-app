@@ -149,48 +149,48 @@
                     <label class="text-xs sm:text-sm font-black text-indigo-900 flex items-center gap-1">
                         <span>🚪 (三) 選擇門向 (納氣方)</span>
                     </label>
-                    <select id="sel-door" onchange="calculateAndRender()" class="w-full p-2 border border-indigo-300 rounded-lg bg-white text-sm font-bold text-indigo-950 outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm">
-                        <optgroup label="坎宮 (正北)">
-                            <option value="子" selected>門向子 (坎宮中山)</option>
-                            <option value="丑">門向丑 (艮宮前山 · 屬子丑組)</option>
-                            <option value="壬">門向壬 (坎宮前山)</option>
-                            <option value="癸">門向癸 (坎宮後山)</option>
-                        </optgroup>
-                        <optgroup label="艮宮 (東北)">
-                            <option value="艮">門向艮 (艮宮中山)</option>
-                            <option value="寅">門向寅 (艮宮後山 · 屬寅亥組)</option>
-                        </optgroup>
-                        <optgroup label="震宮 (正東)">
-                            <option value="卯">門向卯 (震宮中山 · 屬卯戌組)</option>
-                            <option value="甲">門向甲 (震宮前山)</option>
-                            <option value="乙">門向乙 (震宮後山)</option>
-                        </optgroup>
-                        <optgroup label="巽宮 (東南)">
-                            <option value="辰">門向辰 (巽宮前山 · 屬辰酉組)</option>
-                            <option value="巽">門向巽 (巽宮中山)</option>
-                            <option value="巳">門向巳 (巽宮後山 · 屬巳申組)</option>
-                        </optgroup>
-                        <optgroup label="離宮 (正南)">
-                            <option value="午">門向午 (離宮中山 · 屬午未組)</option>
-                            <option value="丙">門向丙 (離宮前山)</option>
-                            <option value="丁">門向丁 (離宮後山)</option>
-                        </optgroup>
-                        <optgroup label="坤宮 (西南)">
-                            <option value="未">門向未 (坤宮前山 · 屬午未組)</option>
-                            <option value="坤">門向坤 (坤宮中山)</option>
-                            <option value="申">門向申 (坤宮後山 · 屬巳申組)</option>
-                        </optgroup>
-                        <optgroup label="兌宮 (正西)">
-                            <option value="酉">門向酉 (兌宮中山 · 屬辰酉組)</option>
-                            <option value="庚">門向庚 (兌宮前山)</option>
-                            <option value="辛">門向辛 (兌宮後山)</option>
-                        </optgroup>
-                        <optgroup label="乾宮 (西北)">
-                            <option value="戌">門向戌 (乾宮前山 · 屬卯戌組)</option>
-                            <option value="乾">門向乾 (乾宮中山)</option>
-                            <option value="亥">門向亥 (乾宮後山 · 屬寅亥組)</option>
-                        </optgroup>
-                    </select>
+<select id="sel-door" onchange="calculateAndRender()" class="w-full p-2 border border-indigo-300 rounded-lg bg-white text-sm font-bold text-indigo-950 outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm">
+    <optgroup label="坎宮 (正北)">
+        <option value="壬">門向壬 (坎宮 · 壬山)</option>
+        <option value="子" selected>門向子 (坎宮 · 子山)</option>
+        <option value="癸">門向癸 (坎宮 · 癸山)</option>
+    </optgroup>
+    <optgroup label="艮宮 (東北)">
+        <option value="丑">門向丑 (艮宮 · 丑山)</option>
+        <option value="艮">門向艮 (艮宮 · 艮山)</option>
+        <option value="寅">門向寅 (艮宮 · 寅山)</option>
+    </optgroup>
+    <optgroup label="震宮 (正東)">
+        <option value="甲">門向甲 (震宮 · 甲山)</option>
+        <option value="卯">門向卯 (震宮 · 卯山)</option>
+        <option value="乙">門向乙 (震宮 · 乙山)</option>
+    </optgroup>
+    <optgroup label="巽宮 (東南)">
+        <option value="辰">門向辰 (巽宮 · 辰山)</option>
+        <option value="巽">門向巽 (巽宮 · 巽山)</option>
+        <option value="巳">門向巳 (巽宮 · 巳山)</option>
+    </optgroup>
+    <optgroup label="離宮 (正南)">
+        <option value="丙">門向丙 (離宮 · 丙山)</option>
+        <option value="午">門向午 (離宮 · 午山)</option>
+        <option value="丁">門向丁 (離宮 · 丁山)</option>
+    </optgroup>
+    <optgroup label="坤宮 (西南)">
+        <option value="未">門向未 (坤宮 · 未山)</option>
+        <option value="坤">門向坤 (坤宮 · 坤山)</option>
+        <option value="申">門向申 (坤宮 · 申山)</option>
+    </optgroup>
+    <optgroup label="兌宮 (正西)">
+        <option value="庚">門向庚 (兌宮 · 庚山)</option>
+        <option value="酉">門向酉 (兌宮 · 酉山)</option>
+        <option value="辛">門向辛 (兌宮 · 辛山)</option>
+    </optgroup>
+    <optgroup label="乾宮 (西北)">
+        <option value="戌">門向戌 (乾宮 · 戌山)</option>
+        <option value="乾">門向乾 (乾宮 · 乾山)</option>
+        <option value="亥">門向亥 (乾宮 · 亥山)</option>
+    </optgroup>
+</select>
                 </div>
             </div>
         </div>
