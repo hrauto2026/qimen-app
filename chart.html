@@ -573,6 +573,22 @@
     </div>
 </div>
 
+<!-- 🌟 節氣交接提醒彈窗 -->
+<div id="jieqi-warn-modal" class="fixed inset-0 bg-gray-900/60 hidden flex justify-center items-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-5 max-w-sm w-full text-center border-t-8 border-amber-500 space-y-3 animate-fade-in">
+        <div class="text-3xl">⚠️</div>
+        <h3 class="text-base font-black text-amber-900">節氣交接提醒</h3>
+        <p class="text-sm text-gray-800 font-bold leading-relaxed">
+            請留意：節氣於此時辰交接。
+        </p>
+        <div class="pt-2">
+            <button onclick="document.getElementById('jieqi-warn-modal').classList.add('hidden')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-1.5 px-6 rounded-xl shadow transition active:scale-95 text-sm">
+                確定
+            </button>
+        </div>
+    </div>
+</div>    
+    
 <div id="palace-modal" class="fixed inset-0 bg-gray-900/60 hidden flex justify-center items-center z-50 p-2 sm:p-4">
     <!-- 🌟 手機端改為 w-full max-w-full，邊距縮小至 p-3.5，在手機上完全符合 screen width；電腦端擴大至 max-w-2xl -->
     <div class="bg-white rounded-2xl shadow-2xl p-3.5 sm:p-5 max-w-full sm:max-w-lg md:max-w-2xl w-full max-h-[92vh] sm:max-h-[85vh] overflow-y-auto relative border-t-8 border-indigo-600">
@@ -2545,6 +2561,12 @@ document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日(${weekSt
             let nextWarn = jqData.isNextTransition ? "⚠️" : "";
             document.getElementById('info-jieqi').innerHTML = `${jieQi} <span class="text-[10px] text-gray-500 font-normal">(交節：${jqData.time}${targetWarn})</span>`;
             document.getElementById('info-next-jieqi').innerHTML = `${jqData.nextName} <span class="text-[10px] text-gray-500 font-normal">(交節：${jqData.nextTime}${nextWarn})</span>`;
+
+            // 🌟 當前時辰遇節氣交接時，彈出警告對話框
+            if (jqData.isTransitionInHour) {
+                const warnModal = document.getElementById('jieqi-warn-modal');
+                if (warnModal) warnModal.classList.remove('hidden');
+            }
             
             document.getElementById('info-ju').innerText = juStr;
             document.getElementById('info-xunshou').innerText = xunShouGZ + xunShouStem;
