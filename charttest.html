@@ -3073,7 +3073,16 @@ function closeCompassMode() {
         }
     }
 
+
+// ==================== 指南針感測器平滑與跨平台修復 ====================
+    let compassActiveListenerType = null;
+    let currentContinuousRotation = 0; // 紀錄連續角度，避免 0/360 度跨界倒轉
+    let smoothedHeading = null;        // 平滑濾波角度
+
     function startCompassSensor() {
+        stopCompassSensor(); // 啟動前先清理舊監聽器
+
+        // 1. iOS 13+ 權限請求流程
         if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
             const permBtn = document.getElementById('btn-ios-perm');
             const hint = document.getElementById('compass-status-hint');
@@ -3082,6 +3091,7 @@ function closeCompassMode() {
                 .then(response => {
                     if (response === 'granted') {
                         window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+                        compassActiveListenerType = 'deviceorientation';
                         isCompassRunning = true;
                         if (permBtn) permBtn.classList.add('hidden');
                         if (hint) hint.innerText = '💡 轉動手機，奇門盤將自動對準方位實地堪輿';
@@ -3094,11 +3104,32 @@ function closeCompassMode() {
                     if (permBtn) permBtn.classList.remove('hidden');
                     if (hint) hint.innerText = '⚠️ 請點擊按鈕啟用指南針：';
                 });
-        } else {
+        } 
+        // 2. Android / Chrome / Firefox：精確單一監聽，避免事件打架
+        else if ('ondeviceorientationabsolute' in window) {
+            // Android 優先使用地磁絕對方位
             window.addEventListener('deviceorientationabsolute', handleDeviceOrientation, true);
+            compassActiveListenerType = 'deviceorientationabsolute';
+            isCompassRunning = true;
+        } else {
+            // 降級使用一般方位
             window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+            compassActiveListenerType = 'deviceorientation';
             isCompassRunning = true;
         }
+    }
+
+    function stopCompassSensor() {
+        if (compassActiveListenerType === 'deviceorientationabsolute') {
+            window.removeEventListener('deviceorientationabsolute', handleDeviceOrientation, true);
+        } else if (compassActiveListenerType === 'deviceorientation') {
+            window.removeEventListener('deviceorientation', handleDeviceOrientation, true);
+        }
+        window.removeEventListener('deviceorientation', handleDeviceOrientation, true);
+        window.removeEventListener('deviceorientationabsolute', handleDeviceOrientation, true);
+        compassActiveListenerType = null;
+        isCompassRunning = false;
+        smoothedHeading = null;
     }
 
     function requestDeviceOrientationPerm() {
@@ -3106,10 +3137,7 @@ function closeCompassMode() {
             DeviceOrientationEvent.requestPermission()
                 .then(res => {
                     if (res === 'granted') {
-                        window.addEventListener('deviceorientation', handleDeviceOrientation, true);
-                        isCompassRunning = true;
-                        document.getElementById('btn-ios-perm')?.classList.add('hidden');
-                        document.getElementById('compass-status-hint').innerText = '💡 轉動手機，奇門盤將自動對準方位實地堪輿';
+                        startCompassSensor();
                     } else {
                         alert('指南針權限未開啟。');
                     }
@@ -3118,32 +3146,48 @@ function closeCompassMode() {
         }
     }
 
-    function stopCompassSensor() {
-        window.removeEventListener('deviceorientation', handleDeviceOrientation, true);
-        window.removeEventListener('deviceorientationabsolute', handleDeviceOrientation, true);
-        isCompassRunning = false;
-    }
-
     function handleDeviceOrientation(e) {
         if (isCompassLocked) return;
-        let heading = 0;
+        let rawHeading = 0;
+
+        // iOS 系統
         if (e.webkitCompassHeading !== undefined && e.webkitCompassHeading !== null) {
-            heading = e.webkitCompassHeading;
-        } else if (e.alpha !== null) {
-            heading = (360 - e.alpha) % 360;
+            rawHeading = e.webkitCompassHeading;
+        } 
+        // Android / 標準 W3C（alpha 逆時針 0~360°）
+        else if (e.alpha !== null && e.alpha !== undefined) {
+            // Android Chrome 絕對地磁轉換為順時針方向
+            rawHeading = (360 - e.alpha) % 360;
         } else {
             return;
         }
 
-        updateCompassHeading(heading);
+        // 低通濾波器 (EMA Smoothing)，消除 Android 感測器抖動噪點
+        if (smoothedHeading === null) {
+            smoothedHeading = rawHeading;
+        } else {
+            // 計算最小角度差值
+            let delta = rawHeading - smoothedHeading;
+            delta = (delta + 540) % 360 - 180; // 限制在 -180° ~ 180°
+            smoothedHeading = (smoothedHeading + delta * 0.25 + 360) % 360; // 0.25 平滑係數
+        }
+
+        updateCompassHeading(smoothedHeading);
     }
 
     function updateCompassHeading(heading) {
         heading = Math.round(heading) % 360;
-        const rotation = (180 - heading + 360) % 360;
+        
+        // 計算羅盤應旋轉的目標角度 (朝向指針位於頂部，盤面逆向轉動)
+        let targetRotation = (180 - heading + 360) % 360;
+
+        // 計算最短旋轉路徑 (解決 359° 與 0° 跨界導致的 360 度倒轉問題)
+        let diff = (targetRotation - (currentContinuousRotation % 360) + 540) % 360 - 180;
+        currentContinuousRotation += diff;
+
         const dial = document.getElementById('compass-dial-container');
         if (dial) {
-            dial.style.transform = `rotate(${rotation}deg)`;
+            dial.style.transform = `rotate(${currentContinuousRotation}deg)`;
         }
 
         const degEl = document.getElementById('compass-degree');
