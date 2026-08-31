@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>奇門遁甲 - 拆補法排盤 (v27.1)</title>
+    <title>奇門遁甲 - 拆補法排盤 (v28.1)</title>
 <!-- iOS Home Screen Icon -->
 <link rel="apple-touch-icon" href="icon.png">
 
@@ -275,6 +275,15 @@
                     分享起盤連結
                 </button>
 
+<!-- Toggle Switch: 奇門指南針 -->
+<div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-purple-200">
+    <span class="text-xs font-bold text-purple-900 flex items-center gap-1">🧭 奇門指南針</span>
+    <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" id="toggle-compass" class="sr-only peer" onchange="handleToggleSwitch('toggle-compass')">
+        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600 shadow-inner"></div>
+    </label>
+</div>
+
                 <div class="flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full shadow border border-indigo-100">
                     <span class="text-xs font-bold text-gray-700" id="bagua-label">先天八卦數</span>
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -314,7 +323,7 @@
                 </div>
 
                 <div class="w-full text-center mt-2">
-                    <span class="text-xs text-gray-400 font-normal">created by RS2026 <button onclick="showManualModal()" class="text-indigo-600 hover:text-indigo-800 underline font-bold transition-colors focus:outline-none cursor-pointer" title="點擊查看使用手冊">(v27.1)</button></span>
+                    <span class="text-xs text-gray-400 font-normal">created by RS2026 <button onclick="showManualModal()" class="text-indigo-600 hover:text-indigo-800 underline font-bold transition-colors focus:outline-none cursor-pointer" title="點擊查看使用手冊">(v28.1)</button></span>
                 </div>
             </div>
         </div>
@@ -558,7 +567,64 @@
         </div>
     </div>
 </div>
+<!-- 🌟 奇門指南針風水全螢幕黑屏模式 (Compass Blackout Mode) -->
+<div id="compass-modal" class="fixed inset-0 bg-black/95 z-[100] hidden flex flex-col justify-between items-center p-3 select-none overflow-hidden touch-none text-white">
 
+
+
+    <!-- 頂部資訊區：角度、廿四山、方位、流年飛星、關閉按鈕 -->
+<div class="w-full flex justify-between items-center pt-1 sm:pt-2 px-2 sm:px-4 z-20">
+        <div class="flex items-center gap-2">
+            <div class="flex flex-col">
+                <div class="flex items-baseline gap-2">
+                    <span id="compass-degree" class="text-2xl sm:text-4xl font-black text-amber-400 font-mono tracking-wider">000°</span>
+                    <span id="compass-direction-text" class="text-base sm:text-xl font-black text-white">正北</span>
+                </div>
+
+                <div class="text-[11px] sm:text-xs font-bold text-gray-300 flex items-center flex-wrap gap-1 mt-0.5">
+                    <span>廿四山：<span id="compass-mountain" class="text-amber-300 font-black text-xs sm:text-sm">坎宮 · 子山</span></span>
+                    <span class="text-gray-400">｜</span>
+                    <div class="flex items-center gap-1">
+                        <span class="text-rose-300 text-[10px] sm:text-xs">飛星年份:</span>
+                        <select id="sel-compass-feixing-year" onchange="changeCompassFeiXingYear()" class="text-[11px] sm:text-xs bg-slate-900 border border-rose-500/60 rounded px-1.5 py-0.5 text-rose-300 font-bold outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer">
+                        </select>
+                    </div>
+                </div>
+            </div> </div> <div class="flex items-center gap-2">
+            <button id="btn-compass-lock" onclick="toggleCompassLock()" class="bg-gray-900 hover:bg-gray-800 text-gray-200 px-2.5 py-1.5 rounded-full border border-gray-700 text-xs font-bold transition flex items-center gap-1">
+                <span id="compass-lock-icon">🔓</span> <span id="compass-lock-text">跟隨</span>
+            </button>
+            <button onclick="closeCompassMode()" class="bg-red-600 hover:bg-red-700 text-white px-3.5 py-1.5 rounded-full font-black text-xs sm:text-sm shadow-lg border border-red-500 transition active:scale-95 flex items-center gap-1">
+                <span>✖</span> 關閉
+            </button>
+        </div>
+    </div>
+    <!-- 朝向指示指針 (Top Sight Marker) -->
+    <div class="w-full flex flex-col items-center justify-center my-0.5 z-20">
+        <div class="w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-t-[12px] border-t-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.9)]"></div>
+        <div class="text-[9px] text-red-400 font-black tracking-widest uppercase">朝向</div>
+    </div>
+
+    <!-- 中間旋轉羅盤本體 (24山外圈 + 緊湊高清晰度九宮格) -->
+    <div class="relative flex items-center justify-center flex-grow w-full my-auto overflow-hidden">
+        <div id="compass-dial-container" class="relative rounded-full flex items-center justify-center transition-transform duration-100 ease-out will-change-transform shadow-[0_0_50px_rgba(30,58,138,0.35)] border-2 border-amber-500/40 bg-slate-950" style="width: min(86vw, 86vh, 440px); height: min(86vw, 86vh, 440px);">
+            <!-- 外圈 24 山刻度 SVG -->
+            <svg id="compass-svg-dial" class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 440 440"></svg>
+
+            <!-- 內圈微縮九宮格（保持易讀性） -->
+            <div id="compass-qimen-grid" class="grid grid-cols-3 gap-1 z-10 w-[74%] h-[74%] p-1 rounded-xl bg-black/85 backdrop-blur-md border border-amber-500/30">
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部提示欄與 iOS 授權按鈕 -->
+    <div class="w-full text-center pb-2 text-[11px] sm:text-xs text-gray-400 font-bold z-20 flex justify-center items-center gap-2">
+        <span id="compass-status-hint">💡 轉動手機，奇門盤將自動對準方位實地堪輿</span>
+        <button id="btn-ios-perm" onclick="requestDeviceOrientationPerm()" class="hidden bg-amber-500 hover:bg-amber-600 text-slate-950 px-2.5 py-1 rounded-md text-xs font-black shadow transition">
+            啟用指南針感測
+        </button>
+    </div>
+</div>
 <div id="jieqi-modal" class="fixed inset-0 bg-gray-900/60 hidden flex justify-center items-center z-50 p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-5 max-w-md w-full max-h-[80vh] overflow-y-auto relative border-t-8 border-teal-600">
         <button onclick="closeJieQiModal()" class="absolute top-3 right-4 text-gray-400 hover:text-black text-2xl">✖</button>
@@ -650,21 +716,22 @@
         <button onclick="closeManualModal()" class="absolute top-4 right-5 text-gray-400 hover:text-black text-2xl font-bold transition-colors">✖</button>
         
         <div class="border-b border-indigo-100 pb-4 text-center">
-            <span class="bg-indigo-100 text-indigo-800 text-xs font-black px-2.5 py-1 rounded-full uppercase tracking-wider">v27.1 Official Guide</span>
+            <span class="bg-indigo-100 text-indigo-800 text-xs font-black px-2.5 py-1 rounded-full uppercase tracking-wider">v28.1</span>
             <h2 class="text-2xl sm:text-3xl font-black text-indigo-950 mt-2 tracking-wide">奇門遁甲 - 拆補法排盤程式使用手冊</h2>
             <p class="text-xs text-gray-500 mt-1">RS2026 研製 ｜ 高精度古典奇門與多維演算工具</p>
         </div>
 
-        <!-- 手冊內容章節 -->
+<!-- 手冊內容章節 -->
         <div class="space-y-6 text-sm leading-relaxed">
             <section class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
                 <h3 class="text-base sm:text-lg font-black text-indigo-900 mb-2 flex items-center gap-2">
                     <span>一、 程式版本概述與核心特點</span>
                 </h3>
-                <p class="text-gray-700 mb-3">本程式（版本 <strong>v27.1</strong>）是一款專為奇門遁甲研習者與實務運用者設計的高精度網頁版排盤與分析工具，採用傳統權威之<strong>拆補法</strong>起局。</p>
+                <p class="text-gray-700 mb-3">本程式（版本 <strong>v28.1</strong>）是一款專為奇門遁甲研習者與實務運用者設計的高精度網頁版排盤與分析工具，採用傳統權威之<strong>拆補法</strong>起局。</p>
                 <ul class="list-disc list-inside space-y-1.5 text-gray-700">
                     <li><strong>精準天文曆法演算</strong>：集成 <code>lunar-javascript</code> 權威曆法庫，精準計算太陽黃經與節氣交節時間（精確至分秒），自動區分早子時與晚子時。</li>
                     <li><strong>拆補法自動定局</strong>：根據節氣與符頭（上元、中元、下元）自動推算陰陽遁局數與旬首。</li>
+                    <li><strong>實地風水奇門指南針</strong>：結合裝置電子羅盤感測器與精確廿四山刻度，將即時奇門盤與紫白飛星旋轉對齊實地方位，支援方位鎖定與飛星年份切換。</li>
                     <li><strong>多維古典與現代輔助切換</strong>：先天/後天八卦數、十二長生與星門旺相休囚死能量狀態、內外盤、流年紫白飛星、宮位合/沖/方局自動比對與經典格局名堂自動檢測。</li>
                     <li><strong>穿壬十二天將</strong>：依據日干、晝夜、月將與時支，精準推算六壬十二天將環繞宮位。</li>
                     <li><strong>強大雙條件反查篩選引擎</strong>：未來 180 天全時辰範圍內，依據神、星、門、干、四害及特殊時格進行 AND / OR 多重邏輯自動篩選。</li>
@@ -679,8 +746,19 @@
                 </div>
             </section>
 
+            <section class="p-4 bg-purple-50/50 rounded-xl border border-purple-200">
+                <h3 class="text-base sm:text-lg font-black text-purple-900 mb-2">四、 🧭 奇門指南針與實地風水堪輿</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>啟用指南針模式：</strong>點擊下方功能列的「🧭 奇門指南針」開關即可進入全螢幕黑屏風水羅盤模式。iOS 裝置初次使用時請點擊底部提示之「啟用指南針感測」以授予陀螺儀權限。</li>
+                    <li><strong>廿四山方位對齊：</strong>外圈精準標示 360 度刻度與「廿四山（八宮各分三山）」，頂部即時顯示目前朝向度數、八方方位及對應坐向（如：坎宮 · 子山）。</li>
+                    <li><strong>奇門與飛星同盤：</strong>內圈微縮九宮格會隨手機轉動即時旋轉，將該時辰的神、星、門、天地盤干及流年紫白飛星直接對準現場實地空間。</li>
+                    <li><strong>方位鎖定功能：</strong>點擊頂部「🔓 跟隨 / 🔒 鎖定」按鈕，可將當前方位角凍結固定，方便現場坐定後從容閱讀各宮局象。</li>
+                    <li><strong>飛星年份切換：</strong>頂部設有「飛星年份」下拉選單，可即時切換不同年份的紫白飛星配置進行比對。</li>
+                </ul>
+            </section>
+
             <section class="p-4 bg-blue-50/40 rounded-xl border border-blue-100">
-                <h3 class="text-base sm:text-lg font-black text-blue-900 mb-2">三、 盤面資訊結構與解讀</h3>
+                <h3 class="text-base sm:text-lg font-black text-blue-900 mb-2">四、 盤面資訊結構與解讀</h3>
                 <ul class="list-disc list-inside space-y-2 text-gray-700">
                     <li><strong>頂部局象資訊區：</strong>呈現四柱干支（含五行顏色與早晚子註記）、交節時間、局數（如陽遁一局）、旬首、值符、值使、空亡、驛馬，以及天顯時格、五不遇時、伏吟/反吟等特殊提醒。</li>
                     <li><strong>九宮格佈局：</strong>
@@ -694,7 +772,6 @@
                 </ul>
             </section>
         </div>
-
         <div class="pt-4 border-t border-gray-200 text-center">
             <button onclick="closeManualModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-8 rounded-xl shadow-lg transition active:scale-95">關閉使用手冊</button>
         </div>
@@ -980,48 +1057,62 @@
     let useEnergy = false;
     let useFeiXing = false;
 
-    function handleToggleSwitch(activeId) {
-        const allToggles = [
-            'toggle-bagua', 
-            'toggle-energy', 
-            'toggle-neiwai', 
-            'toggle-palacemodal', 
-            'toggle-feixing'
-        ];
-        
-        const activeEl = document.getElementById(activeId);
-        
-        if (activeEl && activeEl.checked) {
-            allToggles.forEach(id => {
-                if (id !== activeId) {
-                    const el = document.getElementById(id);
-                    if (el) el.checked = false;
-                }
-            });
-        }
+let useCompass = false;
+    let isCompassRunning = false;
+    let isCompassLocked = false;
 
-        useXianTian = document.getElementById('toggle-bagua').checked;
-        useEnergy = document.getElementById('toggle-energy').checked;
-        useNeiWai = document.getElementById('toggle-neiwai').checked;
-        enablePalaceModal = document.getElementById('toggle-palacemodal').checked;
-        useFeiXing = document.getElementById('toggle-feixing').checked;
 
-        const fxSel = document.getElementById('sel-feixing-year');
-        if (fxSel) {
-            if (useFeiXing) {
-                fxSel.classList.remove('hidden');
-                if (!fxSel.value) {
-                    fxSel.value = document.getElementById('sel-year').value;
-                }
-            } else {
-                fxSel.classList.add('hidden');
+
+function handleToggleSwitch(activeId) {
+    const allToggles = [
+        'toggle-bagua', 
+        'toggle-energy', 
+        'toggle-neiwai', 
+        'toggle-palacemodal', 
+        'toggle-feixing',
+        'toggle-compass'
+    ];
+    
+    const activeEl = document.getElementById(activeId);
+    
+    if (activeEl && activeEl.checked) {
+        allToggles.forEach(id => {
+            if (id !== activeId) {
+                const el = document.getElementById(id);
+                if (el) el.checked = false;
             }
+        });
+    }
+
+    useXianTian = document.getElementById('toggle-bagua').checked;
+    useEnergy = document.getElementById('toggle-energy').checked;
+    useNeiWai = document.getElementById('toggle-neiwai').checked;
+    enablePalaceModal = document.getElementById('toggle-palacemodal').checked;
+    useFeiXing = document.getElementById('toggle-feixing').checked;
+    useCompass = document.getElementById('toggle-compass').checked;
+
+    const fxSel = document.getElementById('sel-feixing-year');
+    if (fxSel) {
+        if (useFeiXing) {
+            fxSel.classList.remove('hidden');
+            if (!fxSel.value) {
+                fxSel.value = document.getElementById('sel-year').value;
+            }
+        } else {
+            fxSel.classList.add('hidden');
         }
+    }
 
-        document.getElementById('bagua-label').innerText = useXianTian ? "後天八卦數" : "先天八卦數";
+    document.getElementById('bagua-label').innerText = useXianTian ? "後天八卦數" : "先天八卦數";
 
+    if (useCompass) {
+        openCompassMode();
+    } else {
+        closeCompassMode();
         generatePan();
     }
+}
+
 
     const getBranchHTML = (i) => {
         let text = BRANCH_POSITIONS_TEMPLATE[i];
@@ -1597,37 +1688,42 @@
         }
     }
 
-    function initSelectors() {
-        const ySel = document.getElementById('sel-year');
-        const mSel = document.getElementById('sel-month');
-        const dSel = document.getElementById('sel-day');
-        const hSel = document.getElementById('sel-hour24');
-        const minSel = document.getElementById('sel-minute');
-        const fxSel = document.getElementById('sel-feixing-year');
-        
-        for (let i = 1930; i <= 2050; i++) {
-            ySel.add(new Option(i, i));
-            if (fxSel) fxSel.add(new Option(i + "年", i));
-        }
-        for (let i = 1; i <= 12; i++) mSel.add(new Option(i, i));
-        for (let i = 1; i <= 31; i++) dSel.add(new Option(i, i));
-        for (let i = 0; i <= 23; i++) hSel.add(new Option(i.toString().padStart(2, '0'), i));
-        for (let i = 0; i <= 59; i++) minSel.add(new Option(i.toString().padStart(2, '0'), i));
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('y') && urlParams.has('m') && urlParams.has('d') && urlParams.has('h') && urlParams.has('min')) {
-            document.getElementById('sel-year').value = urlParams.get('y');
-            document.getElementById('sel-month').value = urlParams.get('m');
-            document.getElementById('sel-day').value = urlParams.get('d');
-            document.getElementById('sel-hour24').value = urlParams.get('h');
-            document.getElementById('sel-minute').value = urlParams.get('min');
-            currentDate = new Date(urlParams.get('y'), urlParams.get('m') - 1, urlParams.get('d'), urlParams.get('h'), urlParams.get('min'));
-            updateJieQiYearBtn();
-            generatePan();
-        } else {
-            updateSelectorsFromDate(currentDate);
-        }
+
+
+function initSelectors() {
+    const ySel = document.getElementById('sel-year');
+    const mSel = document.getElementById('sel-month');
+    const dSel = document.getElementById('sel-day');
+    const hSel = document.getElementById('sel-hour24');
+    const minSel = document.getElementById('sel-minute');
+    const fxSel = document.getElementById('sel-feixing-year');
+    const compassFxSel = document.getElementById('sel-compass-feixing-year');
+    
+    for (let i = 1930; i <= 2050; i++) {
+        ySel.add(new Option(i, i));
+        if (fxSel) fxSel.add(new Option(i + "年", i));
+        if (compassFxSel) compassFxSel.add(new Option(i + "年", i));
     }
+    for (let i = 1; i <= 12; i++) mSel.add(new Option(i, i));
+    for (let i = 1; i <= 31; i++) dSel.add(new Option(i, i));
+    for (let i = 0; i <= 23; i++) hSel.add(new Option(i.toString().padStart(2, '0'), i));
+    for (let i = 0; i <= 59; i++) minSel.add(new Option(i.toString().padStart(2, '0'), i));
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('y') && urlParams.has('m') && urlParams.has('d') && urlParams.has('h') && urlParams.has('min')) {
+        document.getElementById('sel-year').value = urlParams.get('y');
+        document.getElementById('sel-month').value = urlParams.get('m');
+        document.getElementById('sel-day').value = urlParams.get('d');
+        document.getElementById('sel-hour24').value = urlParams.get('h');
+        document.getElementById('sel-minute').value = urlParams.get('min');
+        currentDate = new Date(urlParams.get('y'), urlParams.get('m') - 1, urlParams.get('d'), urlParams.get('h'), urlParams.get('min'));
+        updateJieQiYearBtn();
+        generatePan();
+} else {
+        updateSelectorsFromDate(currentDate);
+        generatePan(); // 預設開啟時自動起盤
+    }
+}
 
     function initBaziSelectors() {
         const sortedJiaZi = [...JIA_ZI_ARRAY].sort((a, b) => {
@@ -2734,7 +2830,332 @@ if (jqData.isTransitionInHour) {
             alert("分享連結已複製！貼上即可分享目前的排盤時間。");
         });
     }
+// ==================== 廿四山與指南針核心演算法 ====================
+    const MOUNTAINS_24 = [
+        { name: "子", gua: "坎", center: 0, start: 352.5, end: 7.5, color: "#38bdf8", isMajor: true },
+        { name: "癸", gua: "坎", center: 15, start: 7.5, end: 22.5, color: "#bae6fd" },
+        { name: "丑", gua: "艮", center: 30, start: 22.5, end: 37.5, color: "#fde68a" },
+        { name: "艮", gua: "艮", center: 45, start: 37.5, end: 52.5, color: "#fbbf24", isMajor: true },
+        { name: "寅", gua: "艮", center: 60, start: 52.5, end: 67.5, color: "#fde68a" },
+        { name: "甲", gua: "震", center: 75, start: 67.5, end: 82.5, color: "#86efac" },
+        { name: "卯", gua: "震", center: 90, start: 82.5, end: 97.5, color: "#4ade80", isMajor: true },
+        { name: "乙", gua: "震", center: 105, start: 97.5, end: 112.5, color: "#86efac" },
+        { name: "辰", gua: "巽", center: 120, start: 112.5, end: 127.5, color: "#86efac" },
+        { name: "巽", gua: "巽", center: 135, start: 127.5, end: 142.5, color: "#4ade80", isMajor: true },
+        { name: "巳", gua: "巽", center: 150, start: 142.5, end: 157.5, color: "#86efac" },
+        { name: "丙", gua: "離", center: 165, start: 157.5, end: 172.5, color: "#fca5a5" },
+        { name: "午", gua: "離", center: 180, start: 172.5, end: 187.5, color: "#f87171", isMajor: true },
+        { name: "丁", gua: "離", center: 195, start: 187.5, end: 202.5, color: "#fca5a5" },
+        { name: "未", gua: "坤", center: 210, start: 202.5, end: 217.5, color: "#fde68a" },
+        { name: "坤", gua: "坤", center: 225, start: 217.5, end: 232.5, color: "#fbbf24", isMajor: true },
+        { name: "申", gua: "坤", center: 240, start: 232.5, end: 247.5, color: "#fde68a" },
+        { name: "庚", gua: "兌", center: 255, start: 247.5, end: 262.5, color: "#e2e8f0" },
+        { name: "酉", gua: "兌", center: 270, start: 262.5, end: 277.5, color: "#f1f5f9", isMajor: true },
+        { name: "辛", gua: "兌", center: 285, start: 277.5, end: 292.5, color: "#e2e8f0" },
+        { name: "戌", gua: "乾", center: 300, start: 292.5, end: 307.5, color: "#e2e8f0" },
+        { name: "乾", gua: "乾", center: 315, start: 307.5, end: 322.5, color: "#f1f5f9", isMajor: true },
+        { name: "亥", gua: "乾", center: 330, start: 322.5, end: 337.5, color: "#e2e8f0" },
+        { name: "壬", gua: "坎", center: 345, start: 337.5, end: 352.5, color: "#bae6fd" }
+    ];
 
+    function get24Mountain(deg) {
+        deg = (deg % 360 + 360) % 360;
+        for (let m of MOUNTAINS_24) {
+            if (m.start > m.end) {
+                if (deg >= m.start || deg < m.end) return m;
+            } else {
+                if (deg >= m.start && deg < m.end) return m;
+            }
+        }
+        return MOUNTAINS_24[0];
+    }
+
+    function getDirectionName(deg) {
+        const dirs = [
+            { name: "正北", start: 337.5, end: 22.5 },
+            { name: "東北", start: 22.5, end: 67.5 },
+            { name: "正東", start: 67.5, end: 112.5 },
+            { name: "東南", start: 112.5, end: 157.5 },
+            { name: "正南", start: 157.5, end: 202.5 },
+            { name: "西南", start: 202.5, end: 247.5 },
+            { name: "正西", start: 247.5, end: 292.5 },
+            { name: "西北", start: 292.5, end: 337.5 }
+        ];
+        deg = (deg % 360 + 360) % 360;
+        for (let d of dirs) {
+            if (d.start > d.end) {
+                if (deg >= d.start || deg < d.end) return d.name;
+            } else {
+                if (deg >= d.start && deg < d.end) return d.name;
+            }
+        }
+        return "正北";
+    }
+
+    function renderCompassSvgDial() {
+        const svg = document.getElementById('compass-svg-dial');
+        if (!svg) return;
+        const cx = 220, cy = 220, rOut = 216, rMid = 176, rIn = 162;
+        let html = `
+            <circle cx="${cx}" cy="${cy}" r="${rOut}" fill="#050b14" stroke="#d97706" stroke-width="2"/>
+            <circle cx="${cx}" cy="${cy}" r="${rMid}" fill="#0f172a" stroke="#78350f" stroke-width="1.5"/>
+            <circle cx="${cx}" cy="${cy}" r="${rIn}" fill="#020617" stroke="#d97706" stroke-width="1.5"/>
+        `;
+
+        for (let deg = 0; deg < 360; deg += 5) {
+            let dialAngle = (deg - 180 + 360) % 360;
+            let rad = dialAngle * Math.PI / 180;
+            let is10 = (deg % 10 === 0);
+            let is30 = (deg % 30 === 0);
+            let len = is30 ? 9 : (is10 ? 6 : 3.5);
+            let x1 = cx + (rOut - 2) * Math.sin(rad);
+            let y1 = cy - (rOut - 2) * Math.cos(rad);
+            let x2 = cx + (rOut - 2 - len) * Math.sin(rad);
+            let y2 = cy - (rOut - 2 - len) * Math.cos(rad);
+            let strokeColor = is30 ? '#fbbf24' : (is10 ? '#94a3b8' : '#475569');
+            html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${strokeColor}" stroke-width="${is30?1.5:1}"/>`;
+        }
+
+        MOUNTAINS_24.forEach(m => {
+            let dialAngle = (m.center - 180 + 360) % 360;
+            let boundaryDialAngle = (dialAngle - 7.5 + 360) % 360;
+            let bRad = boundaryDialAngle * Math.PI / 180;
+            
+            let bx1 = cx + rOut * Math.sin(bRad);
+            let by1 = cy - rOut * Math.cos(bRad);
+            let bx2 = cx + rIn * Math.sin(bRad);
+            let by2 = cy - rIn * Math.cos(bRad);
+            html += `<line x1="${bx1}" y1="${by1}" x2="${bx2}" y2="${by2}" stroke="#78350f" stroke-width="1" opacity="0.6"/>`;
+
+            let tRad = dialAngle * Math.PI / 180;
+            let textR = (rMid + rOut - 10) / 2 + 2;
+            let tx = cx + textR * Math.sin(tRad);
+            let ty = cy - textR * Math.cos(tRad);
+            
+            let fontSize = m.isMajor ? "12" : "10";
+            let fontWeight = m.isMajor ? "900" : "700";
+            html += `<text x="${tx}" y="${ty}" fill="${m.color}" font-size="${fontSize}" font-weight="${fontWeight}" text-anchor="middle" dominant-baseline="central" transform="rotate(${dialAngle}, ${tx}, ${ty})">${m.name}</text>`;
+        });
+
+        svg.innerHTML = html;
+    }
+
+
+
+function renderCompassQimen() {
+    const grid = document.getElementById('compass-qimen-grid');
+    if (!grid) return;
+
+    const cFxSel = document.getElementById('sel-compass-feixing-year');
+    const y = parseInt(document.getElementById('sel-year').value);
+    let flightYear = (cFxSel && cFxSel.value) ? parseInt(cFxSel.value) : y;
+    
+    let starC = (11 - (flightYear % 9)) % 9;
+    if (starC <= 0) starC += 9;
+    const FLIGHT_OFFSET = { 5: 0, 6: 1, 7: 2, 8: 3, 9: 4, 1: 5, 2: 6, 3: 7, 4: 8 };
+    const FEIXING_ZH_NAMES = ["", "一白", "二黑", "三碧", "四綠", "五黃", "六白", "七赤", "八白", "九紫"];
+
+    // 加入安全檢查，避免報錯
+    const flyYearEl = document.getElementById('compass-flying-year');
+    if (flyYearEl) {
+        flyYearEl.innerText = `(${flightYear}年流年飛星)`;
+    }
+
+    const order = [4, 9, 2, 3, 5, 7, 8, 1, 6];
+    let html = '';
+
+    order.forEach(pNum => {
+        let data = globalPalaceData[pNum];
+        let feixingNum = (starC + FLIGHT_OFFSET[pNum] - 1) % 9 + 1;
+        let feixingStr = FEIXING_ZH_NAMES[feixingNum];
+
+        if (pNum === 5) {
+            let s = data ? data.hStems[0] : "";
+            let b5 = panData.bazi5Info;
+            html += `
+            <div class="flex flex-col justify-between p-1 bg-slate-900/95 border border-amber-500/40 rounded text-center text-white overflow-hidden shadow-inner">
+                <div class="flex justify-between items-center text-[9px] sm:text-[10px] font-black border-b border-gray-700/60 pb-0.5">
+                    <span class="text-amber-300">中五</span>
+                    <span class="bg-rose-900/90 text-rose-200 px-1 rounded text-[8px] sm:text-[9px] font-mono">${feixingStr}</span>
+                </div>
+                <div class="flex flex-col justify-center items-center my-auto leading-none space-y-0.5">
+                    <div class="text-[9px] text-amber-200 font-bold">${b5 ? b5.hS+b5.hB+'時' : ''}</div>
+                    <div class="text-[9px] text-gray-300 scale-90">符:${b5?b5.zf:''}</div>
+                    <div class="text-[9px] text-gray-300 scale-90">使:${b5?b5.zs:''}</div>
+                </div>
+                <div class="text-[10px] text-right font-black text-amber-400 mt-auto">${s}</div>
+            </div>`;
+        } else if (data) {
+            let pGua = PALACES_HOU[pNum].gua;
+            let tags = [];
+            if (data.isKong) tags.push("🈳");
+            if (data.isMa) tags.push("🐎");
+            if (data.isMenPo) tags.push("迫");
+            let tagDisplay = tags.length ? `<span class="text-[8px] text-red-400 ml-0.5">${tags.join('')}</span>` : '';
+
+            html += `
+            <div class="flex flex-col justify-between p-1 bg-slate-950/95 border border-slate-800 rounded text-white overflow-hidden shadow">
+                <div class="flex justify-between items-center text-[9px] sm:text-[10px] font-black border-b border-slate-800 pb-0.5">
+                    <span class="text-amber-300">${data.name} ${pGua}</span>
+                    <span class="bg-rose-900/90 text-rose-200 px-1 rounded text-[8px] sm:text-[9px] font-mono">${feixingStr}</span>
+                </div>
+                
+                <div class="flex flex-col items-start my-auto space-y-0.5 text-[10px] sm:text-[11px] font-black leading-tight w-full">
+                    <span class="text-emerald-400 truncate w-full">${data.god}</span>
+                    <span class="text-yellow-300 truncate w-full">${data.star}</span>
+                    <div class="flex items-center w-full justify-between">
+                        <span class="text-red-400 truncate">${data.door}</span>
+                        ${tagDisplay}
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-end mt-auto pt-0.5 border-t border-slate-800 text-[10px] sm:text-[11px] font-black leading-none">
+                    <span class="text-[8px] text-gray-500">${data.anGan||''}</span>
+                    <div class="text-right">
+                        <span class="text-cyan-300">${data.hStems.join('|')}</span>
+                        <span class="text-gray-600 mx-0.5">/</span>
+                        <span class="text-orange-300">${data.eStems.join('|')}</span>
+                    </div>
+                </div>
+            </div>`;
+        }
+    });
+
+    grid.innerHTML = html;
+}
+    
+
+function openCompassMode() {
+    if (!panData || !panData.ju) {
+        generatePan();
+    }
+    const modal = document.getElementById('compass-modal');
+    if (modal) modal.classList.remove('hidden');
+
+    // 同步當前排盤年份至指南針年份選單
+    const cFxSel = document.getElementById('sel-compass-feixing-year');
+    if (cFxSel) {
+        cFxSel.value = document.getElementById('sel-year').value;
+    }
+    
+    renderCompassSvgDial();
+    renderCompassQimen();
+    startCompassSensor();
+}
+
+// 切換年份時立即重繪九宮格飛星
+function changeCompassFeiXingYear() {
+    renderCompassQimen();
+}
+
+function closeCompassMode() {
+    const modal = document.getElementById('compass-modal');
+    if (modal) modal.classList.add('hidden');
+    stopCompassSensor();
+
+    const toggle = document.getElementById('toggle-compass');
+    if (toggle && toggle.checked) toggle.checked = false;
+}
+
+    function toggleCompassLock() {
+        isCompassLocked = !isCompassLocked;
+        const icon = document.getElementById('compass-lock-icon');
+        const txt = document.getElementById('compass-lock-text');
+        const btn = document.getElementById('btn-compass-lock');
+        if (isCompassLocked) {
+            if (icon) icon.innerText = '🔒';
+            if (txt) txt.innerText = '已鎖定';
+            if (btn) { btn.classList.replace('border-gray-700', 'border-amber-500'); btn.classList.add('text-amber-400'); }
+        } else {
+            if (icon) icon.innerText = '🔓';
+            if (txt) txt.innerText = '跟隨';
+            if (btn) { btn.classList.replace('border-amber-500', 'border-gray-700'); btn.classList.remove('text-amber-400'); }
+        }
+    }
+
+    function startCompassSensor() {
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            const permBtn = document.getElementById('btn-ios-perm');
+            const hint = document.getElementById('compass-status-hint');
+            
+            DeviceOrientationEvent.requestPermission()
+                .then(response => {
+                    if (response === 'granted') {
+                        window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+                        isCompassRunning = true;
+                        if (permBtn) permBtn.classList.add('hidden');
+                        if (hint) hint.innerText = '💡 轉動手機，奇門盤將自動對準方位實地堪輿';
+                    } else {
+                        if (permBtn) permBtn.classList.remove('hidden');
+                        if (hint) hint.innerText = '⚠️ 請授權指南針讀取：';
+                    }
+                })
+                .catch(err => {
+                    if (permBtn) permBtn.classList.remove('hidden');
+                    if (hint) hint.innerText = '⚠️ 請點擊按鈕啟用指南針：';
+                });
+        } else {
+            window.addEventListener('deviceorientationabsolute', handleDeviceOrientation, true);
+            window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+            isCompassRunning = true;
+        }
+    }
+
+    function requestDeviceOrientationPerm() {
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+                .then(res => {
+                    if (res === 'granted') {
+                        window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+                        isCompassRunning = true;
+                        document.getElementById('btn-ios-perm')?.classList.add('hidden');
+                        document.getElementById('compass-status-hint').innerText = '💡 轉動手機，奇門盤將自動對準方位實地堪輿';
+                    } else {
+                        alert('指南針權限未開啟。');
+                    }
+                })
+                .catch(console.error);
+        }
+    }
+
+    function stopCompassSensor() {
+        window.removeEventListener('deviceorientation', handleDeviceOrientation, true);
+        window.removeEventListener('deviceorientationabsolute', handleDeviceOrientation, true);
+        isCompassRunning = false;
+    }
+
+    function handleDeviceOrientation(e) {
+        if (isCompassLocked) return;
+        let heading = 0;
+        if (e.webkitCompassHeading !== undefined && e.webkitCompassHeading !== null) {
+            heading = e.webkitCompassHeading;
+        } else if (e.alpha !== null) {
+            heading = (360 - e.alpha) % 360;
+        } else {
+            return;
+        }
+
+        updateCompassHeading(heading);
+    }
+
+    function updateCompassHeading(heading) {
+        heading = Math.round(heading) % 360;
+        const rotation = (180 - heading + 360) % 360;
+        const dial = document.getElementById('compass-dial-container');
+        if (dial) {
+            dial.style.transform = `rotate(${rotation}deg)`;
+        }
+
+        const degEl = document.getElementById('compass-degree');
+        if (degEl) degEl.innerText = `${heading.toString().padStart(3, '0')}°`;
+
+        const dirEl = document.getElementById('compass-direction-text');
+        if (dirEl) dirEl.innerText = getDirectionName(heading);
+
+        const mInfo = get24Mountain(heading);
+        const mEl = document.getElementById('compass-mountain');
+        if (mEl) mEl.innerText = `${mInfo.gua}宮 · ${mInfo.name}山 (${mInfo.center}°)`;
+    }
     window.onload = function() {
         initSelectors();
         initBaziSelectors();
