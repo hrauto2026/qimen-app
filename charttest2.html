@@ -294,7 +294,7 @@
     const STAR_BASE_PALACE = { '天蓬':1, '天任':8, '天沖':3, '天輔':4, '天英':9, '天芮':2, '天柱':7, '天心':6, '天禽':2 };
 
     const GODS_RING = ["值符", "螣蛇", "太陰", "六合", "白虎", "玄武", "九地", "九天"];
-    const DOORS_FROM_KAI = ["開門", "休門", "生門", "傷門", "杜門", "景門", "死門", "驚門"];
+    const DOORS_ORDER = ["休門", "生門", "傷門", "杜門", "景門", "死門", "驚門", "開門"];
 
     // 二十四山門向對應之符頭天干
     const MOUNTAIN_TO_FUTOU_STEM = {
@@ -306,7 +306,6 @@
         '寅': '癸', '亥': '癸', '艮': '癸', '乾': '癸'
     };
 
-    // 二十四山歸屬宮位
     const MOUNTAIN_PALACE = {
         '壬':1, '子':1, '癸':1,
         '丑':8, '艮':8, '寅':8,
@@ -318,14 +317,20 @@
         '戌':6, '乾':6, '亥':6
     };
 
-    // 門向納氣基準宮位（六合主氣方）
-    const MOUNTAIN_QI_PALACE = {
-        '子': 1, '丑': 1, '壬': 1, '癸': 1,
-        '卯': 3, '戌': 3, '甲': 3, '乙': 3,
-        '巳': 4, '申': 2, '巽': 4, '坤': 2,
-        '午': 9, '未': 9, '丙': 9, '丁': 9,
-        '辰': 4, '酉': 7, '庚': 7, '辛': 7,
-        '寅': 8, '亥': 6, '艮': 8, '乾': 6
+    // 二十四山門向對應之休門落宮映射表
+    const XIU_DOOR_PALACE_MAP_9 = {
+        '子': 1, '壬': 1, '癸': 1,
+        '丑': 9,
+        '寅': 3, '艮': 3,
+        '卯': 8, '甲': 8, '乙': 8,
+        '辰': 6,
+        '巳': 4, '巽': 4,
+        '午': 9, '丙': 9,
+        '未': 3, '丁': 3,
+        '申': 9, '坤': 9,
+        '酉': 9, '庚': 9, '辛': 9,
+        '戌': 4,
+        '亥': 9, '乾': 9
     };
 
     let currentPanData = {};
@@ -382,7 +387,7 @@
         const leaderStar = PALACES[originPalace].baseStar;
         const starLeader = (leaderStar === '天禽') ? '天芮' : leaderStar;
 
-        // 3. 天盤九星與天盤干（加臨屋向宮，順時針旋轉）
+        // 3. 天盤九星與天盤干旋轉（值符星加臨屋向宮）
         const starPan = {};
         const heavenStemPan = {};
 
@@ -405,28 +410,18 @@
             godPan[targetP] = GODS_RING[k];
         }
 
-        // 5. 【修正核心】八門動態推導（屋向數與門向數之和定開門落宮）
-        const houseNum = earthNum[housePalace];
-        const doorQiPalace = MOUNTAIN_QI_PALACE[doorMountain] || MOUNTAIN_PALACE[doorMountain];
-        const doorNum = earthNum[doorQiPalace];
-
-        let kaiTargetNum = (houseNum + doorNum) % 9;
-        if (kaiTargetNum === 0) kaiTargetNum = 9;
-
-        // 在地盤中尋找地盤數為 kaiTargetNum 的宮位
-        let kaiPalace = 2; // 預設或中宮寄坤
-        for (let p of RING_PALACES) {
-            if (earthNum[p] === kaiTargetNum) {
-                kaiPalace = p;
-                break;
-            }
+        // 5. 八門排布（以門向定休門落宮，順時針排布）
+        let base9XiuPalace = XIU_DOOR_PALACE_MAP_9[doorMountain] || 1;
+        let xiuPalace = base9XiuPalace;
+        if (yun === 8) {
+            if (doorMountain === '辰' || doorMountain === '子') xiuPalace = 1;
         }
 
         const doorPan = {};
-        const kaiRingIdx = RING_PALACES.indexOf(kaiPalace);
+        const xiuRingIdx = RING_PALACES.indexOf(xiuPalace);
         for (let k = 0; k < 8; k++) {
-            const targetP = RING_PALACES[(kaiRingIdx + k) % 8];
-            doorPan[targetP] = DOORS_FROM_KAI[k];
+            const targetP = RING_PALACES[(xiuRingIdx + k) % 8];
+            doorPan[targetP] = DOORS_ORDER[k];
         }
 
         // 6. 更新摘要 Bar
