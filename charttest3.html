@@ -638,17 +638,21 @@
             </button>
         </div>
 
-        <div class="flex items-center gap-1">
+<div class="flex items-center gap-1">
             <span class="text-indigo-300 font-bold">門向:</span>
-            <select id="sel-compass-door" onchange="renderCompassQimen()" class="bg-slate-950 border border-indigo-400/60 rounded px-1 text-amber-300 font-bold outline-none text-xs">
-                <optgroup label="坎宮"><option value="壬">壬</option><option value="子" selected>子</option><option value="癸">癸</option></optgroup>
-                <optgroup label="艮宮"><option value="丑">丑</option><option value="艮">艮</option><option value="寅">寅</option></optgroup>
-                <optgroup label="震宮"><option value="甲">甲</option><option value="卯">卯</option><option value="乙">乙</option></optgroup>
-                <optgroup label="巽宮"><option value="辰">辰</option><option value="巽">巽</option><option value="巳">巳</option></optgroup>
-                <optgroup label="離宮"><option value="丙">丙</option><option value="午">午</option><option value="丁">丁</option></optgroup>
-                <optgroup label="坤宮"><option value="未">未</option><option value="坤">坤</option><option value="申">申</option></optgroup>
-                <optgroup label="兌宮"><option value="庚">庚</option><option value="酉">酉</option><option value="辛">辛</option></optgroup>
-                <optgroup label="乾宮"><option value="戌">戌</option><option value="乾">乾</option><option value="亥">亥</option></optgroup>
+            <select id="sel-compass-door" onchange="renderCompassQimen()" class="bg-slate-950 border border-indigo-400/60 rounded px-1.5 py-0.5 text-amber-300 font-bold outline-none text-xs cursor-pointer">
+                <option value="子" selected>子 (坎宮·正北)</option>
+                <option value="丑">丑 (艮宮·東北)</option>
+                <option value="寅">寅 (艮宮·東北)</option>
+                <option value="卯">卯 (震宮·正東)</option>
+                <option value="辰">辰 (巽宮·東南)</option>
+                <option value="巳">巳 (巽宮·東南)</option>
+                <option value="午">午 (離宮·正南)</option>
+                <option value="未">未 (坤宮·西南)</option>
+                <option value="申">申 (坤宮·西南)</option>
+                <option value="酉">酉 (兌宮·正西)</option>
+                <option value="戌">戌 (乾宮·西北)</option>
+                <option value="亥">亥 (乾宮·西北)</option>
             </select>
         </div>
     </div>
@@ -2888,30 +2892,31 @@ if (jqData.isTransitionInHour) {
 // ==================== 屋向奇門（三元九運）演算法 ====================
     let compassPanMode = 'shijia'; // 'shijia' (時家盤) 或 'wuxiang' (屋向盤)
 
-    const WUXIANG_MOUNTAIN_FUTOU = {
-        '子': '戊', '丑': '戊', '壬': '戊', '癸': '戊',
-        '卯': '己', '戌': '己', '甲': '己', '乙': '己',
-        '巳': '庚', '申': '庚', '巽': '庚', '坤': '庚',
-        '午': '辛', '未': '辛', '丙': '辛', '丁': '辛',
-        '辰': '壬', '酉': '壬', '庚': '壬', '辛': '壬',
-        '寅': '癸', '亥': '癸', '艮': '癸', '乾': '癸'
+// 十二地支門向對應之符頭六儀天干
+    const WUXIANG_BRANCH_FUTOU = {
+        '子': '戊', '丑': '戊',
+        '寅': '癸', '卯': '己',
+        '辰': '壬', '巳': '庚',
+        '午': '辛', '未': '辛',
+        '申': '庚', '酉': '壬',
+        '戌': '己', '亥': '癸'
     };
 
+    // 十二地支門向對應之休門落宮映射表 (九運)
     const WUXIANG_XIU_MAP = {
-        '子': 1, '壬': 1, '癸': 1, '丑': 9, '寅': 3, '艮': 3,
-        '卯': 8, '甲': 8, '乙': 8, '辰': 6, '巳': 4, '巽': 4,
-        '午': 9, '丙': 9, '未': 3, '丁': 3, '申': 9, '坤': 9,
-        '酉': 9, '庚': 9, '辛': 9, '戌': 4, '亥': 9, '乾': 9
+        '子': 1, '丑': 9, '寅': 3, '卯': 8,
+        '辰': 6, '巳': 4, '午': 9, '未': 3,
+        '申': 9, '酉': 9, '戌': 4, '亥': 9
     };
 
-    const WUXIANG_MOUNTAIN_PALACE = {
-        '壬':1, '子':1, '癸':1, '丑':8, '艮':8, '寅':8,
-        '甲':3, '卯':3, '乙':3, '辰':4, '巽':4, '巳':4,
-        '丙':9, '午':9, '丁':9, '未':2, '坤':2, '申':2,
-        '庚':7, '酉':7, '辛':7, '戌':6, '乾':6, '亥':6
+    // 十二地支所屬之八卦宮位
+    const WUXIANG_BRANCH_PALACE = {
+        '子': 1, '丑': 8, '寅': 8, '卯': 3,
+        '辰': 4, '巳': 4, '午': 9, '未': 2,
+        '申': 2, '酉': 7, '戌': 6, '亥': 6
     };
 
-    function calculateWuxiangData(yun, housePalace, doorMountain) {
+    function calculateWuxiangData(yun, housePalace, doorBranch) {
         const LUOSHU_FLY = [5, 6, 7, 8, 9, 1, 2, 3, 4];
         const STEMS_9 = ['戊', '己', '庚', '辛', '壬', '癸', '丁', '丙', '乙'];
         const STAR_RING = ['天蓬', '天任', '天衝', '天輔', '天英', '天芮', '天柱', '天心'];
@@ -2934,8 +2939,8 @@ if (jqData.isTransitionInHour) {
         const centerStem = earthStem[5];
         earthStem[2] = earthStem[2] + centerStem; // 中五寄坤二
 
-        // 2. 符頭與值符星
-        const fuTouStem = WUXIANG_MOUNTAIN_FUTOU[doorMountain] || '戊';
+        // 2. 依十二地支查符頭與值符星
+        const fuTouStem = WUXIANG_BRANCH_FUTOU[doorBranch] || '戊';
         let originPalace = 5;
         if (fuTouStem === centerStem) {
             originPalace = 2;
@@ -2969,9 +2974,9 @@ if (jqData.isTransitionInHour) {
             godPan[RING_ORDER[(houseRingIdx + k) % 8]] = GODS_YANG[k];
         }
 
-        // 5. 八門排布（依門向查休門宮）
-        let xiuPalace = WUXIANG_XIU_MAP[doorMountain] || 1;
-        if (yun === 8 && (doorMountain === '辰' || doorMountain === '子')) xiuPalace = 1;
+        // 5. 八門排布（依地支門向查休門宮位）
+        let xiuPalace = WUXIANG_XIU_MAP[doorBranch] || 1;
+        if (yun === 8 && (doorBranch === '辰' || doorBranch === '子')) xiuPalace = 1;
 
         const doorPan = {};
         const xiuRingIdx = RING_ORDER.indexOf(xiuPalace);
@@ -2980,14 +2985,14 @@ if (jqData.isTransitionInHour) {
         }
 
         return {
-            yun, housePalace, doorMountain,
-            doorPalace: WUXIANG_MOUNTAIN_PALACE[doorMountain],
+            yun, housePalace, doorMountain: doorBranch,
+            doorPalace: WUXIANG_BRANCH_PALACE[doorBranch],
             earthNum, earthStem, starPan, heavenStemPan, godPan, doorPan,
             centerStem, fuTouStem, starLeader, CHINESE_NUMS
         };
     }
-
-    function switchCompassPanMode(mode) {
+ 
+   function switchCompassPanMode(mode) {
         compassPanMode = mode;
         const btnShijia = document.getElementById('btn-mode-shijia');
         const btnWuxiang = document.getElementById('btn-mode-wuxiang');
@@ -3082,7 +3087,7 @@ if (jqData.isTransitionInHour) {
         return "正北";
     }
 
-    function renderCompassSvgDial() {
+function renderCompassSvgDial() {
         const svg = document.getElementById('compass-svg-dial');
         if (!svg) return;
         const cx = 220, cy = 220, rOut = 216, rMid = 176, rIn = 162;
@@ -3095,17 +3100,26 @@ if (jqData.isTransitionInHour) {
         for (let deg = 0; deg < 360; deg += 5) {
             let dialAngle = (deg - 180 + 360) % 360;
             let rad = dialAngle * Math.PI / 180;
+            
+            // 🌟 判斷是否為「子(0°)、卯(90°)、午(180°)、酉(270°)」四正軸心刻度
+            let isMajorCardinal = (deg === 0 || deg === 90 || deg === 180 || deg === 270);
             let is10 = (deg % 10 === 0);
             let is30 = (deg % 30 === 0);
-            let len = is30 ? 9 : (is10 ? 6 : 3.5);
+
+            // 四正刻度加長至 16px (一般 30度為 9px，10度為 6px，其餘 3.5px)
+            let len = isMajorCardinal ? 16 : (is30 ? 9 : (is10 ? 6 : 3.5));
             let x1 = cx + (rOut - 2) * Math.sin(rad);
             let y1 = cy - (rOut - 2) * Math.cos(rad);
             let x2 = cx + (rOut - 2 - len) * Math.sin(rad);
             let y2 = cy - (rOut - 2 - len) * Math.cos(rad);
-            let strokeColor = is30 ? '#fbbf24' : (is10 ? '#94a3b8' : '#475569');
-            html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${strokeColor}" stroke-width="${is30?1.5:1}"/>`;
+
+            let strokeColor = isMajorCardinal ? '#f87171' : (is30 ? '#fbbf24' : (is10 ? '#94a3b8' : '#475569'));
+            let strokeWidth = isMajorCardinal ? 2.5 : (is30 ? 1.5 : 1);
+
+            html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`;
         }
 
+        // 廿四山文字與界線（維持完整 24 山排列）
         MOUNTAINS_24.forEach(m => {
             let dialAngle = (m.center - 180 + 360) % 360;
             let boundaryDialAngle = (dialAngle - 7.5 + 360) % 360;
@@ -3129,8 +3143,6 @@ if (jqData.isTransitionInHour) {
 
         svg.innerHTML = html;
     }
-
-
 
 function renderCompassQimen() {
     const grid = document.getElementById('compass-qimen-grid');
