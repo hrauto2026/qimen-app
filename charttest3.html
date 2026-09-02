@@ -214,8 +214,8 @@
                 </div>
             </details>
 
-            <!-- 🌟 3. 折疊欄二：簡化為「📋 排盤資料」且高度扁平化 -->
-            <details id="accordion-pan-info" class="group bg-indigo-50/80 border-l-4 border-indigo-500 rounded-r-lg rounded-l-none mb-1.5 shadow-sm hidden">
+            <!-- 🌟 3. 折疊欄二：簡化為「📋 排盤資料」且預設展開 (加入 open) -->
+<details id="accordion-pan-info" class="group bg-indigo-50/80 border-l-4 border-indigo-500 rounded-r-lg rounded-l-none mb-1.5 shadow-sm hidden" open>
                 <summary class="py-1 px-3 cursor-pointer text-xs sm:text-sm font-bold text-indigo-900 flex justify-between items-center select-none">
                     <span id="pan-summary-title">📋 排盤資料</span>
                     <span class="transform group-open:rotate-180 transition-transform duration-200 text-[10px]">▼</span>
@@ -596,8 +596,8 @@
 
         <!-- 鎖定與關閉按鈕 -->
         <div class="flex items-center gap-1.5">
-            <button id="btn-compass-lock" onclick="toggleCompassLock()" class="bg-gray-900 hover:bg-gray-800 text-gray-200 px-2 py-1 rounded-full border border-gray-700 text-xs font-bold transition flex items-center gap-1">
-                <span id="compass-lock-icon">🔓</span> <span id="compass-lock-text">跟隨</span>
+<button id="btn-compass-lock" onclick="toggleCompassLock()" class="bg-gray-900 hover:bg-gray-800 text-gray-200 px-2.5 py-1.5 rounded-full border border-gray-700 text-xs font-bold transition flex items-center gap-1">
+                <span id="compass-lock-icon">🔓</span> <span id="compass-lock-text">鎖定</span>
             </button>
             <button onclick="closeCompassMode()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full font-black text-xs shadow border border-red-500 transition active:scale-95">
                 關閉
@@ -657,24 +657,31 @@
         </div>
     </div>
 </div>
-    <!-- 朝向指示指針 (Top Sight Marker) -->
-    <div class="w-full flex flex-col items-center justify-center my-0.5 z-20">
-        <div class="w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-t-[12px] border-t-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.9)]"></div>
-        <div class="text-[9px] text-red-400 font-black tracking-widest uppercase">朝向</div>
-    </div>
 
-    <!-- 中間旋轉羅盤本體 (24山外圈 + 緊湊高清晰度九宮格) -->
-    <div class="relative flex items-center justify-center flex-grow w-full my-auto overflow-hidden">
-        <div id="compass-dial-container" class="relative rounded-full flex items-center justify-center transition-transform duration-100 ease-out will-change-transform shadow-[0_0_50px_rgba(30,58,138,0.35)] border-2 border-amber-500/40 bg-slate-950" style="width: min(86vw, 86vh, 440px); height: min(86vw, 86vh, 440px);">
+
+<!-- 中間旋轉羅盤本體與朝向瞄準線 -->
+    <div class="relative flex flex-col items-center justify-center flex-grow w-full my-auto overflow-hidden">
+        <!-- 朝向指示指針與紅線 (垂直延伸，剛好抵達羅盤外邊緣，不覆蓋盤面) -->
+        <div class="w-full flex flex-col items-center justify-end flex-grow z-20 pointer-events-none">
+            <div class="w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-t-[12px] border-t-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.9)] flex-shrink-0"></div>
+            <div class="text-[9px] text-red-400 font-black tracking-widest uppercase my-0.5 leading-none flex-shrink-0">朝向</div>
+            <!-- 延伸紅線 -->
+            <div class="w-[2px] flex-grow bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.9)] min-h-[12px]"></div>
+        </div>
+
+        <!-- 旋轉羅盤本體 (作為獨立同層元素，紅線完全不會穿透覆蓋盤面) -->
+        <div id="compass-dial-container" class="relative rounded-full flex-shrink-0 flex items-center justify-center transition-transform duration-100 ease-out will-change-transform shadow-[0_0_50px_rgba(30,58,138,0.35)] border-2 border-amber-500/40 bg-slate-950" style="width: min(84vw, 84vh, 440px); height: min(84vw, 84vh, 440px);">
             <!-- 外圈 24 山刻度 SVG -->
             <svg id="compass-svg-dial" class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 440 440"></svg>
 
-            <!-- 內圈微縮九宮格（保持易讀性） -->
+            <!-- 內圈微縮九宮格 -->
             <div id="compass-qimen-grid" class="grid grid-cols-3 gap-1 z-10 w-[74%] h-[74%] p-1 rounded-xl bg-black/85 backdrop-blur-md border border-amber-500/30">
             </div>
         </div>
-    </div>
 
+        <!-- 底部等距平衡佔位 (確保羅盤始終垂直居中) -->
+        <div class="w-full flex-grow pointer-events-none"></div>
+    </div>
     <!-- 底部提示欄與 iOS 授權按鈕 -->
     <div class="w-full text-center pb-2 text-[11px] sm:text-xs text-gray-400 font-bold z-20 flex justify-center items-center gap-2">
         <span id="compass-status-hint">💡 轉動手機，奇門盤將自動對準方位實地堪輿</span>
@@ -2552,7 +2559,7 @@ function initSelectors() {
             const appTitle = document.getElementById('app-title');
             if (appTitle) appTitle.classList.add('hidden');
 
-            // 🌟 1. 收折「設定」Accordion，並展示簡化的「📋 排盤資料」Accordion
+// 🌟 1. 收折「設定」Accordion，並展示且預設展開「📋 排盤資料」Accordion
             const accControls = document.getElementById('accordion-controls');
             const accInfo = document.getElementById('accordion-pan-info');
             const quickBar = document.getElementById('quick-time-bar');
@@ -2560,9 +2567,9 @@ function initSelectors() {
             if (accControls) accControls.open = false; // 自動收起時間設定欄
             if (accInfo) {
                 accInfo.classList.remove('hidden');
+                accInfo.open = true; // 確保每次起盤後「排盤資料」風琴預設保持開啟狀態
                 document.getElementById('pan-summary-title').innerHTML = `📋 排盤資料`;
             }
-
             // 🌟 2. 顯示並更新單行快調 Bar（不含四柱，僅保留時間、農曆與早晚子）
 if (quickBar) {
     quickBar.classList.remove('hidden');
@@ -3324,19 +3331,26 @@ function closeCompassMode() {
     if (toggle && toggle.checked) toggle.checked = false;
 }
 
-    function toggleCompassLock() {
+function toggleCompassLock() {
         isCompassLocked = !isCompassLocked;
         const icon = document.getElementById('compass-lock-icon');
         const txt = document.getElementById('compass-lock-text');
         const btn = document.getElementById('btn-compass-lock');
+        
         if (isCompassLocked) {
             if (icon) icon.innerText = '🔒';
-            if (txt) txt.innerText = '已鎖定';
-            if (btn) { btn.classList.replace('border-gray-700', 'border-amber-500'); btn.classList.add('text-amber-400'); }
+            if (txt) txt.innerText = '解鎖'; // 鎖定狀態下提示可點擊「解鎖」
+            if (btn) { 
+                btn.classList.replace('border-gray-700', 'border-amber-500'); 
+                btn.classList.add('text-amber-400'); 
+            }
         } else {
             if (icon) icon.innerText = '🔓';
-            if (txt) txt.innerText = '跟隨';
-            if (btn) { btn.classList.replace('border-amber-500', 'border-gray-700'); btn.classList.remove('text-amber-400'); }
+            if (txt) txt.innerText = '鎖定'; // 跟隨狀態下提示可點擊「鎖定」
+            if (btn) { 
+                btn.classList.replace('border-amber-500', 'border-gray-700'); 
+                btn.classList.remove('text-amber-400'); 
+            }
         }
     }
 
