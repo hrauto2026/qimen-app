@@ -2910,13 +2910,6 @@ if (jqData.isTransitionInHour) {
         '戌': '己', '亥': '癸'
     };
 
-    // 十二地支門向對應之休門落宮映射表 (九運)
-    const WUXIANG_XIU_MAP = {
-        '子': 1, '丑': 9, '寅': 3, '卯': 8,
-        '辰': 6, '巳': 4, '午': 9, '未': 3,
-        '申': 9, '酉': 9, '戌': 4, '亥': 9
-    };
-
     // 十二地支所屬之八卦宮位
     const WUXIANG_BRANCH_PALACE = {
         '子': 1, '丑': 8, '寅': 8, '卯': 3,
@@ -2924,17 +2917,73 @@ if (jqData.isTransitionInHour) {
         '申': 2, '酉': 7, '戌': 6, '亥': 6
     };
 
-function calculateWuxiangData(yun, housePalace, doorBranch) {
+    // =========================================================================
+    // 九運十二局寫死盤（由巽宮推理至八宮，神盤採用白虎／玄武）
+    // =========================================================================
+    const WX_RING_ORDER = [1, 8, 3, 4, 9, 2, 7, 6];
+    const WX_GODS_YANG = ["值符", "螣蛇", "太陰", "六合", "白虎", "玄武", "九地", "九天"];
+    const WX_STAR_RING = ['天蓬', '天任', '天衝', '天輔', '天英', '天芮', '天柱', '天心'];
+    const WX_DOORS_ORDER = ["休門", "生門", "傷門", "杜門", "景門", "死門", "驚門", "開門"];
+    const WX_EARTH_STEMS_YUN9 = ['己', '乙', '辛', '壬', '戊', '庚癸', '丙', '丁'];
+
+    const YUN9_XUN_CONFIGS = {
+        '子_1': { door: '子', house: 1, god: '六合', star: '天心', doorName: '傷門', stem: '丁', fuTou: '戊', starLeader: '天英' },
+        '丑_8': { door: '丑', house: 8, god: '太陰', star: '天柱', doorName: '開門', stem: '丙', fuTou: '戊', starLeader: '天英' },
+        '亥_6': { door: '亥', house: 6, god: '白虎', star: '天任', doorName: '開門', stem: '乙', fuTou: '癸', starLeader: '天芮' },
+        '寅_8': { door: '寅', house: 8, god: '太陰', star: '天心', doorName: '生門', stem: '丁', fuTou: '癸', starLeader: '天芮' },
+        '卯_3': { door: '卯', house: 3, god: '螣蛇', star: '天任', doorName: '傷門', stem: '乙', fuTou: '己', starLeader: '天蓬' },
+        '戌_6': { door: '戌', house: 6, god: '白虎', star: '天英', doorName: '休門', stem: '戊', fuTou: '己', starLeader: '天蓬' },
+        '辰_4': { door: '辰', house: 4, god: '值符', star: '天輔', doorName: '景門', stem: '壬', fuTou: '壬', starLeader: '天輔' },
+        '巳_4': { door: '巳', house: 4, god: '值符', star: '天芮', doorName: '休門', stem: '庚癸', fuTou: '庚', starLeader: '天芮' },
+        '午_9': { door: '午', house: 9, god: '九天', star: '天任', doorName: '開門', stem: '乙', fuTou: '辛', starLeader: '天任' },
+        '未_2': { door: '未', house: 2, god: '九地', star: '天蓬', doorName: '生門', stem: '己', fuTou: '辛', starLeader: '天任' },
+        '申_2': { door: '申', house: 2, god: '九地', star: '天輔', doorName: '開門', stem: '壬', fuTou: '庚', starLeader: '天芮' },
+        '酉_7': { door: '酉', house: 7, god: '玄武', star: '天蓬', doorName: '開門', stem: '己', fuTou: '壬', starLeader: '天輔' },
+        // 兼容別向選取（如 門向寅/屋向乾）
+        '寅_6': { door: '寅', house: 6, god: '白虎', star: '天任', doorName: '開門', stem: '乙', fuTou: '癸', starLeader: '天芮' }
+    };
+
+    const YUN9_PRESET_CACHE = {};
+    (function initYun9Presets() {
+        for (const key in YUN9_XUN_CONFIGS) {
+            const conf = YUN9_XUN_CONFIGS[key];
+            const gIdx = WX_GODS_YANG.indexOf(conf.god);
+            const sIdx = WX_STAR_RING.indexOf(conf.star);
+            const dIdx = WX_DOORS_ORDER.indexOf(conf.doorName);
+            const tIdx = WX_EARTH_STEMS_YUN9.indexOf(conf.stem);
+
+            const godPan = {};
+            const starPan = {};
+            const doorPan = {};
+            const heavenStemPan = {};
+
+            // 巽宮在 WX_RING_ORDER 索引為 3
+            for (let r = 0; r < 8; r++) {
+                const p = WX_RING_ORDER[r];
+                const offset = r - 3;
+                godPan[p] = WX_GODS_YANG[(gIdx + offset + 16) % 8];
+                starPan[p] = WX_STAR_RING[(sIdx + offset + 16) % 8];
+                doorPan[p] = WX_DOORS_ORDER[(dIdx + offset + 16) % 8];
+                heavenStemPan[p] = WX_EARTH_STEMS_YUN9[(tIdx + offset + 16) % 8];
+            }
+
+            YUN9_PRESET_CACHE[key] = {
+                godPan,
+                starPan,
+                doorPan,
+                heavenStemPan,
+                fuTouStem: conf.fuTou,
+                starLeader: conf.starLeader
+            };
+        }
+    })();
+
+    function calculateWuxiangData(yun, housePalace, doorBranch) {
         const LUOSHU_FLY = [5, 6, 7, 8, 9, 1, 2, 3, 4];
         const STEMS_9 = ['戊', '己', '庚', '辛', '壬', '癸', '丁', '丙', '乙'];
-        const STAR_RING = ['天蓬', '天任', '天衝', '天輔', '天英', '天芮', '天柱', '天心'];
-        const STAR_BASE = { '天蓬':1, '天任':8, '天衝':3, '天輔':4, '天英':9, '天芮':2, '天柱':7, '天心':6 };
         const CHINESE_NUMS = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
-        const GODS_YANG = ["值符", "螣蛇", "太陰", "六合", "白虎", "玄武", "九地", "九天"];
-        const DOORS_ORDER = ["休門", "生門", "傷門", "杜門", "景門", "死門", "驚門", "開門"];
-        const RING_ORDER = [1, 8, 3, 4, 9, 2, 7, 6];
 
-        // 1. 地盤：依三元九運定局，陽遁排地盤
+        // 1. 地盤洛書數與陽遁排地盤
         const earthNum = {};
         const earthStem = {};
         for (let i = 0; i < 9; i++) {
@@ -2950,16 +2999,39 @@ function calculateWuxiangData(yun, housePalace, doorBranch) {
         const centerStem = earthStem[5];
         earthStem[2] = earthStem[2] + centerStem; // 中五寄坤二
 
-        // 2. 定宅干與符首
+        // 九運直接調用寫死預設盤
+        if (yun === 9) {
+            const lookupKey = `${doorBranch}_${housePalace}`;
+            const fallbackKey = Object.keys(YUN9_PRESET_CACHE).find(k => k.startsWith(doorBranch + '_')) || '子_1';
+            const preset = YUN9_PRESET_CACHE[lookupKey] || YUN9_PRESET_CACHE[fallbackKey];
+
+            return {
+                yun,
+                housePalace,
+                doorMountain: doorBranch,
+                doorPalace: WUXIANG_BRANCH_PALACE[doorBranch],
+                earthNum,
+                earthStem,
+                starPan: preset.starPan,
+                heavenStemPan: preset.heavenStemPan,
+                godPan: preset.godPan,
+                doorPan: preset.doorPan,
+                centerStem,
+                fuTouStem: preset.fuTouStem,
+                starLeader: preset.starLeader,
+                CHINESE_NUMS
+            };
+        }
+
+        // 非九運後續計算備用結構
         let effHousePalace = housePalace === 5 ? 2 : housePalace;
-        const zhaiGan = earthStem[effHousePalace].charAt(0); // 洛書方位宮之奇儀為「宅干」
-        const fuTouStem = WUXIANG_BRANCH_FUTOU[doorBranch] || '戊'; // 十二支向定六甲旬符首
+        const fuTouStem = WUXIANG_BRANCH_FUTOU[doorBranch] || '戊';
         
         let originPalace = 5;
         if (fuTouStem === centerStem) {
             originPalace = 2;
         } else {
-            for (let p of RING_ORDER) {
+            for (let p of WX_RING_ORDER) {
                 if (earthStem[p].includes(fuTouStem)) {
                     originPalace = p;
                     break;
@@ -2975,53 +3047,20 @@ function calculateWuxiangData(yun, housePalace, doorBranch) {
         const godPan = {};
         const doorPan = {};
         
-        // 3. 天盤：地盤符首填入宅干宮，餘干順時針轉移 (保留地盤外圍八宮順序整體平移)
-        const earthOuterStems = RING_ORDER.map(p => earthStem[p]);
+        const earthOuterStems = WX_RING_ORDER.map(p => earthStem[p]);
         const fuTouEarthIdx = earthOuterStems.findIndex(s => s.includes(fuTouStem));
-        const houseRingIdx = RING_ORDER.indexOf(effHousePalace);
-
-        // 4. 九星與八神：直符入宅干宮，順時針排入洛書宮
-        const starOriginIdx = STAR_RING.indexOf(starLeader);
+        const houseRingIdx = WX_RING_ORDER.indexOf(effHousePalace);
+        const starOriginIdx = WX_STAR_RING.indexOf(starLeader);
         
         for (let k = 0; k < 8; k++) {
-            const targetP = RING_ORDER[(houseRingIdx + k) % 8];
-            
-            // 天盤干順移
+            const targetP = WX_RING_ORDER[(houseRingIdx + k) % 8];
             const sourceIdx = (fuTouEarthIdx + k) % 8;
             heavenStemPan[targetP] = earthOuterStems[sourceIdx];
-            
-            // 九星順移
-            starPan[targetP] = STAR_RING[(starOriginIdx + k) % 8];
-            
-            // 八神順移
-            godPan[targetP] = GODS_YANG[k];
-        }
-        
-// 5. 八門：依十天干順位推定「宅支」步數，將直使順推至宅支位
-        const STEMS_LOOKUP = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
-        
-        // 宅干若在坤二宮，若遇符首為癸則取癸，否則取坤宮正干
-        let effectiveZhaiGan = zhaiGan;
-        if (earthStem[effHousePalace].includes(fuTouStem)) {
-            effectiveZhaiGan = fuTouStem;
+            starPan[targetP] = WX_STAR_RING[(starOriginIdx + k) % 8];
+            godPan[targetP] = WX_GODS_YANG[k];
+            doorPan[targetP] = WX_DOORS_ORDER[k];
         }
 
-        // 無論是否伏吟，宅支步數皆等於宅干在旬內的自然位置（乙=1, 丙=2 ... 癸=9）
-        let step = STEMS_LOOKUP.indexOf(effectiveZhaiGan);
-        if (step === -1) step = 0;
-        
-        // 直使從符首本宮依陽遁洛書軌跡順推 step 步
-        let currentP = ((originPalace - 1 + step) % 9) + 1;
-        if (currentP === 5) currentP = 2; // 中五宮寄坤二
-        
-        // 依洛書八宮環形陣列順時針排布八門
-        const zhiShiRingIdx = RING_ORDER.indexOf(currentP);
-        const zhiShiDoorIdx = DOORS_ORDER.indexOf(zhiShiDoor);
-        const doorOffset = (zhiShiRingIdx - zhiShiDoorIdx + 8) % 8;
-        
-        for (let k = 0; k < 8; k++) {
-            doorPan[RING_ORDER[(k + doorOffset) % 8]] = DOORS_ORDER[k];
-        }
         return {
             yun, housePalace, doorMountain: doorBranch,
             doorPalace: WUXIANG_BRANCH_PALACE[doorBranch],
@@ -3029,8 +3068,8 @@ function calculateWuxiangData(yun, housePalace, doorBranch) {
             centerStem, fuTouStem, starLeader, CHINESE_NUMS
         };
     }
- 
-   function switchCompassPanMode(mode) {
+
+    function switchCompassPanMode(mode) {
         compassPanMode = mode;
         const btnShijia = document.getElementById('btn-mode-shijia');
         const btnWuxiang = document.getElementById('btn-mode-wuxiang');
@@ -3044,7 +3083,7 @@ function calculateWuxiangData(yun, housePalace, doorBranch) {
             subWuxiang.classList.add('hidden');
         } else {
             btnWuxiang.className = "px-2.5 py-1 text-xs font-black rounded bg-indigo-600 text-white transition";
-            btnShijia.className = "px-2.5 py-1 text-xs font-black rounded XUN_SHOU_BRANCHtext-gray-300 hover:text-white transition";
+            btnShijia.className = "px-2.5 py-1 text-xs font-black rounded text-gray-300 hover:text-white transition";
             subWuxiang.classList.remove('hidden');
             subShijia.classList.add('hidden');
         }
@@ -3062,8 +3101,7 @@ function calculateWuxiangData(yun, housePalace, doorBranch) {
         }
     }
 
-
-// ==================== 廿四山與指南針核心演算法 ====================
+    // ==================== 廿四山與指南針核心演算法 ====================
     const MOUNTAINS_24 = [
         { name: "子", gua: "坎", center: 0, start: 352.5, end: 7.5, color: "#38bdf8", isMajor: true },
         { name: "癸", gua: "坎", center: 15, start: 7.5, end: 22.5, color: "#bae6fd" },
@@ -3125,7 +3163,7 @@ function calculateWuxiangData(yun, housePalace, doorBranch) {
         return "正北";
     }
 
-function renderCompassSvgDial() {
+    function renderCompassSvgDial() {
         const svg = document.getElementById('compass-svg-dial');
         if (!svg) return;
         const cx = 220, cy = 220, rOut = 216, rMid = 176, rIn = 162;
@@ -3139,12 +3177,10 @@ function renderCompassSvgDial() {
             let dialAngle = (deg - 180 + 360) % 360;
             let rad = dialAngle * Math.PI / 180;
             
-            // 🌟 判斷是否為「子(0°)、卯(90°)、午(180°)、酉(270°)」四正軸心刻度
             let isMajorCardinal = (deg === 0 || deg === 90 || deg === 180 || deg === 270);
             let is10 = (deg % 10 === 0);
             let is30 = (deg % 30 === 0);
 
-            // 四正刻度加長至 16px (一般 30度為 9px，10度為 6px，其餘 3.5px)
             let len = isMajorCardinal ? 16 : (is30 ? 9 : (is10 ? 6 : 3.5));
             let x1 = cx + (rOut - 2) * Math.sin(rad);
             let y1 = cy - (rOut - 2) * Math.cos(rad);
@@ -3157,7 +3193,6 @@ function renderCompassSvgDial() {
             html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`;
         }
 
-        // 廿四山文字與界線（維持完整 24 山排列）
         MOUNTAINS_24.forEach(m => {
             let dialAngle = (m.center - 180 + 360) % 360;
             let boundaryDialAngle = (dialAngle - 7.5 + 360) % 360;
@@ -3182,187 +3217,181 @@ function renderCompassSvgDial() {
         svg.innerHTML = html;
     }
 
-function renderCompassQimen() {
-    const grid = document.getElementById('compass-qimen-grid');
-    if (!grid) return;
+    function renderCompassQimen() {
+        const grid = document.getElementById('compass-qimen-grid');
+        if (!grid) return;
 
-    const order = [4, 9, 2, 3, 5, 7, 8, 1, 6];
-    let html = '';
+        const order = [4, 9, 2, 3, 5, 7, 8, 1, 6];
+        let html = '';
 
-    // ==========================================
-    // 模式 A：時家奇門盤 (含流年飛星)
-    // ==========================================
-    if (compassPanMode === 'shijia') {
+        // 時家奇門盤
+        if (compassPanMode === 'shijia') {
+            const cFxSel = document.getElementById('sel-compass-feixing-year');
+            const y = parseInt(document.getElementById('sel-year').value);
+            let flightYear = (cFxSel && cFxSel.value) ? parseInt(cFxSel.value) : y;
+            
+            let starC = (11 - (flightYear % 9)) % 9;
+            if (starC <= 0) starC += 9;
+            const FLIGHT_OFFSET = { 5: 0, 6: 1, 7: 2, 8: 3, 9: 4, 1: 5, 2: 6, 3: 7, 4: 8 };
+            const FEIXING_ZH_NAMES = ["", "一白", "二黑", "三碧", "四綠", "五黃", "六白", "七赤", "八白", "九紫"];
+
+            order.forEach(pNum => {
+                let data = globalPalaceData[pNum];
+                let feixingNum = (starC + FLIGHT_OFFSET[pNum] - 1) % 9 + 1;
+                let feixingStr = FEIXING_ZH_NAMES[feixingNum];
+
+                if (pNum === 5) {
+                    let s = data ? data.hStems[0] : "";
+                    let b5 = panData.bazi5Info;
+                    html += `
+                    <div class="flex flex-col justify-between p-1 bg-slate-900/95 border border-amber-500/40 rounded text-center text-white overflow-hidden shadow-inner">
+                        <div class="flex justify-between items-center text-[9px] sm:text-[10px] font-black border-b border-gray-700/60 pb-0.5">
+                            <span class="text-amber-300">中五</span>
+                            <span class="bg-rose-900/90 text-rose-200 px-1 rounded text-[8px] sm:text-[9px] font-mono">${feixingStr}</span>
+                        </div>
+                        <div class="flex flex-col justify-center items-center my-auto leading-none space-y-0.5">
+                            <div class="text-[9px] text-amber-200 font-bold">${b5 ? b5.hS+b5.hB+'時' : ''}</div>
+                            <div class="text-[9px] text-gray-300 scale-90">符:${b5?b5.zf:''}</div>
+                            <div class="text-[9px] text-gray-300 scale-90">使:${b5?b5.zs:''}</div>
+                        </div>
+                        <div class="text-[10px] text-right font-black text-amber-400 mt-auto">${s}</div>
+                    </div>`;
+                } else if (data) {
+                    let pGua = PALACES_HOU[pNum].gua;
+                    let tags = [];
+                    if (data.isKong) tags.push("🈳");
+                    if (data.isMa) tags.push("🐎");
+                    if (data.isMenPo) tags.push("迫");
+                    let tagDisplay = tags.length ? `<span class="text-[8px] text-red-400 ml-0.5">${tags.join('')}</span>` : '';
+
+                    html += `
+                    <div class="flex flex-col justify-between p-1 bg-slate-950/95 border border-slate-800 rounded text-white overflow-hidden shadow">
+                        <div class="flex justify-between items-center text-[9px] sm:text-[10px] font-black border-b border-slate-800 pb-0.5">
+                            <span class="text-amber-300">${data.name} ${pGua}</span>
+                            <span class="bg-rose-900/90 text-rose-200 px-1 rounded text-[8px] sm:text-[9px] font-mono">${feixingStr}</span>
+                        </div>
+                        <div class="flex flex-col items-start my-auto space-y-0.5 text-[10px] sm:text-[11px] font-black leading-tight w-full">
+                            <span class="text-emerald-400 truncate w-full">${data.god}</span>
+                            <span class="text-yellow-300 truncate w-full">${data.star}</span>
+                            <div class="flex items-center w-full justify-between">
+                                <span class="text-red-400 truncate">${data.door}</span>
+                                ${tagDisplay}
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-end mt-auto pt-0.5 border-t border-slate-800 text-[10px] sm:text-[11px] font-black leading-none">
+                            <span class="text-[8px] text-gray-500">${data.anGan||''}</span>
+                            <div class="text-right">
+                                <span class="text-cyan-300">${data.hStems.join('|')}</span>
+                                <span class="text-gray-600 mx-0.5">/</span>
+                                <span class="text-orange-300">${data.eStems.join('|')}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            });
+        } 
+        // 地運屋向奇門盤
+        else {
+            const yun = parseInt(document.getElementById('sel-compass-yun').value);
+            const housePalace = parseInt(document.getElementById('sel-compass-house').value);
+            const doorMountain = document.getElementById('sel-compass-door').value;
+            const wx = calculateWuxiangData(yun, housePalace, doorMountain);
+
+            order.forEach(pNum => {
+                const pInfo = PALACES_HOU[pNum];
+
+                if (pNum === 5) {
+                    const eNumZh = wx.CHINESE_NUMS[wx.earthNum[5]];
+                    html += `
+                    <div class="flex flex-col justify-between p-1 bg-slate-900/95 border border-indigo-500/50 rounded text-center text-white overflow-hidden shadow-inner">
+                        <div class="flex justify-between items-center text-[9px] sm:text-[10px] font-black border-b border-indigo-900 pb-0.5">
+                            <span class="text-indigo-300">中五</span>
+                            <span class="bg-indigo-900 text-indigo-200 px-1 rounded text-[8px]">立極</span>
+                        </div>
+                        <div class="flex flex-col justify-center items-center my-auto leading-none space-y-1">
+                            <div class="text-[10px] text-amber-300 font-bold">${wx.yun}運</div>
+                            <div class="text-[8px] text-gray-400">符頭:${wx.fuTouStem}</div>
+                            <div class="text-[8px] text-gray-400">符星:${wx.starLeader}</div>
+                        </div>
+                        <div class="flex justify-between items-end mt-auto text-[10px] font-mono font-bold">
+                            <span class="text-amber-400">${eNumZh}</span>
+                            <span class="text-orange-300">${wx.centerStem}</span>
+                        </div>
+                    </div>`;
+                } else {
+                    const isHouse = (pNum === housePalace);
+                    const isDoor = (pNum === wx.doorPalace);
+                    let badgeHtml = '';
+                    if (isHouse) badgeHtml += `<span class="bg-red-600 text-[8px] text-white px-0.5 rounded font-black">屋</span>`;
+                    if (isDoor) badgeHtml += `<span class="bg-blue-600 text-[8px] text-white px-0.5 rounded font-black">門</span>`;
+
+                    const eNumZh = wx.CHINESE_NUMS[wx.earthNum[pNum]];
+                    const god = wx.godPan[pNum];
+                    const star = wx.starPan[pNum];
+                    const door = wx.doorPan[pNum];
+                    const hStem = wx.heavenStemPan[pNum];
+                    const eStem = wx.earthStem[pNum];
+
+                    html += `
+                    <div class="flex flex-col justify-between p-1 bg-slate-950/95 border border-slate-800 rounded text-white overflow-hidden shadow">
+                        <div class="flex justify-between items-center text-[9px] sm:text-[10px] font-black border-b border-slate-800 pb-0.5">
+                            <span class="text-amber-300">${pInfo.name} ${pInfo.gua}</span>
+                            <div class="flex items-center gap-0.5">${badgeHtml}</div>
+                        </div>
+
+                        <div class="flex flex-col items-start my-auto space-y-0.5 text-[10px] sm:text-[11px] font-black leading-tight w-full">
+                            <span class="text-emerald-400 truncate w-full">${god}</span>
+                            <span class="text-yellow-300 truncate w-full">${star}</span>
+                            <span class="text-red-400 truncate w-full">${door}</span>
+                        </div>
+
+                        <div class="flex justify-between items-end mt-auto pt-0.5 border-t border-slate-800 text-[10px] sm:text-[11px] font-black leading-none">
+                            <span class="text-amber-400 font-mono text-[9px]">${eNumZh}</span>
+                            <div class="text-right">
+                                <span class="text-cyan-300">${hStem}</span>
+                                <span class="text-gray-600 mx-0.5">/</span>
+                                <span class="text-orange-300">${eStem}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            });
+        }
+
+        grid.innerHTML = html;
+    }    
+
+    function openCompassMode() {
+        if (!panData || !panData.ju) {
+            generatePan();
+        }
+        const modal = document.getElementById('compass-modal');
+        if (modal) modal.classList.remove('hidden');
+
         const cFxSel = document.getElementById('sel-compass-feixing-year');
-        const y = parseInt(document.getElementById('sel-year').value);
-        let flightYear = (cFxSel && cFxSel.value) ? parseInt(cFxSel.value) : y;
+        if (cFxSel) {
+            cFxSel.value = document.getElementById('sel-year').value;
+        }
         
-        let starC = (11 - (flightYear % 9)) % 9;
-        if (starC <= 0) starC += 9;
-        const FLIGHT_OFFSET = { 5: 0, 6: 1, 7: 2, 8: 3, 9: 4, 1: 5, 2: 6, 3: 7, 4: 8 };
-        const FEIXING_ZH_NAMES = ["", "一白", "二黑", "三碧", "四綠", "五黃", "六白", "七赤", "八白", "九紫"];
-
-        order.forEach(pNum => {
-            let data = globalPalaceData[pNum];
-            let feixingNum = (starC + FLIGHT_OFFSET[pNum] - 1) % 9 + 1;
-            let feixingStr = FEIXING_ZH_NAMES[feixingNum];
-
-            if (pNum === 5) {
-                let s = data ? data.hStems[0] : "";
-                let b5 = panData.bazi5Info;
-                html += `
-                <div class="flex flex-col justify-between p-1 bg-slate-900/95 border border-amber-500/40 rounded text-center text-white overflow-hidden shadow-inner">
-                    <div class="flex justify-between items-center text-[9px] sm:text-[10px] font-black border-b border-gray-700/60 pb-0.5">
-                        <span class="text-amber-300">中五</span>
-                        <span class="bg-rose-900/90 text-rose-200 px-1 rounded text-[8px] sm:text-[9px] font-mono">${feixingStr}</span>
-                    </div>
-                    <div class="flex flex-col justify-center items-center my-auto leading-none space-y-0.5">
-                        <div class="text-[9px] text-amber-200 font-bold">${b5 ? b5.hS+b5.hB+'時' : ''}</div>
-                        <div class="text-[9px] text-gray-300 scale-90">符:${b5?b5.zf:''}</div>
-                        <div class="text-[9px] text-gray-300 scale-90">使:${b5?b5.zs:''}</div>
-                    </div>
-                    <div class="text-[10px] text-right font-black text-amber-400 mt-auto">${s}</div>
-                </div>`;
-            } else if (data) {
-                let pGua = PALACES_HOU[pNum].gua;
-                let tags = [];
-                if (data.isKong) tags.push("🈳");
-                if (data.isMa) tags.push("🐎");
-                if (data.isMenPo) tags.push("迫");
-                let tagDisplay = tags.length ? `<span class="text-[8px] text-red-400 ml-0.5">${tags.join('')}</span>` : '';
-
-                html += `
-                <div class="flex flex-col justify-between p-1 bg-slate-950/95 border border-slate-800 rounded text-white overflow-hidden shadow">
-                    <div class="flex justify-between items-center text-[9px] sm:text-[10px] font-black border-b border-slate-800 pb-0.5">
-                        <span class="text-amber-300">${data.name} ${pGua}</span>
-                        <span class="bg-rose-900/90 text-rose-200 px-1 rounded text-[8px] sm:text-[9px] font-mono">${feixingStr}</span>
-                    </div>
-                    <div class="flex flex-col items-start my-auto space-y-0.5 text-[10px] sm:text-[11px] font-black leading-tight w-full">
-                        <span class="text-emerald-400 truncate w-full">${data.god}</span>
-                        <span class="text-yellow-300 truncate w-full">${data.star}</span>
-                        <div class="flex items-center w-full justify-between">
-                            <span class="text-red-400 truncate">${data.door}</span>
-                            ${tagDisplay}
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-end mt-auto pt-0.5 border-t border-slate-800 text-[10px] sm:text-[11px] font-black leading-none">
-                        <span class="text-[8px] text-gray-500">${data.anGan||''}</span>
-                        <div class="text-right">
-                            <span class="text-cyan-300">${data.hStems.join('|')}</span>
-                            <span class="text-gray-600 mx-0.5">/</span>
-                            <span class="text-orange-300">${data.eStems.join('|')}</span>
-                        </div>
-                    </div>
-                </div>`;
-            }
-        });
-    } 
-    // ==========================================
-    // 模式 B：地運屋向奇門盤 (三元九運四十八局)
-    // ==========================================
-    else {
-        const yun = parseInt(document.getElementById('sel-compass-yun').value);
-        const housePalace = parseInt(document.getElementById('sel-compass-house').value);
-        const doorMountain = document.getElementById('sel-compass-door').value;
-        const wx = calculateWuxiangData(yun, housePalace, doorMountain);
-
-        order.forEach(pNum => {
-            const pInfo = PALACES_HOU[pNum];
-
-            if (pNum === 5) {
-                const eNumZh = wx.CHINESE_NUMS[wx.earthNum[5]];
-                html += `
-                <div class="flex flex-col justify-between p-1 bg-slate-900/95 border border-indigo-500/50 rounded text-center text-white overflow-hidden shadow-inner">
-                    <div class="flex justify-between items-center text-[9px] sm:text-[10px] font-black border-b border-indigo-900 pb-0.5">
-                        <span class="text-indigo-300">中五</span>
-                        <span class="bg-indigo-900 text-indigo-200 px-1 rounded text-[8px]">立極</span>
-                    </div>
-                    <div class="flex flex-col justify-center items-center my-auto leading-none space-y-1">
-                        <div class="text-[10px] text-amber-300 font-bold">${wx.yun}運</div>
-                        <div class="text-[8px] text-gray-400">符頭:${wx.fuTouStem}</div>
-                        <div class="text-[8px] text-gray-400">符星:${wx.starLeader}</div>
-                    </div>
-                    <div class="flex justify-between items-end mt-auto text-[10px] font-mono font-bold">
-                        <span class="text-amber-400">${eNumZh}</span>
-                        <span class="text-orange-300">${wx.centerStem}</span>
-                    </div>
-                </div>`;
-            } else {
-                const isHouse = (pNum === housePalace);
-                const isDoor = (pNum === wx.doorPalace);
-                let badgeHtml = '';
-                if (isHouse) badgeHtml += `<span class="bg-red-600 text-[8px] text-white px-0.5 rounded font-black">屋</span>`;
-                if (isDoor) badgeHtml += `<span class="bg-blue-600 text-[8px] text-white px-0.5 rounded font-black">門</span>`;
-
-                const eNumZh = wx.CHINESE_NUMS[wx.earthNum[pNum]];
-                const god = wx.godPan[pNum];
-                const star = wx.starPan[pNum];
-                const door = wx.doorPan[pNum];
-                const hStem = wx.heavenStemPan[pNum];
-                const eStem = wx.earthStem[pNum];
-
-                html += `
-                <div class="flex flex-col justify-between p-1 bg-slate-950/95 border border-slate-800 rounded text-white overflow-hidden shadow">
-                    <div class="flex justify-between items-center text-[9px] sm:text-[10px] font-black border-b border-slate-800 pb-0.5">
-                        <span class="text-amber-300">${pInfo.name} ${pInfo.gua}</span>
-                        <div class="flex items-center gap-0.5">${badgeHtml}</div>
-                    </div>
-
-                    <div class="flex flex-col items-start my-auto space-y-0.5 text-[10px] sm:text-[11px] font-black leading-tight w-full">
-                        <span class="text-emerald-400 truncate w-full">${god}</span>
-                        <span class="text-yellow-300 truncate w-full">${star}</span>
-                        <span class="text-red-400 truncate w-full">${door}</span>
-                    </div>
-
-                    <div class="flex justify-between items-end mt-auto pt-0.5 border-t border-slate-800 text-[10px] sm:text-[11px] font-black leading-none">
-                        <span class="text-amber-400 font-mono text-[9px]">${eNumZh}</span>
-                        <div class="text-right">
-                            <span class="text-cyan-300">${hStem}</span>
-                            <span class="text-gray-600 mx-0.5">/</span>
-                            <span class="text-orange-300">${eStem}</span>
-                        </div>
-                    </div>
-                </div>`;
-            }
-        });
+        renderCompassSvgDial();
+        renderCompassQimen();
+        startCompassSensor();
     }
 
-    grid.innerHTML = html;
-}    
-
-function openCompassMode() {
-    if (!panData || !panData.ju) {
-        generatePan();
+    function changeCompassFeiXingYear() {
+        renderCompassQimen();
     }
-    const modal = document.getElementById('compass-modal');
-    if (modal) modal.classList.remove('hidden');
 
-    // 同步當前排盤年份至指南針年份選單
-    const cFxSel = document.getElementById('sel-compass-feixing-year');
-    if (cFxSel) {
-        cFxSel.value = document.getElementById('sel-year').value;
+    function closeCompassMode() {
+        const modal = document.getElementById('compass-modal');
+        if (modal) modal.classList.add('hidden');
+        stopCompassSensor();
+
+        const toggle = document.getElementById('toggle-compass');
+        if (toggle && toggle.checked) toggle.checked = false;
     }
-    
-    renderCompassSvgDial();
-    renderCompassQimen();
-    startCompassSensor();
-}
 
-// 切換年份時立即重繪九宮格飛星
-function changeCompassFeiXingYear() {
-    renderCompassQimen();
-}
-
-function closeCompassMode() {
-    const modal = document.getElementById('compass-modal');
-    if (modal) modal.classList.add('hidden');
-    stopCompassSensor();
-
-    const toggle = document.getElementById('toggle-compass');
-    if (toggle && toggle.checked) toggle.checked = false;
-}
-
-function toggleCompassLock() {
+    function toggleCompassLock() {
         isCompassLocked = !isCompassLocked;
         const icon = document.getElementById('compass-lock-icon');
         const txt = document.getElementById('compass-lock-text');
@@ -3370,14 +3399,14 @@ function toggleCompassLock() {
         
         if (isCompassLocked) {
             if (icon) icon.innerText = '🔒';
-            if (txt) txt.innerText = '解鎖'; // 鎖定狀態下提示可點擊「解鎖」
+            if (txt) txt.innerText = '解鎖';
             if (btn) { 
                 btn.classList.replace('border-gray-700', 'border-amber-500'); 
                 btn.classList.add('text-amber-400'); 
             }
         } else {
             if (icon) icon.innerText = '🔓';
-            if (txt) txt.innerText = '鎖定'; // 跟隨狀態下提示可點擊「鎖定」
+            if (txt) txt.innerText = '鎖定';
             if (btn) { 
                 btn.classList.replace('border-amber-500', 'border-gray-700'); 
                 btn.classList.remove('text-amber-400'); 
@@ -3385,16 +3414,14 @@ function toggleCompassLock() {
         }
     }
 
-
-// ==================== 指南針感測器平滑與跨平台修復 ====================
+    // ==================== 指南針感測器平滑與跨平台修復 ====================
     let compassActiveListenerType = null;
-    let currentContinuousRotation = 0; // 紀錄連續角度，避免 0/360 度跨界倒轉
-    let smoothedHeading = null;        // 平滑濾波角度
+    let currentContinuousRotation = 0;
+    let smoothedHeading = null;
 
     function startCompassSensor() {
-        stopCompassSensor(); // 啟動前先清理舊監聽器
+        stopCompassSensor();
 
-        // 1. iOS 13+ 權限請求流程
         if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
             const permBtn = document.getElementById('btn-ios-perm');
             const hint = document.getElementById('compass-status-hint');
@@ -3417,14 +3444,11 @@ function toggleCompassLock() {
                     if (hint) hint.innerText = '⚠️ 請點擊按鈕啟用指南針：';
                 });
         } 
-        // 2. Android / Chrome / Firefox：精確單一監聽，避免事件打架
         else if ('ondeviceorientationabsolute' in window) {
-            // Android 優先使用地磁絕對方位
             window.addEventListener('deviceorientationabsolute', handleDeviceOrientation, true);
             compassActiveListenerType = 'deviceorientationabsolute';
             isCompassRunning = true;
         } else {
-            // 降級使用一般方位
             window.addEventListener('deviceorientation', handleDeviceOrientation, true);
             compassActiveListenerType = 'deviceorientation';
             isCompassRunning = true;
@@ -3462,26 +3486,20 @@ function toggleCompassLock() {
         if (isCompassLocked) return;
         let rawHeading = 0;
 
-        // iOS 系統
         if (e.webkitCompassHeading !== undefined && e.webkitCompassHeading !== null) {
             rawHeading = e.webkitCompassHeading;
-        } 
-        // Android / 標準 W3C（alpha 逆時針 0~360°）
-        else if (e.alpha !== null && e.alpha !== undefined) {
-            // Android Chrome 絕對地磁轉換為順時針方向
+        } else if (e.alpha !== null && e.alpha !== undefined) {
             rawHeading = (360 - e.alpha) % 360;
         } else {
             return;
         }
 
-        // 低通濾波器 (EMA Smoothing)，消除 Android 感測器抖動噪點
         if (smoothedHeading === null) {
             smoothedHeading = rawHeading;
         } else {
-            // 計算最小角度差值
             let delta = rawHeading - smoothedHeading;
-            delta = (delta + 540) % 360 - 180; // 限制在 -180° ~ 180°
-            smoothedHeading = (smoothedHeading + delta * 0.25 + 360) % 360; // 0.25 平滑係數
+            delta = (delta + 540) % 360 - 180;
+            smoothedHeading = (smoothedHeading + delta * 0.25 + 360) % 360;
         }
 
         updateCompassHeading(smoothedHeading);
@@ -3490,10 +3508,7 @@ function toggleCompassLock() {
     function updateCompassHeading(heading) {
         heading = Math.round(heading) % 360;
         
-        // 計算羅盤應旋轉的目標角度 (朝向指針位於頂部，盤面逆向轉動)
         let targetRotation = (180 - heading + 360) % 360;
-
-        // 計算最短旋轉路徑 (解決 359° 與 0° 跨界導致的 360 度倒轉問題)
         let diff = (targetRotation - (currentContinuousRotation % 360) + 540) % 360 - 180;
         currentContinuousRotation += diff;
 
@@ -3512,6 +3527,7 @@ function toggleCompassLock() {
         const mEl = document.getElementById('compass-mountain');
         if (mEl) mEl.innerText = `${mInfo.gua}宮 · ${mInfo.name}山 (${mInfo.center}°)`;
     }
+
     window.onload = function() {
         initSelectors();
         initBaziSelectors();
