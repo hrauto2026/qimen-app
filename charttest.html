@@ -24,61 +24,64 @@
             transition: all 0.5s ease;
         }
         
-        /* 外層間距與手機端優化 */
-        .grid-wrapper { 
-            padding: 24px 36px; 
-            overflow-x: auto; 
-            -webkit-overflow-scrolling: touch; 
-        }
-        @media (max-width: 640px) {
-            .grid-wrapper { 
-                padding: 20px 24px !important; 
-            }
-            .grid-qimen { 
-                gap: 4px !important; 
-                margin: 0 auto; 
-                width: 100% !important; 
-                max-width: 100% !important; 
-            }
-            .palace { 
-                min-height: 175px !important; 
-                padding: 4px 6px !important; 
-                border-radius: 6px !important; 
-            }
-            .branch-label { 
-                font-size: 0.85rem !important; 
-            }
-            .tian-jiang { 
-                font-size: 0.6rem !important; 
-            }
-            .pos-left { left: -21px !important; }
-            .pos-right { right: -21px !important; }
-            .pos-top { top: -22px !important; }
-            .pos-bottom { bottom: -22px !important; }
-        }
+/* 🌟 徹底移除容器捲軸，改為可視自適應拉長 */
+.grid-wrapper { 
+    padding: 26px 36px 36px 36px; 
+    overflow: visible !important; /* 核心：禁止在九宮格外層生成任何滾動條 */
+    width: 100%;
+    box-sizing: border-box;
+}
 
-        .grid-qimen { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 6px; 
-            max-width: 640px; 
-            min-width: 280px; 
-            margin: auto; 
-        }
-        
-        .palace { 
-            position: relative; 
-            border-radius: 8px; 
-            padding: 6px 8px; 
-            min-height: 200px; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
-            border: 1.5px solid; 
-            background-color: rgba(255, 255, 255, 0.95); 
-            transition: all 0.2s ease; 
-            cursor: pointer;
-        }
+@media (max-width: 640px) {
+    .grid-wrapper { 
+        padding: 22px 24px 28px 24px !important; 
+        overflow: visible !important;
+    }
+    .grid-qimen { 
+        gap: 5px !important; 
+        margin: 0 auto; 
+        width: 100% !important; 
+        max-width: 100% !important; 
+    }
+    .palace { 
+        min-height: 165px !important; 
+        padding: 4px 5px !important; 
+        border-radius: 6px !important; 
+    }
+    .branch-label { 
+        font-size: 0.85rem !important; 
+    }
+    .tian-jiang { 
+        font-size: 0.6rem !important; 
+    }
+    .pos-left { left: -21px !important; }
+    .pos-right { right: -21px !important; }
+    .pos-top { top: -22px !important; }
+    .pos-bottom { bottom: -22px !important; }
+}
+
+.grid-qimen { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 8px; 
+    max-width: 640px; 
+    min-width: 280px; 
+    margin: 0 auto; 
+}
+
+.palace { 
+    position: relative; 
+    border-radius: 8px; 
+    padding: 6px 8px; 
+    min-height: 185px; /* 緊湊適中，避免過度拉高 */
+    display: flex; 
+    flex-direction: column; 
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
+    border: 1.5px solid; 
+    background-color: rgba(255, 255, 255, 0.95); 
+    transition: all 0.2s ease; 
+    cursor: pointer;
+}
 
         /* 古典五行配色 */
         .bg-water { background-color: #f0f9ff; border-color: #bae6fd; } .text-water { color: #0369a1; }
@@ -167,7 +170,7 @@
 <div id="app-workspace" class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     
     <div id="main-panel" class="lg:col-span-12 space-y-4 transition-all duration-500">
-        <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-2.5 sm:p-4 md:p-6 border border-white main-container">
+<div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-2.5 sm:p-4 md:p-6 border border-white main-container">
 
 <!-- 🌟 1. 加入 id="app-title"，起盤後自動隱藏 -->
             <h1 id="app-title" class="text-xl sm:text-2xl md:text-3xl text-center mb-2.5 text-indigo-900 tracking-widest">
@@ -1641,30 +1644,32 @@ function handleToggleSwitch(activeId) {
     let panData = {}; 
     let currentYiMaPalace = "";
 
-    function renderPalace5Html(s, anGan, centerLabel, bazi5) {
+function renderPalace5Html(s, anGan, centerLabel, bazi5) {
         let baziContent = "";
         if (bazi5) {
             baziContent = `
 <div class="flex flex-col items-center justify-center w-full select-none z-10 my-auto">
+    <!-- 🌟 四柱順序由左至右：時柱 -> 日柱 -> 月柱 -> 年柱 -->
     <div class="flex justify-center items-center gap-x-1.5 sm:gap-x-2 font-black text-lg sm:text-xl md:text-2xl leading-none mt-1">
         <div class="flex flex-col items-center gap-y-0.5 leading-none">
-            <span style="color:${WUXING_COLORS[bazi5.yS] || '#1a202c'}">${bazi5.yS}</span>
-            <span style="color:${WUXING_COLORS[bazi5.yB] || '#1a202c'}">${bazi5.yB}</span>
-        </div>
-        <div class="flex flex-col items-center gap-y-0.5 leading-none">
-            <span style="color:${WUXING_COLORS[bazi5.mS] || '#1a202c'}">${bazi5.mS}</span>
-            <span style="color:${WUXING_COLORS[bazi5.mB] || '#1a202c'}">${bazi5.mB}</span>
+            <span style="color:${WUXING_COLORS[bazi5.hS] || '#1a202c'}">${bazi5.hS}</span>
+            <span style="color:${WUXING_COLORS[bazi5.hB] || '#1a202c'}">${bazi5.hB}</span>
         </div>
         <div class="flex flex-col items-center gap-y-0.5 leading-none">
             <span style="color:${WUXING_COLORS[bazi5.dS] || '#1a202c'}">${bazi5.dS}</span>
             <span style="color:${WUXING_COLORS[bazi5.dB] || '#1a202c'}">${bazi5.dB}</span>
         </div>
         <div class="flex flex-col items-center gap-y-0.5 leading-none">
-            <span style="color:${WUXING_COLORS[bazi5.hS] || '#1a202c'}">${bazi5.hS}</span>
-            <span style="color:${WUXING_COLORS[bazi5.hB] || '#1a202c'}">${bazi5.hB}</span>
+            <span style="color:${WUXING_COLORS[bazi5.mS] || '#1a202c'}">${bazi5.mS}</span>
+            <span style="color:${WUXING_COLORS[bazi5.mB] || '#1a202c'}">${bazi5.mB}</span>
+        </div>
+        <div class="flex flex-col items-center gap-y-0.5 leading-none">
+            <span style="color:${WUXING_COLORS[bazi5.yS] || '#1a202c'}">${bazi5.yS}</span>
+            <span style="color:${WUXING_COLORS[bazi5.yB] || '#1a202c'}">${bazi5.yB}</span>
         </div>
     </div>
-    <div class="text-[10px] sm:text-xs text-gray-400 font-bold tracking-widest mt-1">年月日時</div>
+    <!-- 標籤文字同步更新為「時日月年」 -->
+    <div class="text-[10px] sm:text-xs text-gray-400 font-bold tracking-widest mt-1">時日月年</div>
     <div class="flex flex-col items-start w-full text-xs sm:text-sm md:text-base text-gray-700 font-bold leading-normal space-y-1.5 mt-2 sm:mt-3 px-1">
         <div class="whitespace-nowrap flex items-center">旬首：<span class="text-gray-950 font-black ml-0.5">${bazi5.xun}</span></div>
         <div class="whitespace-nowrap flex items-center">值符：<span class="text-gray-950 font-black ml-0.5">${bazi5.zf}</span></div>
