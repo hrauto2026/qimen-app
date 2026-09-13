@@ -11,6 +11,7 @@
 <link rel="icon" type="image/png" href="icon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="data/lunar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
     <style>
         body { 
             font-family: 'BiauKai', 'DFKai-SB', 'Kaiti', 'STKaiti', 'Noto Serif TC', serif; 
@@ -212,35 +213,6 @@
             border-color: #000000 !important;
         }
 
-/* ☁️ 雲狀批斷氣泡樣式 */
-        .cloud-bubble {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.92);
-            border: 1.5px solid #818cf8;
-            color: #3730a3;
-            border-radius: 9999px;
-            padding: 1px 7px;
-            font-size: 0.68rem;
-            line-height: 1.2;
-            font-weight: 900;
-            margin-left: 4px;
-            box-shadow: 0 1px 4px rgba(99, 102, 241, 0.25);
-            cursor: pointer;
-            backdrop-filter: blur(2px);
-            max-width: 95px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            vertical-align: middle;
-            transition: all 0.15s ease;
-        }
-        .cloud-bubble:hover {
-            transform: scale(1.06);
-            background-color: #eef2ff;
-            border-color: #4f46e5;
-        }
-
     </style>
 </head>
 <body class="p-2 md:p-6">
@@ -296,6 +268,34 @@
     </div>
 </details>
 
+<!-- 🌟 折疊欄二：排盤資料 (字體加大 ~70%) -->
+<details id="accordion-pan-info" class="group bg-indigo-50/80 border-l-4 border-indigo-500 rounded-r-xl rounded-l-none mb-2 shadow-sm hidden" open>
+    <summary class="py-2 px-3.5 cursor-pointer text-base sm:text-lg font-black text-indigo-950 flex justify-between items-center select-none">
+        <span id="pan-summary-title">📋 排盤資料</span>
+        <span class="transform group-open:rotate-180 transition-transform duration-200 text-sm">▼</span>
+    </summary>
+    
+    <div class="p-3 text-gray-800 border-t border-indigo-100 bg-white/60 space-y-2">
+        <!-- 四柱八字大標題 -->
+        <div class="text-base sm:text-xl font-black text-indigo-950 leading-relaxed" id="info-bazi"></div>
+        
+        <!-- 節氣列 (字體放大) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm sm:text-base border-t border-indigo-100 pt-2 font-bold">
+            <div><span class="text-gray-500">現時節氣：</span><span id="info-jieqi" class="text-indigo-900 font-black"></span></div>
+            <div><span class="text-gray-500">下一節氣：</span><span id="info-next-jieqi" class="text-teal-900 font-black"></span></div>
+        </div>
+
+        <!-- 局數/旬首/符使/空亡 (字體放大) -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-sm sm:text-base border-t border-indigo-100 pt-2 font-bold">
+            <div><span class="text-gray-500">局數：</span><span id="info-ju" class="text-red-600 font-black"></span></div>
+            <div><span class="text-gray-500">旬首：</span><span id="info-xunshou" class="text-gray-950 font-black"></span></div>
+            <div><span class="text-gray-500">值符：</span><span id="info-zhifu" class="text-gray-950 font-black"></span></div>
+            <div><span class="text-gray-500">值使：</span><span id="info-zhishi" class="text-gray-950 font-black"></span></div>
+            <div><span class="text-gray-500">空亡：</span><span id="info-kongwang" class="text-gray-950 font-black"></span></div>
+        </div>
+        <div id="info-special" class="hidden text-sm sm:text-base pt-1.5 font-black"></div>
+    </div>
+</details>
 
 <!-- 🌟 折疊欄二：排盤資料 (字體全面放大 70%) -->
 <details id="accordion-pan-info" class="group bg-indigo-50/80 border-l-4 border-indigo-500 rounded-r-xl rounded-l-none mb-2 shadow-sm hidden" open>
@@ -422,15 +422,6 @@
                 </label>
             </div>
 
-<!-- 🌟 新增：加入註解開關 -->
-            <div class="flex items-center gap-2 bg-white/90 px-3 py-1 rounded-full shadow-sm border border-indigo-200">
-                <span class="text-xs font-black text-indigo-900 flex items-center gap-1">☁️ 加入註解</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="toggle-notes" class="sr-only peer" onchange="handleToggleSwitch('toggle-notes')">
-                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 shadow-inner"></div>
-                </label>
-            </div>
-
             <!-- 8. 流年飛星 -->
             <div class="flex items-center gap-2 bg-white/90 px-3 py-1 rounded-full shadow-sm border border-rose-100">
                 <span class="text-xs font-bold text-gray-700">流年飛星</span>
@@ -439,6 +430,36 @@
                     <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-rose-600 shadow-inner"></div>
                 </label>
                 <select id="sel-feixing-year" class="hidden text-xs p-1 border border-rose-200 rounded bg-rose-50 font-bold text-rose-900 outline-none" onchange="generatePan()"></select>
+            </div>
+        </div>
+    </details>
+
+<!-- 🌟 折疊欄：注解功能 (預設展開) -->
+    <details id="accordion-notes" class="group w-full max-w-5xl mx-auto bg-slate-50/90 border border-indigo-100 rounded-xl shadow-sm select-none mt-2" open>
+        <summary class="py-1.5 px-3 cursor-pointer text-xs sm:text-sm font-bold text-indigo-900 bg-indigo-50/70 rounded-xl group-open:rounded-b-none group-open:border-b border-indigo-100 flex justify-between items-center transition-colors hover:bg-indigo-100/60 select-none">
+            <span class="flex items-center gap-1.5">📝 注解功能</span>
+            <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs text-indigo-400">▼</span>
+        </summary>
+
+        <div class="p-3 bg-white/80 space-y-2">
+            <div>
+                <textarea id="note-input" maxlength="400" oninput="updateNoteCounter()" placeholder="在此輸入注解文字（最多 400 字）..." class="w-full p-2.5 text-sm sm:text-base border border-indigo-200 rounded-lg bg-white outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 resize-y min-h-[90px] font-normal leading-relaxed text-gray-800"></textarea>
+                <div class="flex justify-end text-xs text-gray-400 font-bold mt-0.5">
+                    <span id="note-counter">0</span> / 400 字
+                </div>
+            </div>
+
+            <!-- 三個功能按鈕 -->
+            <div class="flex flex-wrap justify-end items-center gap-2 pt-1 border-t border-indigo-50">
+                <button onclick="exportNoteTxt()" class="bg-teal-600 hover:bg-teal-700 text-white py-1 px-3.5 rounded-full shadow transition active:scale-95 flex items-center justify-center text-xs font-bold">
+                    💾 導出注解為.txt檔
+                </button>
+                <button onclick="sharePanWithNote()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3.5 rounded-full shadow transition active:scale-95 flex items-center justify-center text-xs font-bold">
+                    🔗 分享連結(包括注解)
+                </button>
+                <button onclick="deleteNote()" class="bg-rose-500 hover:bg-rose-600 text-white py-1 px-3.5 rounded-full shadow transition active:scale-95 flex items-center justify-center text-xs font-bold">
+                    🗑️ 刪除注解
+                </button>
             </div>
         </div>
     </details>
@@ -810,29 +831,6 @@
             <button onclick="document.getElementById('jieqi-warn-modal').classList.add('hidden')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-1.5 px-6 rounded-xl shadow transition active:scale-95 text-sm">
                 確定
             </button>
-        </div>
-    </div>
-</div>
-
-<!-- 🌟 雲狀批斷註解輸入彈窗 -->
-<div id="note-modal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-xs hidden flex justify-center items-center z-[80] p-4 select-none">
-    <div class="bg-white rounded-3xl shadow-2xl p-5 max-w-sm w-full relative border-2 border-indigo-400 space-y-3 animate-fade-in">
-        <div class="flex justify-between items-center border-b border-indigo-100 pb-2">
-            <h3 class="text-base font-black text-indigo-950 flex items-center gap-1.5">
-                <span>☁️</span> <span id="note-modal-title">批斷註解</span>
-            </h3>
-            <button onclick="closeNoteModal()" class="text-gray-400 hover:text-black font-bold text-xl leading-none">✖</button>
-        </div>
-        <div>
-            <label class="block text-xs font-bold text-gray-500 mb-1">輸入批語 (簡短批斷，例如：得吉門逢空、伏吟主靜)：</label>
-            <textarea id="note-input-text" rows="3" maxlength="60" class="w-full p-2.5 border border-indigo-200 rounded-xl bg-indigo-50/40 text-sm font-bold text-indigo-950 outline-none focus:ring-2 focus:ring-indigo-400" placeholder="請輸入批斷..."></textarea>
-        </div>
-        <div class="flex justify-between items-center gap-2 pt-1">
-            <button onclick="deleteCurrentNote()" class="py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs font-bold transition">清除註解</button>
-            <div class="flex gap-2">
-                <button onclick="closeNoteModal()" class="py-1.5 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-bold transition">取消</button>
-                <button onclick="saveCurrentNote()" class="py-1.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-black shadow transition active:scale-95">儲存</button>
-            </div>
         </div>
     </div>
 </div>
@@ -1240,16 +1238,10 @@
     let isBaziMode = false; 
     let isFilterPanelOpen = false;
 
-let useXianTian = false;
+    // Toggle switch variables
+    let useXianTian = false;
     let useEnergy = false;
     let useFeiXing = false;
-    let useNotes = false;
-    let panNotes = {}; // 儲存格式: { "4_god": "批斷內容", "4_star": "..." }
-    let currentEditingNoteKey = null;
-
-let useCompass = false;
-    let isCompassRunning = false;
-    let isCompassLocked = false;
 
 function handleToggleSwitch(activeId) {
     const allToggles = [
@@ -1258,8 +1250,7 @@ function handleToggleSwitch(activeId) {
         'toggle-neiwai', 
         'toggle-palacemodal', 
         'toggle-feixing',
-        'toggle-compass',
-        'toggle-notes'
+        'toggle-compass'
     ];
     
     const activeEl = document.getElementById(activeId);
@@ -1279,7 +1270,6 @@ function handleToggleSwitch(activeId) {
     enablePalaceModal = document.getElementById('toggle-palacemodal').checked;
     useFeiXing = document.getElementById('toggle-feixing').checked;
     useCompass = document.getElementById('toggle-compass').checked;
-    useNotes = document.getElementById('toggle-notes').checked;
 
     const fxSel = document.getElementById('sel-feixing-year');
     if (fxSel) {
@@ -1302,6 +1292,7 @@ function handleToggleSwitch(activeId) {
         generatePan();
     }
 }
+
 
     const getBranchHTML = (i) => {
         let text = BRANCH_POSITIONS_TEMPLATE[i];
@@ -1901,23 +1892,6 @@ function initSelectors() {
     for (let i = 0; i <= 59; i++) minSel.add(new Option(i.toString().padStart(2, '0'), i));
     
 const urlParams = new URLSearchParams(window.location.search);
-    // 🌟 若網址帶有註解，自動載入並直接開啟「加入註解」展示模式
-    if (urlParams.has('notes')) {
-        try {
-            panNotes = JSON.parse(decodeURIComponent(urlParams.get('notes')));
-            if (Object.keys(panNotes).length > 0) {
-                useNotes = true;
-                const toggleNotes = document.getElementById('toggle-notes');
-                if (toggleNotes) toggleNotes.checked = true;
-                enablePalaceModal = false;
-                const togglePm = document.getElementById('toggle-palacemodal');
-                if (togglePm) togglePm.checked = false;
-            }
-        } catch (e) {
-            console.error("Notes load error:", e);
-        }
-    }
-
     if (urlParams.has('y') && urlParams.has('m') && urlParams.has('d') && urlParams.has('h') && urlParams.has('min')) {
         document.getElementById('sel-year').value = urlParams.get('y');
         document.getElementById('sel-month').value = urlParams.get('m');
@@ -1927,9 +1901,31 @@ const urlParams = new URLSearchParams(window.location.search);
         currentDate = new Date(urlParams.get('y'), urlParams.get('m') - 1, urlParams.get('d'), urlParams.get('h'), urlParams.get('min'));
         updateJieQiYearBtn();
         generatePan();
-} else {
+    } else {
         updateSelectorsFromDate(currentDate);
-        generatePan();
+        generatePan(); // 預設開啟時自動起盤
+    }
+
+    // 🌟 解析 URL 中的注解參數並自動載入
+    if (urlParams.has('note')) {
+        const rawNote = urlParams.get('note');
+        let decompressed = "";
+        try {
+            if (typeof LZString !== 'undefined') {
+                decompressed = LZString.decompressFromEncodedURIComponent(rawNote) || decodeURIComponent(rawNote);
+            } else {
+                decompressed = decodeURIComponent(rawNote);
+            }
+        } catch (err) {
+            decompressed = rawNote;
+        }
+        const noteInput = document.getElementById('note-input');
+        if (noteInput) {
+            noteInput.value = decompressed;
+            updateNoteCounter();
+        }
+        const accNote = document.getElementById('accordion-notes');
+        if (accNote) accNote.open = true;
     }
 }
 
@@ -1982,9 +1978,8 @@ const urlParams = new URLSearchParams(window.location.search);
     function resetToNow() { currentDate = new Date(); updateSelectorsFromDate(currentDate); generatePan(); }
     function shiftHour(dir) { currentDate.setHours(currentDate.getHours() + (dir * 2)); updateSelectorsFromDate(currentDate); generatePan(); }
 
-function highlightPalace(el) {
-        // 若處於「加入註解」模式，暫停宮位格局彈窗
-        if (useNotes || !enablePalaceModal) return;
+    function highlightPalace(el) {
+        if (!enablePalaceModal) return;
         let idMatch = el.id.match(/palace-(\d)/);
         if (idMatch && idMatch[1]) {
             let activePNum = parseInt(idMatch[1]);
@@ -1993,53 +1988,6 @@ function highlightPalace(el) {
             }
         }
     }
-
-function handleElementNoteClick(e, pNum, type, label) {
-        if (!useNotes) return;
-        if (e) e.stopPropagation();
-        currentEditingNoteKey = `${pNum}_${type}`;
-        const pName = PALACES_HOU[pNum] ? PALACES_HOU[pNum].name : `中五`;
-        document.getElementById('note-modal-title').innerText = `【${pName} · ${label}】註解`;
-        document.getElementById('note-input-text').value = panNotes[currentEditingNoteKey] || '';
-        document.getElementById('note-modal').classList.remove('hidden');
-        setTimeout(() => document.getElementById('note-input-text').focus(), 100);
-    }
-
-    function closeNoteModal() {
-        document.getElementById('note-modal').classList.add('hidden');
-        currentEditingNoteKey = null;
-    }
-
-    function saveCurrentNote() {
-        if (!currentEditingNoteKey) return;
-        const val = document.getElementById('note-input-text').value.trim();
-        if (val) {
-            panNotes[currentEditingNoteKey] = val;
-        } else {
-            delete panNotes[currentEditingNoteKey];
-        }
-        closeNoteModal();
-        generatePan();
-    }
-
-    function deleteCurrentNote() {
-        if (!currentEditingNoteKey) return;
-        delete panNotes[currentEditingNoteKey];
-        closeNoteModal();
-        generatePan();
-    }
-
-    function getNoteBubbleHtml(pNum, type, label) {
-        if (!useNotes) return '';
-        const key = `${pNum}_${type}`;
-        const text = panNotes[key];
-        if (text) {
-            return `<span class="cloud-bubble" onclick="handleElementNoteClick(event, ${pNum}, '${type}', '${label}')" title="${text}">☁️ ${text}</span>`;
-        }
-        return '';
-    }
-
-
 
     function handleGenerateBtn() {
         if (isBaziMode) {
@@ -3002,31 +2950,18 @@ if (jqData.isTransitionInHour) {
                             <span class="text-sm sm:text-base leading-none mt-0.5 font-normal">${guaDisplay}</span>
                         </div>
                         <div class="flex flex-col items-start leading-none space-y-1 w-full my-0.5">
-                            <div class="flex items-center w-full">
-                                <span class="text-main text-${godColor} ${useNotes ? 'cursor-pointer hover:opacity-75' : ''}" onclick="handleElementNoteClick(event, ${i}, 'god', '${godPan[i]}')">${godPan[i]}</span>
-                                ${getNoteBubbleHtml(i, 'god', godPan[i])}
-                            </div>
-                            <div class="flex items-center w-full">
-                                <span class="text-main text-${STAR_COLORS[pStars[0]] || 'black'} tracking-wide ${useNotes ? 'cursor-pointer hover:opacity-75' : ''}" onclick="handleElementNoteClick(event, ${i}, 'star', '${pStars[0]}')">${starTextDisplay}</span>
-                                ${getNoteBubbleHtml(i, 'star', pStars[0])}
-                            </div>
+                            <span class="text-main text-${godColor} w-full">${godPan[i]}</span>
+                            <span class="text-main text-${STAR_COLORS[pStars[0]] || 'black'} w-full tracking-wide">${starTextDisplay}</span>
                             <div class="flex items-center leading-none w-full">
-                                <span class="text-main text-${doorColor} tracking-wide ${useNotes ? 'cursor-pointer hover:opacity-75' : ''}" onclick="handleElementNoteClick(event, ${i}, 'door', '${pDoor}')">${pDoorDisplay}</span>
+                                <span class="text-main text-${doorColor} tracking-wide">${pDoorDisplay}</span>
                                 ${isMenPo(pDoor, i)?`<span class="text-[10px] text-red-600 ml-1 font-black px-0.5 bg-red-50 border border-red-200 rounded">迫</span>`:""}
-                                ${getNoteBubbleHtml(i, 'door', pDoor)}
                             </div>
                         </div>
                         <div class="flex justify-between items-end mt-auto w-full pt-1">
                             <div class="flex-shrink-0 self-end pb-0.5">${renderStem(anGan, i, true)}</div>
                             <div class="flex flex-col items-stretch text-right leading-tight text-tiandi-stem font-black flex-grow max-w-[80%]">
-                                <div class="w-full flex justify-end items-center ${useNotes ? 'cursor-pointer hover:opacity-75' : ''}" onclick="handleElementNoteClick(event, ${i}, 'hStem', '天盤干')">
-                                    ${getNoteBubbleHtml(i, 'hStem', '天盤干')}
-                                    <div>${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
-                                </div>
-                                <div class="border-t-[2px] border-gray-400 min-w-[2.2rem] w-full pt-0.5 mt-0.5 flex justify-end items-center ${useNotes ? 'cursor-pointer hover:opacity-75' : ''}" onclick="handleElementNoteClick(event, ${i}, 'eStem', '地盤干')">
-                                    ${getNoteBubbleHtml(i, 'eStem', '地盤干')}
-                                    <div>${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
-                                </div>
+                                <div class="w-full">${[...hStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
+                                <div class="border-t-[2px] border-gray-400 min-w-[2.2rem] w-full pt-0.5 mt-0.5">${[...eStems].map(s => renderStem(s, i)).join('<span class="text-gray-400 mx-0.5 text-xs font-normal">|</span>')}</div>
                             </div>
                         </div>
                     </div>`;               
@@ -3073,7 +3008,7 @@ if (jqData.isTransitionInHour) {
         navigator.clipboard.writeText(text).then(() => alert("資料已複製！")).catch(() => { let t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); document.execCommand("Copy"); t.remove(); alert("資料已複製！"); });
     }
 
-function sharePan() {
+    function sharePan() {
         const y = document.getElementById('sel-year').value;
         const m = document.getElementById('sel-month').value;
         const d = document.getElementById('sel-day').value;
@@ -3087,14 +3022,7 @@ function sharePan() {
         url.searchParams.set('h', h);
         url.searchParams.set('min', min);
         
-        // 🌟 當前有註解時，一同打包進分享網址中
-        if (panNotes && Object.keys(panNotes).length > 0) {
-            url.searchParams.set('notes', encodeURIComponent(JSON.stringify(panNotes)));
-        } else {
-            url.searchParams.delete('notes');
-        }
-        
-        navigator.clipboard.writeText(url.toString()).then(() => {
+navigator.clipboard.writeText(url.toString()).then(() => {
             alert("分享連結已複製！貼上即可分享目前的排盤時間。");
         }).catch(() => {
             let t = document.createElement("textarea"); 
@@ -3107,9 +3035,101 @@ function sharePan() {
         });
     }
 
+    // ==================== 注解功能專屬邏輯 ====================
+    function updateNoteCounter() {
+        const input = document.getElementById('note-input');
+        const counter = document.getElementById('note-counter');
+        if (input && counter) {
+            counter.innerText = input.value.length;
+        }
+    }
 
-// ==================== 屋向奇門（三元九運）演算法 ====================
-    let compassPanMode = 'shijia'; // 'shijia' (時家盤) 或 'wuxiang' (屋向盤)
+    function exportNoteTxt() {
+        const noteText = document.getElementById('note-input').value.trim();
+        if (!noteText) {
+            alert("注解內容為空，請先輸入注解文字。");
+            return;
+        }
+        
+        const baziLine = (panData && panData.bazi) ? (panData.bazi + (panData.special ? " " + panData.special : "") + (panData.stemStatus ? " " + panData.stemStatus : "")) : "";
+        
+        // 選項 B：完整排盤資料摘要 + 注解
+        let content = `【奇門遁甲 - 排盤資料與注解】\n`;
+        if (baziLine) {
+            content += `時間：${baziLine}\n`;
+            content += `局數：${panData.ju || '-'}\n`;
+            content += `旬首：${panData.xun || '-'}\n`;
+            content += `值符：${panData.zf || '-'} ｜ 值使：${panData.zs || '-'}\n`;
+            content += `空亡：${panData.kw || '-'} ｜ 驛馬：${currentYiMaPalace || '-'}\n`;
+        }
+        content += `--------------------------------------------------\n`;
+        content += `【注解內容】\n`;
+        content += `${noteText}\n`;
+
+        const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+        const downloadUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = "奇門注解.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(downloadUrl);
+    }
+
+    function sharePanWithNote() {
+        const noteText = document.getElementById('note-input').value.trim();
+        if (!noteText) {
+            alert("注解內容為空，如只需分享起盤時間，請點擊「分享起盤連結」。");
+            return;
+        }
+
+        const y = document.getElementById('sel-year').value;
+        const m = document.getElementById('sel-month').value;
+        const d = document.getElementById('sel-day').value;
+        const h = document.getElementById('sel-hour24').value;
+        const min = document.getElementById('sel-minute').value;
+        
+        const url = new URL(window.location.href);
+        url.searchParams.set('y', y);
+        url.searchParams.set('m', m);
+        url.searchParams.set('d', d);
+        url.searchParams.set('h', h);
+        url.searchParams.set('min', min);
+
+        // 使用 LZString 壓縮注解文字縮短網址
+        let compressed = "";
+        if (typeof LZString !== 'undefined') {
+            compressed = LZString.compressToEncodedURIComponent(noteText);
+        } else {
+            compressed = encodeURIComponent(noteText);
+        }
+        url.searchParams.set('note', compressed);
+
+        navigator.clipboard.writeText(url.toString()).then(() => {
+            alert("包含注解的分享連結已複製！另一位使用者開啟該 URL 即會顯示此排盤與注解。");
+        }).catch(() => {
+            let t = document.createElement("textarea"); 
+            t.value = url.toString(); 
+            document.body.appendChild(t); 
+            t.select(); 
+            document.execCommand("Copy"); 
+            t.remove(); 
+            alert("包含注解的分享連結已複製！另一位使用者開啟該 URL 即會顯示此排盤與注解。");
+        });
+    }
+
+    function deleteNote() {
+        const input = document.getElementById('note-input');
+        if (!input || !input.value) return;
+        if (confirm("確定要清除現有的注解文字嗎？")) {
+            input.value = "";
+            updateNoteCounter();
+        }
+    }
+
+
+// ==================== 屋向奇門（三元九運）演算法 ====================    let compassPanMode = 'shijia'; // 'shijia' (時家盤) 或 'wuxiang' (屋向盤)
 
 // 十二地支門向對應之符頭六儀天干
     const WUXIANG_BRANCH_FUTOU = {
@@ -3368,6 +3388,9 @@ function switchCompassPanMode(mode) {
         return "正北";
     }
 
+let useCompass = false;
+    let isCompassRunning = false;
+    let isCompassLocked = false;
     let isCompassBW = false;
 
     function toggleCompassTheme() {
