@@ -11,6 +11,7 @@
 <link rel="icon" type="image/png" href="icon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="data/lunar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
     <style>
         body { 
             font-family: 'BiauKai', 'DFKai-SB', 'Kaiti', 'STKaiti', 'Noto Serif TC', serif; 
@@ -429,6 +430,36 @@
                     <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-rose-600 shadow-inner"></div>
                 </label>
                 <select id="sel-feixing-year" class="hidden text-xs p-1 border border-rose-200 rounded bg-rose-50 font-bold text-rose-900 outline-none" onchange="generatePan()"></select>
+            </div>
+        </div>
+    </details>
+
+<!-- 🌟 折疊欄：注解功能 (預設展開) -->
+    <details id="accordion-notes" class="group w-full max-w-5xl mx-auto bg-slate-50/90 border border-indigo-100 rounded-xl shadow-sm select-none mt-2" open>
+        <summary class="py-1.5 px-3 cursor-pointer text-xs sm:text-sm font-bold text-indigo-900 bg-indigo-50/70 rounded-xl group-open:rounded-b-none group-open:border-b border-indigo-100 flex justify-between items-center transition-colors hover:bg-indigo-100/60 select-none">
+            <span class="flex items-center gap-1.5">📝 注解功能</span>
+            <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs text-indigo-400">▼</span>
+        </summary>
+
+        <div class="p-3 bg-white/80 space-y-2">
+            <div>
+                <textarea id="note-input" maxlength="400" oninput="updateNoteCounter()" placeholder="在此輸入注解文字（最多 400 字）..." class="w-full p-2.5 text-sm sm:text-base border border-indigo-200 rounded-lg bg-white outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 resize-y min-h-[90px] font-normal leading-relaxed text-gray-800"></textarea>
+                <div class="flex justify-end text-xs text-gray-400 font-bold mt-0.5">
+                    <span id="note-counter">0</span> / 400 字
+                </div>
+            </div>
+
+            <!-- 三個功能按鈕 -->
+            <div class="flex flex-wrap justify-end items-center gap-2 pt-1 border-t border-indigo-50">
+                <button onclick="exportNoteTxt()" class="bg-teal-600 hover:bg-teal-700 text-white py-1 px-3.5 rounded-full shadow transition active:scale-95 flex items-center justify-center text-xs font-bold">
+                    💾 導出注解為.txt檔
+                </button>
+                <button onclick="sharePanWithNote()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3.5 rounded-full shadow transition active:scale-95 flex items-center justify-center text-xs font-bold">
+                    🔗 分享連結(包括注解)
+                </button>
+                <button onclick="deleteNote()" class="bg-rose-500 hover:bg-rose-600 text-white py-1 px-3.5 rounded-full shadow transition active:scale-95 flex items-center justify-center text-xs font-bold">
+                    🗑️ 刪除注解
+                </button>
             </div>
         </div>
     </details>
@@ -1860,7 +1891,7 @@ function initSelectors() {
     for (let i = 0; i <= 23; i++) hSel.add(new Option(i.toString().padStart(2, '0'), i));
     for (let i = 0; i <= 59; i++) minSel.add(new Option(i.toString().padStart(2, '0'), i));
     
-    const urlParams = new URLSearchParams(window.location.search);
+const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('y') && urlParams.has('m') && urlParams.has('d') && urlParams.has('h') && urlParams.has('min')) {
         document.getElementById('sel-year').value = urlParams.get('y');
         document.getElementById('sel-month').value = urlParams.get('m');
@@ -1870,9 +1901,31 @@ function initSelectors() {
         currentDate = new Date(urlParams.get('y'), urlParams.get('m') - 1, urlParams.get('d'), urlParams.get('h'), urlParams.get('min'));
         updateJieQiYearBtn();
         generatePan();
-} else {
+    } else {
         updateSelectorsFromDate(currentDate);
         generatePan(); // 預設開啟時自動起盤
+    }
+
+    // 🌟 解析 URL 中的注解參數並自動載入
+    if (urlParams.has('note')) {
+        const rawNote = urlParams.get('note');
+        let decompressed = "";
+        try {
+            if (typeof LZString !== 'undefined') {
+                decompressed = LZString.decompressFromEncodedURIComponent(rawNote) || decodeURIComponent(rawNote);
+            } else {
+                decompressed = decodeURIComponent(rawNote);
+            }
+        } catch (err) {
+            decompressed = rawNote;
+        }
+        const noteInput = document.getElementById('note-input');
+        if (noteInput) {
+            noteInput.value = decompressed;
+            updateNoteCounter();
+        }
+        const accNote = document.getElementById('accordion-notes');
+        if (accNote) accNote.open = true;
     }
 }
 
@@ -2969,7 +3022,7 @@ if (jqData.isTransitionInHour) {
         url.searchParams.set('h', h);
         url.searchParams.set('min', min);
         
-        navigator.clipboard.writeText(url.toString()).then(() => {
+navigator.clipboard.writeText(url.toString()).then(() => {
             alert("分享連結已複製！貼上即可分享目前的排盤時間。");
         }).catch(() => {
             let t = document.createElement("textarea"); 
@@ -2982,8 +3035,101 @@ if (jqData.isTransitionInHour) {
         });
     }
 
+    // ==================== 注解功能專屬邏輯 ====================
+    function updateNoteCounter() {
+        const input = document.getElementById('note-input');
+        const counter = document.getElementById('note-counter');
+        if (input && counter) {
+            counter.innerText = input.value.length;
+        }
+    }
 
-// ==================== 屋向奇門（三元九運）演算法 ====================
+    function exportNoteTxt() {
+        const noteText = document.getElementById('note-input').value.trim();
+        if (!noteText) {
+            alert("注解內容為空，請先輸入注解文字。");
+            return;
+        }
+        
+        const baziLine = (panData && panData.bazi) ? (panData.bazi + (panData.special ? " " + panData.special : "") + (panData.stemStatus ? " " + panData.stemStatus : "")) : "";
+        
+        // 選項 B：完整排盤資料摘要 + 注解
+        let content = `【奇門遁甲 - 排盤資料與注解】\n`;
+        if (baziLine) {
+            content += `時間：${baziLine}\n`;
+            content += `局數：${panData.ju || '-'}\n`;
+            content += `旬首：${panData.xun || '-'}\n`;
+            content += `值符：${panData.zf || '-'} ｜ 值使：${panData.zs || '-'}\n`;
+            content += `空亡：${panData.kw || '-'} ｜ 驛馬：${currentYiMaPalace || '-'}\n`;
+        }
+        content += `--------------------------------------------------\n`;
+        content += `【注解內容】\n`;
+        content += `${noteText}\n`;
+
+        const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+        const downloadUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = "奇門注解.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(downloadUrl);
+    }
+
+    function sharePanWithNote() {
+        const noteText = document.getElementById('note-input').value.trim();
+        if (!noteText) {
+            alert("注解內容為空，如只需分享起盤時間，請點擊「分享起盤連結」。");
+            return;
+        }
+
+        const y = document.getElementById('sel-year').value;
+        const m = document.getElementById('sel-month').value;
+        const d = document.getElementById('sel-day').value;
+        const h = document.getElementById('sel-hour24').value;
+        const min = document.getElementById('sel-minute').value;
+        
+        const url = new URL(window.location.href);
+        url.searchParams.set('y', y);
+        url.searchParams.set('m', m);
+        url.searchParams.set('d', d);
+        url.searchParams.set('h', h);
+        url.searchParams.set('min', min);
+
+        // 使用 LZString 壓縮注解文字縮短網址
+        let compressed = "";
+        if (typeof LZString !== 'undefined') {
+            compressed = LZString.compressToEncodedURIComponent(noteText);
+        } else {
+            compressed = encodeURIComponent(noteText);
+        }
+        url.searchParams.set('note', compressed);
+
+        navigator.clipboard.writeText(url.toString()).then(() => {
+            alert("包含注解的分享連結已複製！另一位使用者開啟該 URL 即會顯示此排盤與注解。");
+        }).catch(() => {
+            let t = document.createElement("textarea"); 
+            t.value = url.toString(); 
+            document.body.appendChild(t); 
+            t.select(); 
+            document.execCommand("Copy"); 
+            t.remove(); 
+            alert("包含注解的分享連結已複製！另一位使用者開啟該 URL 即會顯示此排盤與注解。");
+        });
+    }
+
+    function deleteNote() {
+        const input = document.getElementById('note-input');
+        if (!input || !input.value) return;
+        if (confirm("確定要清除現有的注解文字嗎？")) {
+            input.value = "";
+            updateNoteCounter();
+        }
+    }
+
+
+// ==================== 屋向奇門（三元九運）演算法 ====================    
     let compassPanMode = 'shijia'; // 'shijia' (時家盤) 或 'wuxiang' (屋向盤)
 
 // 十二地支門向對應之符頭六儀天干
