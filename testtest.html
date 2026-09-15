@@ -379,7 +379,7 @@
 
             <!-- 3. 奇門指南針 -->
             <div class="flex items-center gap-2 bg-white/90 px-3 py-1 rounded-full shadow-sm border border-purple-200">
-                <span class="text-xs font-bold text-purple-900 flex items-center gap-1">🧭 奇門指南針</span>
+                <span class="text-xs font-bold text-purple-900 flex items-center gap-1">奇門指南針</span>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="toggle-compass" class="sr-only peer" onchange="handleToggleSwitch('toggle-compass')">
                     <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600 shadow-inner"></div>
@@ -431,7 +431,17 @@
                 </label>
                 <select id="sel-feixing-year" class="hidden text-xs p-1 border border-rose-200 rounded bg-rose-50 font-bold text-rose-900 outline-none" onchange="generatePan()"></select>
             </div>
-        </div>
+ 
+<!-- 9. 貴人歌訣切換 -->
+            <div class="flex items-center gap-2 bg-white/90 px-3 py-1 rounded-full shadow-sm border border-emerald-100">
+                <span class="text-xs font-bold text-gray-700" id="guiren-label">天乙貴人</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="toggle-guiren" class="sr-only peer" onchange="handleToggleSwitch('toggle-guiren')">
+                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500 shadow-inner"></div>
+                </label>
+            </div>
+
+       </div>
     </details>
 
 <!-- 🌟 折疊欄：注解功能 (預設展開) -->
@@ -452,13 +462,13 @@
             <!-- 三個功能按鈕 -->
             <div class="flex flex-wrap justify-end items-center gap-2 pt-1 border-t border-indigo-50">
                 <button onclick="exportNoteTxt()" class="bg-teal-600 hover:bg-teal-700 text-white py-1 px-3.5 rounded-full shadow transition active:scale-95 flex items-center justify-center text-xs font-bold">
-                    💾 導出注解為.txt檔
+                    💾 導出.txt檔
                 </button>
                 <button onclick="sharePanWithNote()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3.5 rounded-full shadow transition active:scale-95 flex items-center justify-center text-xs font-bold">
-                    🔗 分享連結(包括注解)
+                    🔗 分享連結(含注解)
                 </button>
                 <button onclick="deleteNote()" class="bg-rose-500 hover:bg-rose-600 text-white py-1 px-3.5 rounded-full shadow transition active:scale-95 flex items-center justify-center text-xs font-bold">
-                    🗑️ 刪除注解
+                    🗑️
                 </button>
             </div>
         </div>
@@ -1134,7 +1144,9 @@
 
     const TIAN_JIANG_LIST = ['貴人', '螣蛇', '朱雀', '六合', '勾陳', '青龍', '天空', '白虎', '太常', '玄武', '太陰', '天后'];
     const ZQ_MAP = {"雨水": "亥", "春分": "戌", "谷雨": "酉", "穀雨": "酉", "小满": "申", "小滿": "申", "夏至": "未", "大暑": "午", "处暑": "巳", "處暑": "巳", "秋分": "辰", "霜降": "卯", "小雪": "寅", "冬至": "丑", "大寒": "子"};
-    const GUI_REN_MAP = {
+
+// 預設：傳統天乙貴人歌訣
+    const GUI_REN_MAP_ORIGINAL = {
         '甲': { day: '丑', night: '未' },
         '乙': { day: '子', night: '申' },
         '丙': { day: '亥', night: '酉' },
@@ -1144,6 +1156,20 @@
         '庚': { day: '丑', night: '未' },
         '辛': { day: '午', night: '寅' },
         '壬': { day: '巳', night: '卯' },
+        '癸': { day: '巳', night: '卯' }
+    };
+
+    // 新增：陰陽貴人訣 (依您提供的圖檔設定)
+    const GUI_REN_MAP_YINYANG = {
+        '甲': { day: '丑', night: '未' },
+        '乙': { day: '申', night: '子' },
+        '丙': { day: '酉', night: '亥' },
+        '丁': { day: '亥', night: '酉' },
+        '戊': { day: '丑', night: '未' },
+        '己': { day: '子', night: '申' },
+        '庚': { day: '丑', night: '未' },
+        '辛': { day: '寅', night: '午' },
+        '壬': { day: '卯', night: '巳' },
         '癸': { day: '巳', night: '卯' }
     };
 
@@ -1238,10 +1264,11 @@
     let isBaziMode = false; 
     let isFilterPanelOpen = false;
 
-    // Toggle switch variables
+// Toggle switch variables
     let useXianTian = false;
     let useEnergy = false;
     let useFeiXing = false;
+    let useYinYangGuiRen = false; // 新增全域變數
 
 function handleToggleSwitch(activeId) {
     const allToggles = [
@@ -1250,7 +1277,8 @@ function handleToggleSwitch(activeId) {
         'toggle-neiwai', 
         'toggle-palacemodal', 
         'toggle-feixing',
-        'toggle-compass'
+        'toggle-compass',
+        'toggle-guiren' // 加入新的 Toggle ID
     ];
     
     const activeEl = document.getElementById(activeId);
@@ -1264,13 +1292,18 @@ function handleToggleSwitch(activeId) {
         });
     }
 
-    useXianTian = document.getElementById('toggle-bagua').checked;
+useXianTian = document.getElementById('toggle-bagua').checked;
     useEnergy = document.getElementById('toggle-energy').checked;
     useNeiWai = document.getElementById('toggle-neiwai').checked;
     enablePalaceModal = document.getElementById('toggle-palacemodal').checked;
     useFeiXing = document.getElementById('toggle-feixing').checked;
     useCompass = document.getElementById('toggle-compass').checked;
+    useYinYangGuiRen = document.getElementById('toggle-guiren') ? document.getElementById('toggle-guiren').checked : false; // 新增讀取開關狀態
 
+    document.getElementById('bagua-label').innerText = useXianTian ? "後天八卦數" : "先天八卦數";
+    // 新增：動態修改貴人按鈕文字
+    const grLabel = document.getElementById('guiren-label');
+    if (grLabel) grLabel.innerText = useYinYangGuiRen ? "陰陽貴人" : "天乙貴人";
     const fxSel = document.getElementById('sel-feixing-year');
     if (fxSel) {
         if (useFeiXing) {
@@ -2608,7 +2641,10 @@ const urlParams = new URLSearchParams(window.location.search);
             
             let timeBranchIdxForDayNight = BRANCHES.indexOf(timeBranch);
             let isDay = (timeBranchIdxForDayNight >= 3 && timeBranchIdxForDayNight <= 8);
-            let guiRenBaseBranch = GUI_REN_MAP[dayStem][isDay ? 'day' : 'night'];
+            
+            // 新增：根據切換狀態，決定使用哪一套字典
+            let currentGuiRenMap = useYinYangGuiRen ? GUI_REN_MAP_YINYANG : GUI_REN_MAP_ORIGINAL;
+            let guiRenBaseBranch = currentGuiRenMap[dayStem][isDay ? 'day' : 'night'];
             
             let yjIdx = BRANCHES.indexOf(yueJiangBranchCalculated);
             let tbIdx = BRANCHES.indexOf(timeBranch);
