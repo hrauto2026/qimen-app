@@ -10,8 +10,7 @@
 <!-- Desktop / Chrome Tab Icon -->
 <link rel="icon" type="image/png" href="icon.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="data/lunar.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+    <script src="https://unpkg.com/lunar-javascript/lunar.js"></script>
     <style>
         body { 
             font-family: 'BiauKai', 'DFKai-SB', 'Kaiti', 'STKaiti', 'Noto Serif TC', serif; 
@@ -49,7 +48,7 @@
         padding: 4px 5px !important; 
         border-radius: 6px !important; 
     }
-    .branch-label { 
+.branch-label { 
         font-size: 1.2rem !important; /* 調整為與天將一致 */
         line-height: 1 !important; 
     }
@@ -123,9 +122,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
+            font-size: 1.78rem; /* 桌機版放大 70% (原 1.05 -> 1.78) */
             line-height: 0.9;
-            font-weight: 700;
+            font-weight: 900;
             pointer-events: none;
             white-space: nowrap;
             z-index: 20;
@@ -137,6 +136,7 @@
             margin-left: 1px; /* 縮小與地支的間距，避免越界 */
             line-height: 0.9;
         }
+
         .vertical-label {
             flex-direction: column;
             line-height: 1.1;
@@ -216,6 +216,7 @@
             color: #000000 !important;
             border-color: #000000 !important;
         }
+
 
     </style>
 </head>
@@ -330,18 +331,18 @@
     </div>
 </details>
 
-            <!-- 🌟 4. 頂部常駐快調 Bar：移除四柱，改為單行精準呈現時間與農曆 -->
-            <div id="quick-time-bar" class="hidden justify-between items-center bg-white/95 border border-indigo-200 rounded-lg py-1 px-2 shadow-sm mb-1.5 max-w-xl mx-auto">
-                <button onclick="shiftHour(-1)" class="bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-800 py-1 px-2.5 sm:px-3 rounded border border-indigo-200 text-xs font-black transition-all">
-                    <span>⏪</span>
-                </button>
-                <div class="flex items-center text-center text-xs sm:text-sm font-bold text-indigo-950 px-1">
-                    <span id="quick-bar-time"></span>
-                </div>
-                <button onclick="shiftHour(1)" class="bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-800 py-1 px-2.5 sm:px-3 rounded border border-indigo-200 text-xs font-black transition-all">
-                    <span>⏩</span>
-                </button>
-            </div>
+<!-- 🌟 4. 頂部常駐快調 Bar (日期時間字體加大 ~70%) -->
+<div id="quick-time-bar" class="hidden justify-between items-center bg-white/95 border border-indigo-200 rounded-xl py-1.5 px-3 shadow-sm mb-2 max-w-xl sm:max-w-2xl mx-auto">
+    <button onclick="shiftHour(-1)" class="bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-800 py-1.5 px-3 sm:px-4 rounded-lg border border-indigo-200 text-sm sm:text-base font-black transition-all flex items-center justify-center">
+        <span>⏪</span>
+    </button>
+    <div class="flex items-center text-center text-base sm:text-xl md:text-2xl font-black text-indigo-950 px-2 tracking-wide leading-none">
+        <span id="quick-bar-time"></span>
+    </div>
+    <button onclick="shiftHour(1)" class="bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-800 py-1.5 px-3 sm:px-4 rounded-lg border border-indigo-200 text-sm sm:text-base font-black transition-all flex items-center justify-center">
+        <span>⏩</span>
+    </button>
+</div>
 
             <div class="grid-wrapper">
                 <div id="qimen-grid" class="grid-qimen hidden">
@@ -356,6 +357,7 @@
                     <div id="palace-6" class="palace bg-metal" onclick="highlightPalace(this)"></div>
                 </div>
             </div>
+
 
 <!-- 🌟 底部工具列：超薄風琴 Container (開關尺寸已修正正常) -->
 <div class="w-full mt-4 hidden flex-col items-center" id="action-footer">
@@ -383,7 +385,7 @@
 
             <!-- 3. 奇門指南針 -->
             <div class="flex items-center gap-2 bg-white/90 px-3 py-1 rounded-full shadow-sm border border-purple-200">
-                <span class="text-xs font-bold text-purple-900 flex items-center gap-1">奇門指南針</span>
+                <span class="text-xs font-bold text-purple-900 flex items-center gap-1">🧭 奇門指南針</span>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="toggle-compass" class="sr-only peer" onchange="handleToggleSwitch('toggle-compass')">
                     <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600 shadow-inner"></div>
@@ -417,7 +419,7 @@
                 </label>
             </div>
 
-            <!-- 已刪除的toggle switch 7. 按宮看格局 -->
+            <!-- 已刪除的7. 按宮看格局 -->
 
             <!-- 8. 流年飛星 -->
             <div class="flex items-center gap-2 bg-white/90 px-3 py-1 rounded-full shadow-sm border border-rose-100">
@@ -428,7 +430,7 @@
                 </label>
                 <select id="sel-feixing-year" class="hidden text-xs p-1 border border-rose-200 rounded bg-rose-50 font-bold text-rose-900 outline-none" onchange="generatePan()"></select>
             </div>
- 
+
 <!-- 9. 貴人歌訣切換 (獨立運作) -->
             <div class="flex items-center gap-2 bg-white/90 px-3 py-1 rounded-full shadow-sm border border-emerald-100">
                 <span class="text-xs font-bold text-gray-700" id="guiren-label">天乙貴人</span>
@@ -438,44 +440,64 @@
                     <div class="w-9 h-5 bg-orange-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500 shadow-inner"></div>
                 </label>
             </div>
-       </div>
-    </details>
-
-<!-- 🌟 折疊欄：注解功能 (預設展開) -->
-    <details id="accordion-notes" class="group w-full max-w-5xl mx-auto bg-slate-50/90 border border-indigo-100 rounded-xl shadow-sm select-none mt-2" open>
-        <summary class="py-1.5 px-3 cursor-pointer text-xs sm:text-sm font-bold text-indigo-900 bg-indigo-50/70 rounded-xl group-open:rounded-b-none group-open:border-b border-indigo-100 flex justify-between items-center transition-colors hover:bg-indigo-100/60 select-none">
-            <span class="flex items-center gap-1.5">📝 注解功能</span>
-            <span class="transform group-open:rotate-180 transition-transform duration-200 text-xs text-indigo-400">▼</span>
-        </summary>
-
-        <div class="p-3 bg-white/80 space-y-2">
-            <div>
-                <textarea id="note-input" maxlength="400" oninput="updateNoteCounter()" placeholder="在此輸入注解文字（最多 400 字）..." class="w-full p-2.5 text-sm sm:text-base border border-indigo-200 rounded-lg bg-white outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 resize-y min-h-[90px] font-normal leading-relaxed text-gray-800"></textarea>
-                <div class="flex justify-end text-xs text-gray-400 font-bold mt-0.5">
-                    <span id="note-counter">0</span> / 400 字
-                </div>
-            </div>
-
-            <!-- 三個功能按鈕 -->
-            <div class="flex flex-wrap justify-end items-center gap-2 pt-1 border-t border-indigo-50">
-                <button onclick="exportNoteTxt()" class="bg-teal-600 hover:bg-teal-700 text-white py-1 px-3.5 rounded-full shadow transition active:scale-95 flex items-center justify-center text-xs font-bold">
-                    💾 導出.txt檔
-                </button>
-                <button onclick="sharePanWithNote()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3.5 rounded-full shadow transition active:scale-95 flex items-center justify-center text-xs font-bold">
-                    🔗 分享連結(含注解)
-                </button>
-                <button onclick="deleteNote()" class="bg-rose-500 hover:bg-rose-600 text-white py-1 px-3.5 rounded-full shadow transition active:scale-95 flex items-center justify-center text-xs font-bold">
-                    🗑️
-                </button>
-            </div>
         </div>
     </details>
 
-    <!-- 版權文字 -->
-    <div class="w-full text-center mt-2">
-        <span class="text-xs text-gray-400 font-normal">created by RS2026 <button onclick="showManualModal()" class="text-indigo-600 hover:text-indigo-800 underline font-bold transition-colors focus:outline-none cursor-pointer" title="點擊查看使用手冊">(vc1.4)</button></span>
+<!-- 🌟 八字起盤模組外層容器 (超緊湊佈局) -->
+<div id="bazi-wrapper" class="hidden mt-3 w-full flex flex-col items-center">
+    
+    <!-- 三態開關 -->
+    <div class="flex items-center gap-2 bg-white/95 px-3.5 py-1 rounded-full shadow border border-amber-300 mb-2 select-none">
+        <span class="text-xs font-bold text-amber-900 flex items-center gap-1">📜 八字起盤</span>
+        <div class="inline-flex rounded-full bg-slate-100 p-0.5 border border-amber-200 text-xs font-bold">
+            <button type="button" id="bazi-state-off" onclick="setBaziState('off')" class="px-2.5 py-0.5 rounded-full transition-all bg-amber-600 text-white shadow-sm">關</button>
+            <button type="button" id="bazi-state-qian" onclick="setBaziState('qian')" class="px-2.5 py-0.5 rounded-full transition-all text-gray-600 hover:text-amber-800">乾造</button>
+            <button type="button" id="bazi-state-kun" onclick="setBaziState('kun')" class="px-2.5 py-0.5 rounded-full transition-all text-gray-600 hover:text-amber-800">坤造</button>
+        </div>
+    </div>
+
+<!-- 🌟 八字排盤展示面板 (大字體 + 緊湊間距) -->
+<div id="bazi-display-panel" class="hidden w-full bg-white/95 rounded-xl shadow-lg p-2.5 sm:p-4 border-2 border-amber-300 transition-all select-none">
+    
+    <!-- 命造簡介與交運年歲 (字體放大 ~70%，保持緊貼) -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-amber-200 pb-1.5 mb-2 gap-1">
+        <div class="flex items-center gap-1.5">
+            <span class="text-base sm:text-lg font-black text-amber-950" id="bazi-panel-title">四柱八字</span>
+            <span id="bazi-zodiac-tag" class="text-xs sm:text-sm bg-amber-100 text-amber-800 font-black px-2 py-0.5 rounded border border-amber-300"></span>
+        </div>
+        <div id="bazi-yun-info" class="text-xs sm:text-sm font-black text-amber-900 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 leading-tight"></div>
+    </div>
+
+    <!-- 四柱 Table 主體 -->
+    <div class="w-full mb-3">
+        <div id="bazi-pillars-table" class="w-full flex flex-col border-2 border-amber-900 rounded-lg bg-white text-center shadow-sm overflow-hidden">
+            <div id="bazi-pillars-grid" class="w-full flex"></div>
+            <div id="bazi-jiaoyun-row" class="w-full border-t-2 border-amber-900 bg-amber-50/90 py-1.5 px-2.5 text-xs sm:text-sm font-bold text-amber-950 flex flex-col sm:flex-row justify-between items-center gap-1"></div>
+        </div>
+    </div>
+
+    <!-- 大運與流年區塊 -->
+    <div class="border-t border-amber-100 pt-2.5">
+        <h4 class="text-sm sm:text-base font-bold text-amber-900 mb-1.5 flex items-center gap-1">
+            <span>🏃 大運排盤</span>
+            <span class="text-xs font-normal text-stone-500">(點擊大運切換 10 年流年)</span>
+        </h4>
+        
+        <!-- 大運列表 -->
+        <div class="overflow-x-auto pb-1.5 mb-2">
+            <div id="bazi-dayun-list" class="flex gap-1.5 sm:gap-2 min-w-max"></div>
+        </div>
+
+        <!-- 流年容器 -->
+        <div id="bazi-liunian-container" class="bg-amber-50/50 p-2 sm:p-2.5 rounded-lg border border-amber-200"></div>
     </div>
 </div>
+
+
+                <div class="w-full text-center mt-2">
+                    <span class="text-xs text-gray-400 font-normal">created by RS2026 <button onclick="showManualModal()" class="text-indigo-600 hover:text-indigo-800 underline font-bold transition-colors focus:outline-none cursor-pointer" title="點擊查看使用手冊">(vc1.4)</button></span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -743,10 +765,14 @@
                 <button id="btn-mode-wuxiang" onclick="switchCompassPanMode('wuxiang')" class="px-4 py-1.5 text-base sm:text-lg font-black rounded-lg text-gray-300 hover:text-white transition">屋向盤</button>
             </div>
 
-<!-- 鎖定、黑白模式與關閉按鈕 -->
+<!-- 鎖定、大小、黑白模式與關閉按鈕 -->
             <div class="flex items-center gap-1.5 sm:gap-2">
+                <!-- 新增：指南針大小切換 -->
+                <button id="btn-compass-size" onclick="cycleCompassSize()" class="bg-gray-900 hover:bg-gray-800 text-gray-200 px-2.5 py-1.5 sm:py-2 rounded-full border border-gray-700 text-sm sm:text-base font-bold transition flex items-center gap-1 shadow">
+                    🔍 1.0x
+                </button>
                 <button id="btn-compass-bw" onclick="toggleCompassTheme()" class="bg-gray-900 hover:bg-gray-800 text-gray-200 px-3 py-1.5 sm:py-2 rounded-full border border-gray-700 text-sm sm:text-base font-bold transition flex items-center gap-1 shadow">
-                    <span>🌓</span> <span>黑白模式</span>
+                    <span>🌓</span> <span class="hidden sm:inline">黑白模式</span>
                 </button>
                 <button id="btn-compass-lock" onclick="toggleCompassLock()" class="bg-gray-900 hover:bg-gray-800 text-gray-200 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-gray-700 text-sm sm:text-base font-bold transition flex items-center gap-1.5 shadow">
                     <span id="compass-lock-icon">🔓</span> <span id="compass-lock-text">鎖定</span>
@@ -766,27 +792,33 @@
             </div>
         </div>
 
-        <!-- 子工具列：九運十二局專用單一下拉選單 -->
-        <div id="compass-sub-wuxiang" class="hidden flex items-center justify-between gap-2.5 text-base sm:text-lg bg-slate-900/90 px-4 py-2 rounded-xl border border-indigo-500/60">
-            <span class="text-indigo-300 font-bold whitespace-nowrap">九運地盤：</span>
-            <select id="sel-compass-yun9-ju" onchange="renderCompassQimen()" class="bg-slate-950 border border-indigo-400/70 rounded-lg px-3 py-1 text-amber-300 font-bold outline-none text-sm sm:text-base cursor-pointer flex-grow">
-                <option value="子_1" selected>九運 · 門向子 屋向坎 (坎一宮)</option>
-                <option value="丑_8">九運 · 門向丑 屋向艮 (艮八宮)</option>
-                <option value="寅_8">九運 · 門向寅 屋向艮 (艮八宮)</option>
-                <option value="卯_3">九運 · 門向卯 屋向震 (震三宮)</option>
-                <option value="辰_4">九運 · 門向辰 屋向巽 (巽四宮)</option>
-                <option value="巳_4">九運 · 門向巳 屋向巽 (巽四宮)</option>
-                <option value="午_9">九運 · 門向午 屋向離 (離九宮)</option>
-                <option value="未_2">九運 · 門向未 屋向坤 (坤二宮)</option>
-                <option value="申_2">九運 · 門向申 屋向坤 (坤二宮)</option>
-                <option value="酉_7">九運 · 門向酉 屋向兌 (兌七宮)</option>
-                <option value="戌_6">九運 · 門向戌 屋向乾 (乾六宮)</option>
-                <option value="亥_6">九運 · 門向亥 屋向乾 (乾六宮)</option>
-            </select>
+<!-- 子工具列：九運十二局專用單一下拉選單與自動定盤 -->
+        <div id="compass-sub-wuxiang" class="hidden flex-wrap items-center justify-between gap-2 text-base sm:text-lg bg-slate-900/90 px-3 sm:px-4 py-2 rounded-xl border border-indigo-500/60">
+            <div class="flex items-center gap-1.5 flex-grow">
+                <span class="text-indigo-300 font-bold whitespace-nowrap text-sm sm:text-base">九運地盤：</span>
+                <select id="sel-compass-yun9-ju" onchange="renderCompassQimen()" class="bg-slate-950 border border-indigo-400/70 rounded-lg px-2 py-1 text-amber-300 font-bold outline-none text-xs sm:text-sm cursor-pointer flex-grow max-w-[200px] sm:max-w-none">
+                    <option value="子_1" selected>九運 · 門向子 屋向坎 (坎一宮)</option>
+                    <option value="丑_8">九運 · 門向丑 屋向艮 (艮八宮)</option>
+                    <option value="寅_8">九運 · 門向寅 屋向艮 (艮八宮)</option>
+                    <option value="卯_3">九運 · 門向卯 屋向震 (震三宮)</option>
+                    <option value="辰_4">九運 · 門向辰 屋向巽 (巽四宮)</option>
+                    <option value="巳_4">九運 · 門向巳 屋向巽 (巽四宮)</option>
+                    <option value="午_9">九運 · 門向午 屋向離 (離九宮)</option>
+                    <option value="未_2">九運 · 門向未 屋向坤 (坤二宮)</option>
+                    <option value="申_2">九運 · 門向申 屋向坤 (坤二宮)</option>
+                    <option value="酉_7">九運 · 門向酉 屋向兌 (兌七宮)</option>
+                    <option value="戌_6">九運 · 門向戌 屋向乾 (乾六宮)</option>
+                    <option value="亥_6">九運 · 門向亥 屋向乾 (乾六宮)</option>
+                </select>
+            </div>
+            <!-- 新增：自動定盤切換按鈕 -->
+            <button id="btn-auto-align" onclick="toggleAutoAlign()" class="bg-slate-700 hover:bg-slate-600 text-white border border-slate-600 px-3 py-1 rounded-lg text-sm font-bold whitespace-nowrap shadow transition-colors">
+                自動定盤: 關
+            </button>
         </div>
     </div>
 
-    <!-- 中間旋轉羅盤本體與朝向瞄準線 (緊湊排版，消除上下巨大空隙) -->
+<!-- 中間旋轉羅盤本體與朝向瞄準線 (緊湊排版，消除上下巨大空隙) -->
     <div class="relative flex flex-col items-center justify-center flex-grow w-full my-auto overflow-hidden">
         <!-- 朝向指示指針與紅線 (固定輕薄高度，不再擠壓羅盤尺寸) -->
         <div class="flex flex-col items-center justify-end h-6 shrink-0 z-20 pointer-events-none mb-1">
@@ -799,10 +831,13 @@
             <!-- 外圈 24 山刻度 SVG -->
             <svg id="compass-svg-dial" class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 440 440"></svg>
 
+
+
 <!-- 內圈微縮九宮格 (設為 68%：四角精準搭在艮巽坤乾，且完全不覆蓋丑寅/辰巳/未申/戌亥) -->
             <div id="compass-qimen-grid" class="grid grid-cols-3 gap-0.5 sm:gap-1 z-10 w-[68%] h-[68%] p-0.5 sm:p-1 rounded-lg bg-black/90 backdrop-blur-md border border-amber-500/40">
             </div>
         </div>
+
 
         <!-- 底部微調佔位 -->
         <div class="h-2 shrink-0 pointer-events-none"></div>
@@ -972,6 +1007,399 @@
 </div>
 
 <script>
+
+let baziDisplayState = 'off'; // 'off' | 'qian' | 'kun'
+let selectedDaYunIndex = 0;
+let currentBaziChartData = null;
+
+// 三態切換開關控制
+function setBaziState(state) {
+    baziDisplayState = state;
+    const btnOff = document.getElementById('bazi-state-off');
+    const btnQian = document.getElementById('bazi-state-qian');
+    const btnKun = document.getElementById('bazi-state-kun');
+    const panel = document.getElementById('bazi-display-panel');
+
+    const activeClass = "px-3 py-1 rounded-full transition-all bg-amber-600 text-white shadow-sm";
+    const inactiveClass = "px-3 py-1 rounded-full transition-all text-gray-600 hover:text-amber-800";
+
+    if (btnOff) btnOff.className = (state === 'off') ? activeClass : inactiveClass;
+    if (btnQian) btnQian.className = (state === 'qian') ? activeClass : inactiveClass;
+    if (btnKun) btnKun.className = (state === 'kun') ? activeClass : inactiveClass;
+
+    if (state === 'off') {
+        if (panel) panel.classList.add('hidden');
+    } else {
+        if (panel) panel.classList.remove('hidden');
+        renderBaziModule();
+    }
+}
+
+
+// 正體中文標準十神字典
+const SHISHEN_TRAD_MAP = {
+    '比肩': '比肩', '劫财': '劫財', '劫財': '劫財',
+    '食神': '食神', '伤官': '傷官', '傷官': '傷官',
+    '偏财': '偏財', '偏財': '偏財', '正财': '正財', '正財': '正財',
+    '七杀': '七殺', '七殺': '七殺', '偏官': '七殺',
+    '正官': '正官', '偏印': '偏印', '枭神': '偏印', '梟神': '偏印',
+    '正印': '正印', '日主': '日主'
+};
+
+const SHENGXIAO_TRAD_MAP = {
+    '鼠': '鼠', '牛': '牛', '虎': '虎', '兔': '兔',
+    '龙': '龍', '龍': '龍', '蛇': '蛇', '马': '馬', '馬': '馬',
+    '羊': '羊', '猴': '猴', '鸡': '雞', '雞': '雞',
+    '狗': '狗', '猪': '豬', '豬': '豬'
+};
+
+function toTradShiShen(name) {
+    if (!name) return '';
+    return SHISHEN_TRAD_MAP[name] || name;
+}
+
+// 依據秘訣嚴格計算上運與交運時間
+function calculateShangYunJiaoYun(birthDate, yearGan, gender, lunarObj) {
+    // 1. 判斷陽年/陰年與順逆行 (陽男陰女順行，陰男陽女逆行)
+    const isYangYear = ['甲', '丙', '戊', '庚', '壬'].includes(yearGan);
+    const isForward = (isYangYear && gender === 1) || (!isYangYear && gender === 0);
+
+    // 2. 算到「節」：只取12節氣之「節」（立春、驚蟄、清明、立夏、芒種、小暑、立秋、白露、寒露、立冬、大雪、小寒）
+    const targetJie = isForward ? lunarObj.getNextJie(false) : lunarObj.getPrevJie(false);
+    const targetJieName = TRAD_JIEQI[targetJie.getName()] || targetJie.getName();
+    const targetSolar = targetJie.getSolar();
+    const targetDate = new Date(
+        targetSolar.getYear(),
+        targetSolar.getMonth() - 1,
+        targetSolar.getDay(),
+        targetSolar.getHour(),
+        targetSolar.getMinute(),
+        targetSolar.getSecond()
+    );
+
+    // 3. 計算日時差距
+    const diffMs = Math.abs(targetDate.getTime() - birthDate.getTime());
+    const totalMinutes = Math.floor(diffMs / 60000);
+    const totalHours = Math.floor(totalMinutes / 60);
+    const remMinutes = totalMinutes % 60;
+    const totalDays = Math.floor(totalHours / 24);
+    const remHours = totalHours % 24;
+
+    // 4. 依規則折算：三日折一年、一日折四個月、一時辰折十天
+    const yFromDays = Math.floor(totalDays / 3);
+    const remDays = totalDays % 3;
+    let mFromDays = remDays * 4;
+
+    const shichen = Math.floor(remHours / 2);
+    const rem1Hour = remHours % 2;
+    const extraMinutes = rem1Hour * 60 + remMinutes;
+    let dFromTime = shichen * 10 + Math.round(extraMinutes / 12); // 12分鐘折算1天
+
+    // 進位整理
+    if (dFromTime >= 30) {
+        mFromDays += Math.floor(dFromTime / 30);
+        dFromTime = dFromTime % 30;
+    }
+    let finalYears = yFromDays;
+    if (mFromDays >= 12) {
+        finalYears += Math.floor(mFromDays / 12);
+        mFromDays = mFromDays % 12;
+    }
+    const finalMonths = mFromDays;
+    const finalDays = dFromTime;
+
+    // 首次交運公曆日期
+    const jiaoYunDate = new Date(birthDate.getTime());
+    jiaoYunDate.setFullYear(jiaoYunDate.getFullYear() + finalYears);
+    jiaoYunDate.setMonth(jiaoYunDate.getMonth() + finalMonths);
+    jiaoYunDate.setDate(jiaoYunDate.getDate() + finalDays);
+
+    // 虛歲起運年歲
+    const birthYear = birthDate.getFullYear();
+    const startAge = Math.max(1, jiaoYunDate.getFullYear() - birthYear + 1);
+
+    // 計算交運節氣與時辰描述
+    const jyLunar = Solar.fromDate(jiaoYunDate).getLunar();
+    const jyPrevJq = jyLunar.getPrevJieQi(false);
+    const jyPrevJqName = TRAD_JIEQI[jyPrevJq.getName()] || jyPrevJq.getName();
+    const jyPrevJqDate = new Date(
+        jyPrevJq.getSolar().getYear(),
+        jyPrevJq.getSolar().getMonth() - 1,
+        jyPrevJq.getSolar().getDay()
+    );
+    const daysAfterJq = Math.max(0, Math.floor((jiaoYunDate.getTime() - jyPrevJqDate.getTime()) / (1000 * 3600 * 24)));
+    const jyHourBranch = BRANCHES[Math.floor((jiaoYunDate.getHours() + 1) % 24 / 2)];
+    const jiaoYunYearLastDigit = jiaoYunDate.getFullYear() % 10;
+
+    const jiaoYunShiJieDesc = `每逢公曆尾數逢 ${jiaoYunYearLastDigit} 之年，於「${jyPrevJqName}」節後約 ${daysAfterJq} 天（約公曆 ${jiaoYunDate.getMonth() + 1}月${jiaoYunDate.getDate()}日 ${jyHourBranch}時）交脫大運`;
+
+    return {
+        isForward,
+        targetJieName,
+        diffDays: totalDays,
+        diffHours: remHours,
+        diffMinutes: remMinutes,
+        finalYears,
+        finalMonths,
+        finalDays,
+        startAge,
+        jiaoYunDate,
+        jiaoYunDateStr: `${jiaoYunDate.getFullYear()}-${String(jiaoYunDate.getMonth() + 1).padStart(2, '0')}-${String(jiaoYunDate.getDate()).padStart(2, '0')}`,
+        jiaoYunShiJieDesc
+    };
+}
+
+// 核心排盤與渲染
+function renderBaziModule() {
+    if (baziDisplayState === 'off') return;
+
+    try {
+        const y = parseInt(document.getElementById('sel-year').value);
+        const m = parseInt(document.getElementById('sel-month').value);
+        const d = parseInt(document.getElementById('sel-day').value);
+        const h = parseInt(document.getElementById('sel-hour24').value);
+        const min = parseInt(document.getElementById('sel-minute').value);
+        const birthDate = new Date(y, m - 1, d, h, min, 0);
+
+        const solarObj = Solar.fromYmdHms(y, m, d, h, min, 0);
+        const lunarObj = solarObj.getLunar();
+        const bazi = lunarObj.getEightChar();
+        const gender = (baziDisplayState === 'qian') ? 1 : 0; // 1: 乾造, 0: 坤造
+
+        const rawShengXiao = lunarObj.getYearShengXiao();
+        const tradShengXiao = SHENGXIAO_TRAD_MAP[rawShengXiao] || rawShengXiao;
+
+        document.getElementById('bazi-panel-title').innerText = `${gender === 1 ? '乾造 (男)' : '坤造 (女)'} · 四柱八字`;
+        document.getElementById('bazi-zodiac-tag').innerText = `生肖屬${tradShengXiao}`;
+
+        // 計算上運與交運
+        const syInfo = calculateShangYunJiaoYun(birthDate, bazi.getYearGan(), gender, lunarObj);
+
+        // 頂部交運資訊列
+        document.getElementById('bazi-yun-info').innerHTML = `
+            出生後 <span class="text-red-700 font-black">${syInfo.finalYears}</span> 年 
+            <span class="text-red-700 font-black">${syInfo.finalMonths}</span> 個月 
+            <span class="text-red-700 font-black">${syInfo.finalDays}</span> 天上運 
+            <span class="text-stone-500 font-normal">（約西曆 ${syInfo.jiaoYunDateStr} 起）</span>
+        `;
+
+        // 準備四柱資料 (年、月、日、時 左起排列)
+	const pillars = [
+            {
+                name: '時柱',
+                gan: bazi.getTimeGan(), zhi: bazi.getTimeZhi(),
+                ganShiShen: toTradShiShen(bazi.getTimeShiShenGan()),
+                zhiHideGan: bazi.getTimeHideGan(),
+                zhiShiShen: bazi.getTimeShiShenZhi().map(toTradShiShen)
+            },
+            {
+                name: '日柱',
+                gan: bazi.getDayGan(), zhi: bazi.getDayZhi(),
+                ganShiShen: '日主',
+                zhiHideGan: bazi.getDayHideGan(),
+                zhiShiShen: bazi.getDayShiShenZhi().map(toTradShiShen)
+            },
+            {
+                name: '月柱',
+                gan: bazi.getMonthGan(), zhi: bazi.getMonthZhi(),
+                ganShiShen: toTradShiShen(bazi.getMonthShiShenGan()),
+                zhiHideGan: bazi.getMonthHideGan(),
+                zhiShiShen: bazi.getMonthShiShenZhi().map(toTradShiShen)
+            },
+            {
+                name: '年柱',
+                gan: bazi.getYearGan(), zhi: bazi.getYearZhi(),
+                ganShiShen: toTradShiShen(bazi.getYearShiShenGan()),
+                zhiHideGan: bazi.getYearHideGan(),
+                zhiShiShen: bazi.getYearShiShenZhi().map(toTradShiShen)
+            }
+        ];
+        // 排定大運 (配合上運年歲與順逆行)
+        const daYunData = [];
+        const monthGZ = bazi.getMonthGan() + bazi.getMonthZhi();
+        const mIdx = JIA_ZI_ARRAY.indexOf(monthGZ);
+        const birthYearGZ = bazi.getYearGan() + bazi.getYearZhi();
+        const yGzIdx = JIA_ZI_ARRAY.indexOf(birthYearGZ);
+
+        // 若起運歲數大於 1 歲，加入童限卡片
+        if (syInfo.startAge > 1) {
+            const tongLiuNian = [];
+            for (let age = 1; age < syInfo.startAge; age++) {
+                const lnY = y + (age - 1);
+                const lnGz = JIA_ZI_ARRAY[(yGzIdx + (age - 1)) % 60];
+                tongLiuNian.push({ year: lnY, age: age, ganZhi: lnGz });
+            }
+            daYunData.push({
+                startAge: 1,
+                startYear: y,
+                ganZhi: '',
+                gan: '',
+                zhi: '',
+                liuNian: tongLiuNian
+            });
+        }
+
+        // 排列 9 步大運
+        for (let i = 0; i < 9; i++) {
+            const step = syInfo.isForward ? (i + 1) : -(i + 1);
+            const dyGzIdx = (mIdx + step + 60) % 60;
+            const dyGz = JIA_ZI_ARRAY[dyGzIdx];
+            const dyStartAge = syInfo.startAge + i * 10;
+            const dyStartYear = syInfo.jiaoYunDate.getFullYear() + i * 10;
+
+            const lnList = [];
+            for (let j = 0; j < 10; j++) {
+                const lnYear = dyStartYear + j;
+                const lnAge = dyStartAge + j;
+                const offset = lnYear - y;
+                const lnGz = JIA_ZI_ARRAY[(yGzIdx + offset % 60 + 60) % 60];
+                lnList.push({ year: lnYear, age: lnAge, ganZhi: lnGz });
+            }
+
+            daYunData.push({
+                startAge: dyStartAge,
+                startYear: dyStartYear,
+                ganZhi: dyGz,
+                gan: dyGz.charAt(0),
+                zhi: dyGz.charAt(1),
+                liuNian: lnList
+            });
+        }
+
+        currentBaziChartData = { pillars, daYun: daYunData, syInfo };
+        if (selectedDaYunIndex >= daYunData.length) selectedDaYunIndex = 0;
+
+        renderPillarsTable(pillars, syInfo);
+        renderDaYunAndLiuNian();
+
+    } catch (err) {
+        console.error("八字排盤計算錯誤", err);
+    }
+}
+
+
+// 渲染四柱 Table：字體加大 70%，消除字與字之間多餘空隙 (leading-none)
+function renderPillarsTable(pillars, syInfo) {
+    const gridEl = document.getElementById('bazi-pillars-grid');
+    const jiaoYunRowEl = document.getElementById('bazi-jiaoyun-row');
+    const cellBase = "px-0.5 border-b border-amber-200 text-center flex items-center justify-center leading-none";
+    
+    let html = '';
+    pillars.forEach((p, idx) => {
+        let hideGanHtml = '';
+        for (let i = 0; i < p.zhiHideGan.length; i++) {
+            const hg = p.zhiHideGan[i];
+            const ss = p.zhiShiShen[i] || '';
+            const hgColor = WUXING_COLORS[hg] || '#1a202c';
+            hideGanHtml += `
+                <div class="flex items-center justify-center gap-1 w-full leading-none my-0.5">
+                    <span style="color: ${hgColor};" class="font-black text-sm sm:text-base">${hg}</span>
+                    <span class="text-stone-500 font-bold text-xs sm:text-sm whitespace-nowrap">${ss}</span>
+                </div>`;
+        }
+
+        const ganColor = WUXING_COLORS[p.gan] || '#1a202c';
+        const zhiColor = WUXING_COLORS[p.zhi] || '#1a202c';
+        const isLast = (idx === pillars.length - 1);
+        const borderR = isLast ? '' : 'border-r border-amber-200';
+
+        html += `
+            <div class="w-1/4 flex-1 flex flex-col min-w-0 ${borderR}">
+                <!-- 柱別 (時柱/日柱/月柱/年柱)：加大至 text-sm sm:text-lg -->
+                <div class="${cellBase} py-1.5 bg-amber-50/95 font-black text-amber-950 text-sm sm:text-lg">${p.name}</div>
+                <!-- 主星十神：加大至 text-xs sm:text-base -->
+                <div class="${cellBase} py-1 text-xs sm:text-base font-black text-stone-600 truncate">${p.ganShiShen}</div>
+                <!-- 天干：特大字號 text-2xl sm:text-4xl，緊密無空隙 -->
+                <div class="${cellBase} py-1 text-2xl sm:text-4xl font-black" style="color: ${ganColor};">${p.gan}</div>
+                <!-- 地支：特大字號 text-2xl sm:text-4xl，緊密無空隙 -->
+                <div class="${cellBase} py-1 text-2xl sm:text-4xl font-black" style="color: ${zhiColor};">${p.zhi}</div>
+                <!-- 藏干 (副星)：字體加大，保留超緊湊高度 -->
+                <div class="${cellBase} py-1.5 flex flex-col justify-center border-b-0">${hideGanHtml}</div>
+            </div>
+        `;
+    });
+    gridEl.innerHTML = html;
+
+    // 交運時節通欄：字體加大
+    jiaoYunRowEl.innerHTML = `
+        <div class="flex items-center gap-1.5 flex-wrap leading-tight">
+            <span class="bg-amber-700 text-white text-xs sm:text-sm px-2 py-0.5 rounded font-black tracking-wider shadow-sm">交運時節</span>
+            <span class="text-amber-950 font-black text-xs sm:text-base">${syInfo.jiaoYunShiJieDesc}</span>
+        </div>
+        <div class="text-xs sm:text-sm text-stone-600 font-bold mt-0.5 sm:mt-0 leading-tight">
+            (${syInfo.isForward ? '陽男陰女順行' : '陰男陽女逆行'}至「${syInfo.targetJieName}」，相距 ${syInfo.diffDays}天${syInfo.diffHours}時${syInfo.diffMinutes}分)
+        </div>
+    `;
+}
+
+// 渲染大運卡片與流年：字體加粗加大，保持卡片無空贅 padding
+function renderDaYunAndLiuNian() {
+    if (!currentBaziChartData || !currentBaziChartData.daYun.length) return;
+    const dyListEl = document.getElementById('bazi-dayun-list');
+    const daYun = currentBaziChartData.daYun;
+
+    let dyHtml = '';
+    daYun.forEach((dy, idx) => {
+        const isSelected = (idx === selectedDaYunIndex);
+        const activeCardStyle = isSelected 
+            ? 'border-amber-600 bg-amber-100/90 shadow ring-2 ring-amber-500' 
+            : 'border-stone-200 bg-white hover:bg-amber-50/60';
+
+        const gColor = WUXING_COLORS[dy.gan] || '#1a202c';
+        const zColor = WUXING_COLORS[dy.zhi] || '#1a202c';
+
+        dyHtml += `
+            <div onclick="selectBaziDaYun(${idx})" class="cursor-pointer border rounded-lg py-1 px-1.5 sm:py-1.5 sm:px-2 text-center min-w-[62px] sm:min-w-[72px] transition-all select-none ${activeCardStyle}">
+                <div class="text-xs sm:text-sm font-black text-amber-950 leading-none">${dy.startAge} 歲</div>
+                <div class="text-[10px] sm:text-xs text-stone-500 my-0.5 leading-none">${dy.startYear}</div>
+                <div class="text-lg sm:text-2xl font-black flex justify-center gap-0.5 leading-none items-center mt-0.5">
+                    ${dy.gan ? `<span style="color: ${gColor};">${dy.gan}</span><span style="color: ${zColor};">${dy.zhi}</span>` : '<span class="text-xs sm:text-sm text-stone-400 font-bold">童限</span>'}
+                </div>
+            </div>
+        `;
+    });
+    dyListEl.innerHTML = dyHtml;
+
+    const curDaYun = daYun[selectedDaYunIndex];
+    const lnContainer = document.getElementById('bazi-liunian-container');
+    if (!curDaYun) return;
+
+    const titlePrefix = curDaYun.ganZhi ? `【${curDaYun.ganZhi}】大運` : `【童限】`;
+    const endYear = curDaYun.startYear + (curDaYun.liuNian.length > 0 ? curDaYun.liuNian.length - 1 : 9);
+
+    let lnGridHtml = `
+        <div class="font-black text-amber-950 mb-1.5 flex items-center gap-1.5 text-xs sm:text-base leading-tight">
+            <span>${titlePrefix} 流年列表</span>
+            <span class="text-xs text-stone-500 font-normal">(${curDaYun.startYear} - ${endYear})</span>
+        </div>
+        <div class="grid grid-cols-5 sm:grid-cols-10 gap-1 sm:gap-1.5">
+    `;
+
+    curDaYun.liuNian.forEach(ln => {
+        const g = ln.ganZhi.charAt(0);
+        const z = ln.ganZhi.charAt(1);
+        const gCol = WUXING_COLORS[g] || '#1a202c';
+        const zCol = WUXING_COLORS[z] || '#1a202c';
+
+        lnGridHtml += `
+            <div class="bg-white border border-amber-200/90 rounded p-1 text-center shadow-xs">
+                <div class="text-[10px] sm:text-xs text-stone-500 leading-none">${ln.year}</div>
+                <div class="font-black text-sm sm:text-lg my-0.5 leading-none flex justify-center">
+                    <span style="color: ${gCol};">${g}</span>
+                    <span style="color: ${zCol};">${z}</span>
+                </div>
+                <div class="text-[10px] sm:text-xs font-bold text-stone-700 leading-none">${ln.age}歲</div>
+            </div>
+        `;
+    });
+
+    lnGridHtml += `</div>`;
+    lnContainer.innerHTML = lnGridHtml;
+}
+function selectBaziDaYun(idx) {
+    selectedDaYunIndex = idx;
+    renderDaYunAndLiuNian();
+}
     function showManualModal() {
         const el = document.getElementById('manual-modal');
         if (el) el.classList.remove('hidden');
@@ -1141,7 +1569,6 @@
 
     const TIAN_JIANG_LIST = ['貴人', '螣蛇', '朱雀', '六合', '勾陳', '青龍', '天空', '白虎', '太常', '玄武', '太陰', '天后'];
     const ZQ_MAP = {"雨水": "亥", "春分": "戌", "谷雨": "酉", "穀雨": "酉", "小满": "申", "小滿": "申", "夏至": "未", "大暑": "午", "处暑": "巳", "處暑": "巳", "秋分": "辰", "霜降": "卯", "小雪": "寅", "冬至": "丑", "大寒": "子"};
-
 // 預設：傳統天乙貴人歌訣
     const GUI_REN_MAP_ORIGINAL = {
         '甲': { day: '丑', night: '未' },
@@ -1267,6 +1694,7 @@
     let useFeiXing = false;
     let useYinYangGuiRen = false; // 新增全域變數
 
+// 新增獨立處理貴人切換的函數
 function handleGuiRenToggle() {
     const el = document.getElementById('toggle-guiren');
     useYinYangGuiRen = el ? el.checked : false;
@@ -1287,7 +1715,7 @@ function handleToggleSwitch(activeId) {
         'toggle-compass'
     ];
     
-    const activeEl = document.getElementById(activeId);
+const activeEl = document.getElementById(activeId);
     
     if (activeEl && activeEl.checked) {
         allToggles.forEach(id => {
@@ -1307,9 +1735,6 @@ function handleToggleSwitch(activeId) {
 
     document.getElementById('bagua-label').innerText = useXianTian ? "後天八卦數" : "先天八卦數";
 
-    // 新增：動態修改貴人按鈕文字
-    const grLabel = document.getElementById('guiren-label');
-    if (grLabel) grLabel.innerText = useYinYangGuiRen ? "陰陽貴人" : "天乙貴人";
     const fxSel = document.getElementById('sel-feixing-year');
     if (fxSel) {
         if (useFeiXing) {
@@ -1322,15 +1747,23 @@ function handleToggleSwitch(activeId) {
         }
     }
 
-    document.getElementById('bagua-label').innerText = useXianTian ? "後天八卦數" : "先天八卦數";
+document.getElementById('bagua-label').innerText = useXianTian ? "後天八卦數" : "先天八卦數";
+    // 新增：動態修改貴人按鈕文字
+    const grLabel = document.getElementById('guiren-label');
+    if (grLabel) grLabel.innerText = useYinYangGuiRen ? "陰陽貴人" : "天乙貴人";
 
     if (useCompass) {
         openCompassMode();
     } else {
         closeCompassMode();
         generatePan();
+// 當八字面板處於乾造或坤造時，起盤時同步更新
+    if (typeof baziDisplayState !== 'undefined' && baziDisplayState !== 'off') {
+        renderBaziModule();
+    }
     }
 }
+
 
 
     const getBranchHTML = (i) => {
@@ -1851,8 +2284,7 @@ function renderPalace5Html(s, anGan, centerLabel, bazi5) {
         <div class="whitespace-nowrap flex items-center">值使：<span class="text-gray-950 font-black ml-0.5">${bazi5.zs}</span></div>
     </div>
 </div>`;
-        }
-        
+        }        
         let stemColor = WUXING_COLORS[s] || "#1a202c";
         const dayHighlightStem = panData.dayHighlightStem;
         const targetHighlightStem = panData.targetHighlightStem;
@@ -1930,7 +2362,7 @@ function initSelectors() {
     for (let i = 0; i <= 23; i++) hSel.add(new Option(i.toString().padStart(2, '0'), i));
     for (let i = 0; i <= 59; i++) minSel.add(new Option(i.toString().padStart(2, '0'), i));
     
-const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('y') && urlParams.has('m') && urlParams.has('d') && urlParams.has('h') && urlParams.has('min')) {
         document.getElementById('sel-year').value = urlParams.get('y');
         document.getElementById('sel-month').value = urlParams.get('m');
@@ -1940,31 +2372,9 @@ const urlParams = new URLSearchParams(window.location.search);
         currentDate = new Date(urlParams.get('y'), urlParams.get('m') - 1, urlParams.get('d'), urlParams.get('h'), urlParams.get('min'));
         updateJieQiYearBtn();
         generatePan();
-    } else {
+} else {
         updateSelectorsFromDate(currentDate);
         generatePan(); // 預設開啟時自動起盤
-    }
-
-    // 🌟 解析 URL 中的注解參數並自動載入
-    if (urlParams.has('note')) {
-        const rawNote = urlParams.get('note');
-        let decompressed = "";
-        try {
-            if (typeof LZString !== 'undefined') {
-                decompressed = LZString.decompressFromEncodedURIComponent(rawNote) || decodeURIComponent(rawNote);
-            } else {
-                decompressed = decodeURIComponent(rawNote);
-            }
-        } catch (err) {
-            decompressed = rawNote;
-        }
-        const noteInput = document.getElementById('note-input');
-        if (noteInput) {
-            noteInput.value = decompressed;
-            updateNoteCounter();
-        }
-        const accNote = document.getElementById('accordion-notes');
-        if (accNote) accNote.open = true;
     }
 }
 
@@ -2645,7 +3055,7 @@ const urlParams = new URLSearchParams(window.location.search);
             let zqName = prevQi.getName();
             let yueJiangBranchCalculated = ZQ_MAP[zqName] || "亥";
             
-            let timeBranchIdxForDayNight = BRANCHES.indexOf(timeBranch);
+let timeBranchIdxForDayNight = BRANCHES.indexOf(timeBranch);
             let isDay = (timeBranchIdxForDayNight >= 3 && timeBranchIdxForDayNight <= 8);
             
             // 新增：根據切換狀態，決定使用哪一套字典
@@ -2751,12 +3161,18 @@ const urlParams = new URLSearchParams(window.location.search);
                 accInfo.open = true; // 確保每次起盤後「排盤資料」風琴預設保持開啟狀態
                 document.getElementById('pan-summary-title').innerHTML = `📋 排盤資料`;
             }
-            // 🌟 2. 顯示並更新單行快調 Bar（不含四柱，僅保留時間、農曆與早晚子）
-if (quickBar) {
-    quickBar.classList.remove('hidden');
-    quickBar.classList.add('flex');
-    document.getElementById('quick-bar-time').innerHTML = `${y}年${m}月${d}日(${weekStr}) ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}${displayZiMark}`;
-}
+
+            // 顯示常駐快調 Bar
+            if (quickBar) {
+                quickBar.classList.remove('hidden');
+                quickBar.classList.add('flex');
+                document.getElementById('quick-bar-time').innerHTML = `${y}年${m}月${d}日(${weekStr}) ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}${displayZiMark}`;
+                
+                // 💡 關鍵修復：起盤後自動平滑滾動至快調 Bar，讓整個九宮格完整映入視窗，消除捲軸截斷問題
+                setTimeout(() => {
+                    quickBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 80);
+            }
 
             document.getElementById('info-bazi').innerHTML = `${y}年${m}月${d}日(${weekStr}) ${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} ｜ <span class="text-teal-800 font-bold">${lunarStr}</span> ｜ ${coloredBaziStr}${displayZiMark}${specialStr}`;
             
@@ -2830,8 +3246,20 @@ if (jqData.isTransitionInHour) {
             }
 
             document.getElementById('qimen-grid').classList.remove('hidden');
-            document.getElementById('action-footer').classList.remove('hidden');
-            document.getElementById('action-footer').classList.add('flex');
+// 顯示底部功能按鈕與八字容器
+    document.getElementById('action-footer').classList.remove('hidden');
+    document.getElementById('action-footer').classList.add('flex');
+
+    const baziWrapper = document.getElementById('bazi-wrapper');
+    if (baziWrapper) {
+        baziWrapper.classList.remove('hidden');
+        baziWrapper.classList.add('flex');
+    }
+
+    // (iv) 當奇門時辰轉動 (快調 ⏪ ⏩、現在時間、重新起盤) 時，同步更新八字資料
+    if (baziDisplayState !== 'off') {
+        renderBaziModule();
+    }
 
             const isMenPo = (door, pNum) => {
                 const fire = pNum===9, water = pNum===1, earth = pNum===2||pNum===8, metal = pNum===6||pNum===7, wood = pNum===3||pNum===4;
@@ -2991,7 +3419,7 @@ if (jqData.isTransitionInHour) {
                             <span class="text-palace-name text-${ACTIVE_PALACES[i].type}">${palaceLabel}</span>
                             <span class="text-sm sm:text-base leading-none mt-0.5 font-normal">${guaDisplay}</span>
                         </div>
-                        <div class="flex flex-col items-start leading-none space-y-1 w-full my-0.5">
+<div class="flex flex-col items-start leading-none space-y-1 w-full my-0.5">
                             <span class="text-main text-${godColor} w-full tracking-wide">${godPan[i]}</span>
                             <span class="text-main text-${STAR_COLORS[pStars[0]] || 'black'} w-full tracking-wide">${starTextDisplay}</span>
                             <div class="flex items-center leading-none w-full">
@@ -3064,92 +3492,8 @@ if (jqData.isTransitionInHour) {
         url.searchParams.set('h', h);
         url.searchParams.set('min', min);
         
-navigator.clipboard.writeText(url.toString()).then(() => {
-            alert("分享連結已複製！貼上即可分享目前的排盤時間。");
-        }).catch(() => {
-            let t = document.createElement("textarea"); 
-            t.value = url.toString(); 
-            document.body.appendChild(t); 
-            t.select(); 
-            document.execCommand("Copy"); 
-            t.remove(); 
-            alert("分享連結已複製！貼上即可分享目前的排盤時間。");
-        });
-    }
-
-    // ==================== 注解功能專屬邏輯 ====================
-    function updateNoteCounter() {
-        const input = document.getElementById('note-input');
-        const counter = document.getElementById('note-counter');
-        if (input && counter) {
-            counter.innerText = input.value.length;
-        }
-    }
-
-    function exportNoteTxt() {
-        const noteText = document.getElementById('note-input').value.trim();
-        if (!noteText) {
-            alert("注解內容為空，請先輸入注解文字。");
-            return;
-        }
-        
-        const baziLine = (panData && panData.bazi) ? (panData.bazi + (panData.special ? " " + panData.special : "") + (panData.stemStatus ? " " + panData.stemStatus : "")) : "";
-        
-        // 選項 B：完整排盤資料摘要 + 注解
-        let content = `【奇門遁甲 - 排盤資料與注解】\n`;
-        if (baziLine) {
-            content += `時間：${baziLine}\n`;
-            content += `局數：${panData.ju || '-'}\n`;
-            content += `旬首：${panData.xun || '-'}\n`;
-            content += `值符：${panData.zf || '-'} ｜ 值使：${panData.zs || '-'}\n`;
-            content += `空亡：${panData.kw || '-'} ｜ 驛馬：${currentYiMaPalace || '-'}\n`;
-        }
-        content += `--------------------------------------------------\n`;
-        content += `【注解內容】\n`;
-        content += `${noteText}\n`;
-
-        const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-        const downloadUrl = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = downloadUrl;
-        a.download = "奇門注解.txt";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(downloadUrl);
-    }
-
-    function sharePanWithNote() {
-        const noteText = document.getElementById('note-input').value.trim();
-        if (!noteText) {
-            alert("注解內容為空，如只需分享起盤時間，請點擊「分享起盤連結」。");
-            return;
-        }
-
-        const y = document.getElementById('sel-year').value;
-        const m = document.getElementById('sel-month').value;
-        const d = document.getElementById('sel-day').value;
-        const h = document.getElementById('sel-hour24').value;
-        const min = document.getElementById('sel-minute').value;
-        
-        const url = new URL(window.location.href);
-        url.searchParams.set('y', y);
-        url.searchParams.set('m', m);
-        url.searchParams.set('d', d);
-        url.searchParams.set('h', h);
-        url.searchParams.set('min', min);
-
-        // 使用 LZString 壓縮注解文字縮短網址
-        let compressed = "";
-        if (typeof LZString !== 'undefined') {
-            compressed = LZString.compressToEncodedURIComponent(noteText);
-        } else {
-            compressed = encodeURIComponent(noteText);
-        }
-        url.searchParams.set('note', compressed);
-
         navigator.clipboard.writeText(url.toString()).then(() => {
-            alert("包含注解的分享連結已複製！另一位使用者開啟該 URL 即會顯示此排盤與注解。");
+            alert("分享連結已複製！貼上即可分享目前的排盤時間。");
         }).catch(() => {
             let t = document.createElement("textarea"); 
             t.value = url.toString(); 
@@ -3157,21 +3501,12 @@ navigator.clipboard.writeText(url.toString()).then(() => {
             t.select(); 
             document.execCommand("Copy"); 
             t.remove(); 
-            alert("包含注解的分享連結已複製！另一位使用者開啟該 URL 即會顯示此排盤與注解。");
+            alert("分享連結已複製！貼上即可分享目前的排盤時間。");
         });
     }
 
-    function deleteNote() {
-        const input = document.getElementById('note-input');
-        if (!input || !input.value) return;
-        if (confirm("確定要清除現有的注解文字嗎？")) {
-            input.value = "";
-            updateNoteCounter();
-        }
-    }
 
-
-// ==================== 屋向奇門（三元九運）演算法 ====================    
+// ==================== 屋向奇門（三元九運）演算法 ====================
     let compassPanMode = 'shijia'; // 'shijia' (時家盤) 或 'wuxiang' (屋向盤)
 
 // 十二地支門向對應之符頭六儀天干
@@ -3435,6 +3770,73 @@ let useCompass = false;
     let isCompassRunning = false;
     let isCompassLocked = false;
     let isCompassBW = false;
+    let compassScale = 1.0;     // 新增：紀錄當前放大倍率
+    let isAutoAlign = false;    // 新增：紀錄自動定盤狀態
+
+    // 新增：循環切換指南針大小 (1.0 -> 1.25 -> 1.5 -> 1.0)
+    function cycleCompassSize() {
+        if (compassScale === 1.0) compassScale = 1.25;
+        else if (compassScale === 1.25) compassScale = 1.5;
+        else compassScale = 1.0;
+        
+        document.getElementById('btn-compass-size').innerHTML = `🔍 ${compassScale}x`;
+        updateCompassHeading(smoothedHeading !== null ? smoothedHeading : 0);
+    }
+
+    // 新增：自動定盤開關邏輯
+    function toggleAutoAlign() {
+        isAutoAlign = !isAutoAlign;
+        const btn = document.getElementById('btn-auto-align');
+        const sel = document.getElementById('sel-compass-yun9-ju');
+        if (isAutoAlign) {
+            btn.innerText = "自動定盤: 開";
+            btn.classList.replace('bg-slate-700', 'bg-emerald-600');
+            btn.classList.replace('hover:bg-slate-600', 'hover:bg-emerald-500');
+            btn.classList.replace('border-slate-600', 'border-emerald-500');
+            if(sel) {
+                sel.disabled = true; // 鎖死下拉選單
+                sel.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+            if(smoothedHeading !== null) applyAutoAlign(smoothedHeading);
+        } else {
+            btn.innerText = "自動定盤: 關";
+            btn.classList.replace('bg-emerald-600', 'bg-slate-700');
+            btn.classList.replace('hover:bg-emerald-500', 'hover:bg-slate-600');
+            btn.classList.replace('border-emerald-500', 'border-slate-600');
+            if(sel) {
+                sel.disabled = false; // 釋放下拉選單
+                sel.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+    }
+
+    // 新增：根據 360 度找出對應的 12 地支選項 (每支跨距 30 度)
+    function getBranchFromHeading(deg) {
+        deg = (deg % 360 + 360) % 360;
+        if (deg >= 345 || deg < 15) return '子_1';
+        if (deg >= 15 && deg < 45) return '丑_8';
+        if (deg >= 45 && deg < 75) return '寅_8';
+        if (deg >= 75 && deg < 105) return '卯_3';
+        if (deg >= 105 && deg < 135) return '辰_4';
+        if (deg >= 135 && deg < 165) return '巳_4';
+        if (deg >= 165 && deg < 195) return '午_9';
+        if (deg >= 195 && deg < 225) return '未_2';
+        if (deg >= 225 && deg < 255) return '申_2';
+        if (deg >= 255 && deg < 285) return '酉_7';
+        if (deg >= 285 && deg < 315) return '戌_6';
+        if (deg >= 315 && deg < 345) return '亥_6';
+        return '子_1';
+    }
+
+    // 新增：執行自動切換地盤
+    function applyAutoAlign(heading) {
+        const targetVal = getBranchFromHeading(heading);
+        const sel = document.getElementById('sel-compass-yun9-ju');
+        if (sel && sel.value !== targetVal) {
+            sel.value = targetVal;
+            renderCompassQimen();
+        }
+    }
 
     function toggleCompassTheme() {
         isCompassBW = !isCompassBW;
@@ -3708,6 +4110,7 @@ function renderCompassQimen() {
 
     grid.innerHTML = html;
 }
+
     function openCompassMode() {
         if (!panData || !panData.ju) {
             generatePan();
@@ -3852,7 +4255,7 @@ function renderCompassQimen() {
         updateCompassHeading(smoothedHeading);
     }
 
-    function updateCompassHeading(heading) {
+function updateCompassHeading(heading) {
         heading = Math.round(heading) % 360;
         
         let targetRotation = (180 - heading + 360) % 360;
@@ -3861,7 +4264,8 @@ function renderCompassQimen() {
 
         const dial = document.getElementById('compass-dial-container');
         if (dial) {
-            dial.style.transform = `rotate(${currentContinuousRotation}deg)`;
+            // 更新：同時載入放大倍率 (scale) 與旋轉 (rotate)
+            dial.style.transform = `scale(${compassScale}) rotate(${currentContinuousRotation}deg)`;
         }
 
         const degEl = document.getElementById('compass-degree');
@@ -3873,6 +4277,11 @@ function renderCompassQimen() {
         const mInfo = get24Mountain(heading);
         const mEl = document.getElementById('compass-mountain');
         if (mEl) mEl.innerText = `${mInfo.gua}宮 · ${mInfo.name}山 (${mInfo.center}°)`;
+
+        // 🌟 新增：若開啟「自動定盤」且處於「屋向盤」模式，則根據方位更新陣局
+        if (isAutoAlign && compassPanMode === 'wuxiang') {
+            applyAutoAlign(heading);
+        }
     }
 
     window.onload = function() {
